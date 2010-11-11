@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">小An(droid)需要愛</string>
+    <string name="how_to_play">怎麼玩?</string>
+    <string name="exit">離開</string>
+    <string name="about">關於</string>
+    <string name="author">作者</string>
+    <string name="copyright">版權</string>
+    <string name="report_problem">問題回報</string>
+    <string name="back">返回</string>
+</resources>

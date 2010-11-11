@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/background">
+
+	
+<Button
+	android:id="@+id/button_exit"
+	android:layout_width="150dip"
+	android:layout_height="60dip"
+	android:text="@string/exit"
+	android:textColor="@color/white"
+	android:visibility="invisible"
+	android:layout_marginLeft="5dip"
+	android:layout_marginTop="5dip"
+	android:background="@drawable/exit_button"
+	/>
+
+<Button
+	android:id="@+id/button_how"
+	android:layout_width="120dip"
+	android:layout_height="90dip"
+	android:text="@string/how_to_play"
+	android:layout_alignTop="@id/button_exit"
+	android:layout_toRightOf="@id/button_exit"
+	android:layout_marginLeft="50dip"
+	android:background="@drawable/how_button"/>
+<ImageView
+	android:id="@+id/img"
+	android:layout_below="@id/button_exit"
+	android:layout_width="220dip"
+	android:layout_height="280dip"
+	android:layout_marginLeft="10dip"
+	android:layout_marginTop="20dip"
+	/>
+<ImageView
+	android:id="@+id/fall"
+	android:layout_below="@id/button_exit"
+	android:layout_width="280dip"
+	android:layout_height="240dip"
+	android:visibility="invisible"
+	android:layout_marginLeft="30dip"
+	android:layout_marginTop="20dip"
+	/>
+</RelativeLayout>
