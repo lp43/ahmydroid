@@ -42,6 +42,6 @@
 	android:layout_height="240dip"
 	android:visibility="invisible"
 	android:layout_marginLeft="30dip"
-	android:layout_marginTop="20dip"
+	android:layout_marginTop="40dip"
 	/>
 </RelativeLayout>

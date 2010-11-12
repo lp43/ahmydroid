@@ -30,6 +30,10 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 public class Ahmydroid extends Activity implements SensorEventListener{
+	/**
+	 * 記錄版本編號
+	 */
+	private String softVersion="v1.0.0.1";
 	private Button button_how,button_exit;
     private SensorManager sensormanager;
     private final String tag="tag";
@@ -46,10 +50,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 機器人暈眩的動畫變數
 	 */
 	private AnimationDrawable aniimg;
-	/**
-	 * 記錄版本編號
-	 */
-	private String softVersion="v1.0.0";
+
   
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,17 +84,27 @@ public class Ahmydroid extends Activity implements SensorEventListener{
     }
 	@Override
 	protected void onResume() {
-		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);
-		Resources res=getResources();
+		Intent intent = new Intent();
+		intent.setClass(this,DropService.class);
+		this.startService(intent);
 		
+		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);	
 
-		imgview.setBackgroundResource(R.drawable.stand);
+		imgview.setBackgroundResource(R.drawable.nostart);
 		
 	    //讓按鈕怎麼玩變成動畫
 		Animation how_animation=AnimationUtils.loadAnimation(this, R.anim.scale_animation);
 		button_how.startAnimation(how_animation);
 		
 		super.onResume();
+	}
+	@Override
+	protected void onDestroy() {
+		Log.i(tag, "Ahmydroid.onDestroy");
+		Intent intent = new Intent();
+		intent.setClass(this, DropService.class);
+		stopService(intent);
+		super.onDestroy();
 	}
 	@Override
 	protected Dialog onCreateDialog(int id) {
@@ -192,7 +203,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 					@Override
 					public void onCompletion(MediaPlayer arg0) {
-						Log.i(tag, "into onCompletion");
+//						Log.i(tag, "into onCompletion");
 						mp.release();
 						mpplaying=false;
 					}
@@ -213,6 +224,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			if(aniimg!=null){
 				
 				aniimg.stop();
+				imgview.setBackgroundResource(R.drawable.stand);
 				imgfall.setVisibility(View.INVISIBLE);
 				imgview.setVisibility(View.VISIBLE);
 			}		
