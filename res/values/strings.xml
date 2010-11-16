@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">誰殺了小An(droid)</string>
+    <string name="app_name">別摔小An(droid)</string>
     <string name="how_to_play">怎麼玩?</string>
     <string name="exit">離開</string>
     <string name="about">關於</string>
@@ -10,4 +10,5 @@
     <string name="back">返回</string>
     <string name="startfallprotect">啟動「摔落告知」功能</string>
     <string name="startingfallprotect">「摔落告知」執行中</string>
+    <string name="stopfallprotect">關閉「摔落告知」</string>
 </resources>

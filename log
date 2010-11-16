@@ -9,3 +9,14 @@ v1.0.0
 v1.0.0.1
 1.增加背景動畫功能
 2.更改程式icon
+
+11/15
+v1.0.0.2
+1.當Service進入摔蛟畫面時,Service會關閉以避免重覆啟動Fall.activity
+2.將一開始的機器人從ImageView改為ImageButton,讓Service啟動單元設為被動模式
+3.新增啟動和關閉Service時的Toast告知
+4.icon重換
+[BUG待修]時間測試似乎有問題
+
+v1.0.0.3
+1.螢幕關閉時，也能開啟動畫了

@@ -27,8 +27,8 @@
 	android:layout_toRightOf="@id/button_exit"
 	android:layout_marginLeft="50dip"
 	android:background="@drawable/how_button"/>
-<ImageView
-	android:id="@+id/img"
+<ImageButton
+	android:id="@+id/img_btn"
 	android:layout_below="@id/button_exit"
 	android:layout_width="220dip"
 	android:layout_height="280dip"

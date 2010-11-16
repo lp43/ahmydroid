@@ -3,6 +3,8 @@ package com.funtrigger.ahmydroid;
 import java.util.List;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -27,13 +29,18 @@ import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 public class Ahmydroid extends Activity implements SensorEventListener{
+	private static final int HOW_TO_PLAY = 0;
+	private static final int START_PROTECT = 1;
+	private static final int STOP_PROTECT = 2;
 	/**
 	 * 記錄版本編號
 	 */
-	private String softVersion="v1.0.0.1";
+	private String softVersion="v1.0.0.3";
 	private Button button_how,button_exit;
     private SensorManager sensormanager;
     private final String tag="tag";
@@ -45,7 +52,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	/**
 	 * 機器人圖案的ImageView
 	 */
-	private ImageView imgview,imgfall;
+	private ImageView /*imgview,*/imgfall;
+	private ImageButton img_btn;
 	/**
 	 * 機器人暈眩的動畫變數
 	 */
@@ -58,8 +66,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
         setContentView(R.layout.ahmyphone);
         button_how=(Button) findViewById(R.id.button_how);
         button_exit=(Button) findViewById(R.id.button_exit);
-        imgview=(ImageView) findViewById(R.id.img);
+        img_btn=(ImageButton) findViewById(R.id.img_btn);
         imgfall=(ImageView) findViewById(R.id.fall);
+        img_btn.setBackgroundResource(R.drawable.nostart);
         
         button_how.setOnClickListener(new OnClickListener(){
 
@@ -80,17 +89,29 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			}
         	
         });
-        
+        img_btn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				if(checkServiceExist()==false){
+					startService();
+					img_btn.setBackgroundResource(R.drawable.nostart);
+				}else if(checkServiceExist()==true){
+					stopService();
+					img_btn.setBackgroundResource(R.drawable.start);
+				}
+				
+			}
+        	
+        });
     }
 	@Override
 	protected void onResume() {
-		Intent intent = new Intent();
-		intent.setClass(this,DropService.class);
-		this.startService(intent);
+		
+		setImg_btn();
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);	
 
-		imgview.setBackgroundResource(R.drawable.nostart);
 		
 	    //讓按鈕怎麼玩變成動畫
 		Animation how_animation=AnimationUtils.loadAnimation(this, R.anim.scale_animation);
@@ -101,15 +122,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	@Override
 	protected void onDestroy() {
 		Log.i(tag, "Ahmydroid.onDestroy");
-		Intent intent = new Intent();
-		intent.setClass(this, DropService.class);
-		stopService(intent);
 		super.onDestroy();
 	}
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch(id){
-		case 0:
+		case HOW_TO_PLAY:
 			AlertDialog dialog0=new AlertDialog.Builder(Ahmydroid.this)
  	    	.setTitle("怎麼玩？")
  			.setMessage("當小An跌倒時，他會希望你扶他一把。")
@@ -162,14 +180,119 @@ public class Ahmydroid extends Activity implements SensorEventListener{
      			})
  			.create();
 			return dialog0;
-
+		case START_PROTECT:
+			Toast.makeText(this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
+			break;
+		case STOP_PROTECT:
+			Toast.makeText(this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
+			break;
 		}
+		
 		return super.onCreateDialog(id);
 	}
 	@Override
 	protected void onPause() {
 		sensormanager.unregisterListener(this);
 		super.onPause();
+	}
+	
+	/**
+	 * 因為一開始的小綠人圖案，會因Service是否有開啟而更換圖示
+	 * 該Method呼叫後，會將正確的圖示顯示出來
+	 */
+	private void setImg_btn(){
+		if(checkServiceExist()==false){
+			img_btn.setBackgroundResource(R.drawable.start);
+		}else if(checkServiceExist()==true){
+			img_btn.setBackgroundResource(R.drawable.nostart);
+		}
+	}
+	/**
+	 * 啟動摔落告知Service
+	 */
+	private void startService(){
+		Intent intent = new Intent();
+		intent.setClass(Ahmydroid.this,DropService.class);
+		Ahmydroid.this.startService(intent);
+		showDialog(START_PROTECT);
+	}
+	
+	/**
+	 * 停止摔落告知Service
+	 */
+	private void stopService(){
+		Intent intent = new Intent();
+		intent.setClass(this, DropService.class);
+		stopService(intent);
+		showDialog(STOP_PROTECT);
+	}
+	
+	/**
+	 * 專門檢查摔落告知的Service是否有開啟,
+	 * 預設為false;
+	 * @return 若有開啟回傳為true,否則為false
+	 */
+	private boolean checkServiceExist(){
+		boolean return_field=false;
+		ActivityManager activityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE); 
+		List<ActivityManager.RunningServiceInfo> service=activityManager.getRunningServices(100);
+//		Log.i(tag, "packagename: "+this.getPackageName());
+		
+		for(RunningServiceInfo service_name:service){
+//			Log.i(tag, "exist service: "+service_name.process);
+			if(service_name.process.equals(this.getPackageName())){
+				return_field=true;
+				break;
+			}
+		}
+		
+		Log.i(tag, "service exist: "+String.valueOf(return_field));
+		return return_field;
+		
+	}
+	
+	/**
+	 * 專播動畫的UI控制Method
+	 */
+	private void startFallAnimation(){
+		img_btn.setVisibility(View.INVISIBLE);
+		imgfall.setVisibility(View.VISIBLE);
+		imgfall.setBackgroundResource(R.anim.falling_animation);
+		aniimg=(AnimationDrawable) imgfall.getBackground();
+		
+
+		while(aniimg.isRunning()==false){
+			aniimg.start();
+		}
+		
+			
+			if(mpplaying==false){
+				Log.i(tag, "into mp player");
+				mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
+				mp.start();
+				mpplaying=true;
+
+			
+			mp.setOnCompletionListener(new OnCompletionListener(){
+
+				@Override
+				public void onCompletion(MediaPlayer arg0) {
+//					Log.i(tag, "into onCompletion");
+					mp.release();
+					mpplaying=false;
+				}
+				
+			});
+			mp.setOnErrorListener(new OnErrorListener(){
+
+				@Override
+				public boolean onError(MediaPlayer mp, int what, int extra) {
+					mp.release();
+					return false;
+				}
+				
+			});
+		}
 	}
 	@Override
 	public void onSensorChanged(SensorEvent event) {
@@ -181,52 +304,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		if(a<2){
 			Log.i(tag, "mygod!");
 			
-			imgview.setVisibility(View.INVISIBLE);
-			imgfall.setVisibility(View.VISIBLE);
-			imgfall.setBackgroundResource(R.anim.falling_animation);
-			aniimg=(AnimationDrawable) imgfall.getBackground();
-			
-
-			while(aniimg.isRunning()==false){
-				aniimg.start();
-			}
-			
-				
-				if(mpplaying==false){
-					Log.i(tag, "into mp player");
-					mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
-					mp.start();
-					mpplaying=true;
-
-				
-				mp.setOnCompletionListener(new OnCompletionListener(){
-
-					@Override
-					public void onCompletion(MediaPlayer arg0) {
-//						Log.i(tag, "into onCompletion");
-						mp.release();
-						mpplaying=false;
-					}
-					
-				});
-				mp.setOnErrorListener(new OnErrorListener(){
-
-					@Override
-					public boolean onError(MediaPlayer mp, int what, int extra) {
-						mp.release();
-						return false;
-					}
-					
-				});
-			}
+			startFallAnimation();
 			
 		}else{
 			if(aniimg!=null){
 				
 				aniimg.stop();
-				imgview.setBackgroundResource(R.drawable.stand);
+				setImg_btn();
 				imgfall.setVisibility(View.INVISIBLE);
-				imgview.setVisibility(View.VISIBLE);
+				img_btn.setVisibility(View.VISIBLE);
 			}		
 		}
 		
