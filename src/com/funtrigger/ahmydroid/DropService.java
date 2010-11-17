@@ -85,7 +85,7 @@ public class DropService extends Service implements SensorEventListener{
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);
 		List<Sensor> list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-		sensormanager.registerListener(DropService.this,list.get(0), SensorManager.SENSOR_DELAY_GAME);
+		sensormanager.registerListener(DropService.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);
 	
 	
 		super.onCreate();

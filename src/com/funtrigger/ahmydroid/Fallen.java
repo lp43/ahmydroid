@@ -88,7 +88,8 @@ public class Fallen extends Activity implements SensorEventListener{
 	 * 專門用來處理震動的公用變數
 	 */
 	Vibrator myVibrator;
-	
+	Handler handler;
+	Runnable reg_Gsensor;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +147,7 @@ public class Fallen extends Activity implements SensorEventListener{
 			public void run(){
 				while(pm.isScreenOn()==false){
 					Log.i(tag, "into isScreenOn==false");
-					while(pm.isScreenOn()==true){
+					if(pm.isScreenOn()==true){
 						Log.i(tag, "into isScreenOn==true");
 						break;
 					}
@@ -156,14 +157,15 @@ public class Fallen extends Activity implements SensorEventListener{
 		
 		//使用Handler的方式，註冊Fallen.Sensor。
 		//目的也是為了預防該段程式干擾主程式喚醒螢幕
-		Handler hanler =new Handler();
-		hanler.post(new Runnable(){
+		handler =new Handler();
+		reg_Gsensor=new Runnable(){
 
 			@Override
 			public void run() {
 				boolean sensormanager_register =sensormanager.registerListener(Fallen.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);	
 //				Log.i(tag, "sensormanager_register "+sensormanager_register);		
-			}});
+			}};
+		handler.post(reg_Gsensor);
 		
 		//將媒體音量調整到最大，好讓使用者聽見小綠人的哀嚎聲
 		am.setStreamVolume(AudioManager.STREAM_MUSIC,15, 0);
@@ -180,15 +182,22 @@ public class Fallen extends Activity implements SensorEventListener{
 			if(mp!=null){
 				mp.release();//釋放掉音樂資源
 			}
+			if(aniimg!=null){
+				aniimg.stop();//動畫關掉
+			}
+			if(myVibrator!=null){
+				myVibrator.cancel();//震動關掉
+			}
 			
-			aniimg.stop();//動畫關掉
-			myVibrator.cancel();//震動關掉
 			startService();//離開時再把Service開回去
 			
 			if(sensormanager!=null){
 				sensormanager.unregisterListener(this);
 				Log.i(tag, "sensormanager.unregisterListener");
-				
+			}
+			
+			if(handler!=null){
+				handler.removeCallbacks(reg_Gsensor);
 			}
 			finish();//結束掉，下次再感測時，才能從onCreate()再執行
 
