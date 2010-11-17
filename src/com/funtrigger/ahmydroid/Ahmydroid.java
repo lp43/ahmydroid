@@ -33,31 +33,51 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+/**
+ * 這隻程式當你的手機掉落時，會發出聲音+震動告知你
+ *  @author Simon
+ */
 public class Ahmydroid extends Activity implements SensorEventListener{
-	private static final int HOW_TO_PLAY = 0;
-
 	/**
-	 * 記錄版本編號
+	 * 記錄當前的版本編號<br/>
+	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.4";
+	private String softVersion="v1.0.0.5";
+	/**
+	 * [怎麼玩]和[離開]的Button變數
+	 */
 	private Button button_how,button_exit;
+    /**
+     * 控制Gsensor的變數
+     */
     private SensorManager sensormanager;
     private final String tag="tag";
+	/**
+	 * 控制音樂播放的變數
+	 */
     private MediaPlayer mp;
     /**
      * 告知系統跌倒聲音還在播放的單元
      */
 	private boolean mpplaying=false;
 	/**
-	 * 機器人圖案的ImageView
+	 * 機器人跌倒的ImageView，
+	 * 程式中會和aniimg變數做啟動動畫的動作
 	 */
-	private ImageView /*imgview,*/imgfall;
+	private ImageView imgfall;
+	/**
+	 * 帶齒輪的小綠人的圖形按鈕元件變數
+	 */
 	private ImageButton img_btn;
 	/**
-	 * 機器人暈眩的動畫變數
+	 * 機器人暈眩的動畫變數，它會被imgfall變數啟動
 	 */
 	private AnimationDrawable aniimg;
-
+	/**
+	 * 該變數用在onCreateDialog的switch case裡，
+	 * 主要目的用來告知使用者怎麼玩這隻Apk的訊息視窗
+	 */
+	private static final int HOW_TO_PLAY = 0;
   
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -259,7 +279,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		imgfall.setBackgroundResource(R.anim.falling_animation);
 		aniimg=(AnimationDrawable) imgfall.getBackground();
 		
-
+		//當小綠人沒有在暈眩時，給他暈眩
 		while(aniimg.isRunning()==false){
 			aniimg.start();
 		}
@@ -301,6 +321,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		float x=buf[1];
 		int a=(int) Math.abs(x);
 		Log.i(tag, String.valueOf(a));
+		//當x角度小於2時，啟動動畫
 		if(a<2){
 			Log.i(tag, "mygod!");
 			

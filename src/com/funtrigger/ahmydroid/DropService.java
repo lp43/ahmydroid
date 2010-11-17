@@ -23,15 +23,33 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.view.Window;
 
+/**
+ * 手機掉落時的後臺Service，目的是開啟Gsensor來偵測使用者手機掉落，
+ * 當掉落時，會開啟Fallen.java檔播放所有相關事件。如︰音效、震動、動畫…等
+ * @author simon
+ */
 public class DropService extends Service implements SensorEventListener{
 
 	private String tag="tag";
 	
 	NotificationManager mNotificationManager;
 	Notification notification;
+    /**
+     * 控制Gsensor的變數
+     */
     private SensorManager sensormanager;
+    /**
+     * 該變數被用在告知系統，該類別啟動時，手機不能休眠，
+     * 但是因為和我後來的使用方向不符，就沒用到了
+     */
     WakeLock wakeLock;
+	/**
+	 * 電源管理變數，該變數被拿來偵測螢幕是否有亮
+	 */
     PowerManager pm;
+	/**
+	 * 控制音樂播放的變數
+	 */
     private MediaPlayer mp;
     /**
      * 告知系統跌倒聲音還在播放的單元
@@ -74,9 +92,6 @@ public class DropService extends Service implements SensorEventListener{
 	}
 
 
-
-
-
 	@Override
 	public void onDestroy() {
 		Log.i(tag,"into DropService.onDestroy");
@@ -85,9 +100,9 @@ public class DropService extends Service implements SensorEventListener{
 			sensormanager.unregisterListener(this);
 		}		
 		mNotificationManager.cancelAll();
-		if(wakeLock!=null){
-			wakeLock.release();
-		}
+//		if(wakeLock!=null){
+//			wakeLock.release();
+//		}
 		super.onDestroy();
 	}
 
@@ -167,7 +182,7 @@ public class DropService extends Service implements SensorEventListener{
 			
 			Intent intent = new Intent();
 			intent.setClass(this, Fallen.class);
-
+			//如果沒有在新的Task開啟程式，會Error
 			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 		}

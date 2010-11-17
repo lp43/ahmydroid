@@ -29,11 +29,25 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
+/**
+ * 在後臺運行中偵測手機是否掉落的Gsensor的Service，
+ * 會啟動這個類別。
+ * 這個類別用來處理動畫、音效、和震動…，
+ * 以提示使用者手機掉了。
+ * 這個類別被設在KEYGUARD保護層以外，
+ * 所以螢幕在休眠時，
+ * 也能亮起來，並啟動該類別
+ * 註︰這個類別只會在手勢啟動後才被執行
+ * @author simon
+ */
 public class Fallen extends Activity implements SensorEventListener{
 	/**
 	 * 機器人圖案的ImageView
 	 */
 	private ImageView imgfall;
+	/**
+	 * 控制音樂播放的變數
+	 */
     private MediaPlayer mp;
     /**
      * 告知系統跌倒聲音還在播放的單元
@@ -44,15 +58,35 @@ public class Fallen extends Activity implements SensorEventListener{
 	 */
 	private AnimationDrawable aniimg;
     private final String tag="tag";
+    /**
+     * 控制Gsensor的變數
+     */
     private SensorManager sensormanager;
+    /**
+     * 怎麼玩變數。<br/>
+     * 這個變數在該類別沒有功能，所以必須把他找出來並隱藏
+     */
 	private Button button_how;
+	/**
+	 * 該變數是控制小綠人的圖形按鈕元件
+	 */
 	private ImageButton img_btn;
+	/**
+	 * 電源管理變數，該變數被拿來偵測螢幕是否有亮
+	 */
 	PowerManager pm;
+	/**
+	 * 該變數是重力感應的X,Y,Z值
+	 * 程式將它們存在List裡
+	 */
 	List<Sensor> list;
 	/**
 	 * 用來調整音量Stream大小的啟始變數
 	 */
 	static AudioManager am;
+	/**
+	 * 專門用來處理震動的公用變數
+	 */
 	Vibrator myVibrator;
 	
 	
@@ -81,7 +115,7 @@ public class Fallen extends Activity implements SensorEventListener{
 		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		Log.i(tag, "power screen on? "+pm.isScreenOn());
 	
-
+				//讓該Activity能在鍵盤鎖以外，讓螢幕亮起的法寶
 				final Window win = getWindow();
 				 win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
 			                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
@@ -89,13 +123,8 @@ public class Fallen extends Activity implements SensorEventListener{
 		                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
 		                   /* | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON*/);
 
-	
-
-		 
 		setContentView(R.layout.ahmyphone);
 		Log.i(tag, "setContentView finish");
-		
-
 		
 		button_how=(Button) findViewById(R.id.button_how);
 		img_btn=(ImageButton) findViewById(R.id.img_btn);
@@ -109,10 +138,10 @@ public class Fallen extends Activity implements SensorEventListener{
 		am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
 		sensormanager=(SensorManager) getSystemService(SENSOR_SERVICE);
-		list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+		list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);		
 		
-		
-		
+		//啟動一個執行緒，負責偵測Screen是否有On。
+		//這個檢查迴圈不能寫在主程式裡，否則會干擾主程序喚醒螢幕
 		new Thread(){
 			public void run(){
 				while(pm.isScreenOn()==false){
@@ -125,6 +154,8 @@ public class Fallen extends Activity implements SensorEventListener{
 			}
 		}.start();
 		
+		//使用Handler的方式，註冊Fallen.Sensor。
+		//目的也是為了預防該段程式干擾主程式喚醒螢幕
 		Handler hanler =new Handler();
 		hanler.post(new Runnable(){
 
@@ -134,13 +165,17 @@ public class Fallen extends Activity implements SensorEventListener{
 //				Log.i(tag, "sensormanager_register "+sensormanager_register);		
 			}});
 		
-		//將媒體音量調整到最大，好讓使用者聽見哀嚎聲
+		//將媒體音量調整到最大，好讓使用者聽見小綠人的哀嚎聲
 		am.setStreamVolume(AudioManager.STREAM_MUSIC,15, 0);
 	}
 
-	@Override
+	@Override//程式在按[Back鍵]或[電源鍵]，都會執行到該Method
 	protected void onPause() {
 		Log.i(tag, "into Fallen.onPause()");
+		
+		//程式在按[Back鍵]或[電源鍵]，都會執行到該Method,
+		//所以要偵測，如果螢幕是亮著，才能真的做以下變數的釋放。
+		//否則會產生下次啟動該程式時的干擾
 		if(pm.isScreenOn()==true){
 			if(mp!=null){
 				mp.release();//釋放掉音樂資源
@@ -155,7 +190,7 @@ public class Fallen extends Activity implements SensorEventListener{
 				Log.i(tag, "sensormanager.unregisterListener");
 				
 			}
-			finish();
+			finish();//結束掉，下次再感測時，才能從onCreate()再執行
 
 			Log.i(tag, "finish onPause()");
 		}
