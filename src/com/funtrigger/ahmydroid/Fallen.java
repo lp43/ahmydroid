@@ -3,6 +3,7 @@ package com.funtrigger.ahmydroid;
 import java.util.List;
 import android.app.Activity;
 import android.app.KeyguardManager;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
@@ -10,12 +11,14 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -46,6 +49,12 @@ public class Fallen extends Activity implements SensorEventListener{
 	private ImageButton img_btn;
 	PowerManager pm;
 	List<Sensor> list;
+	/**
+	 * 用來調整音量Stream大小的啟始變數
+	 */
+	static AudioManager am;
+	Vibrator myVibrator;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -93,15 +102,16 @@ public class Fallen extends Activity implements SensorEventListener{
 		imgfall=(ImageView) findViewById(R.id.fall);
 		img_btn.setVisibility(View.INVISIBLE);
 		imgfall.setVisibility(View.VISIBLE);
-		imgfall.setBackgroundResource(R.anim.falling_animation);
-		aniimg=(AnimationDrawable) imgfall.getBackground();
-		
 		button_how.setVisibility(View.INVISIBLE);
-
-		sensormanager=(SensorManager) this.getApplication().getSystemService(SENSOR_SERVICE);
+		imgfall.setBackgroundResource(R.anim.falling_animation);
+		aniimg=(AnimationDrawable) imgfall.getBackground();			
 		
+		am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
+		sensormanager=(SensorManager) getSystemService(SENSOR_SERVICE);
 		list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
+		
+		
 		
 		new Thread(){
 			public void run(){
@@ -124,25 +134,36 @@ public class Fallen extends Activity implements SensorEventListener{
 //				Log.i(tag, "sensormanager_register "+sensormanager_register);		
 			}});
 		
+		//將媒體音量調整到最大，好讓使用者聽見哀嚎聲
+		am.setStreamVolume(AudioManager.STREAM_MUSIC,15, 0);
 	}
 
 	@Override
 	protected void onPause() {
 		Log.i(tag, "into Fallen.onPause()");
+		if(pm.isScreenOn()==true){
+			if(mp!=null){
+				mp.release();//釋放掉音樂資源
+			}
+			
+			aniimg.stop();//動畫關掉
+			myVibrator.cancel();//震動關掉
+			startService();//離開時再把Service開回去
+			
+			if(sensormanager!=null){
+				sensormanager.unregisterListener(this);
+				Log.i(tag, "sensormanager.unregisterListener");
+				
+			}
+			finish();
 
-		if(mp!=null){
-			mp.release();
-		}
-		if(sensormanager!=null){
-			sensormanager.unregisterListener(this);
+			Log.i(tag, "finish onPause()");
 		}
 		
-		aniimg.stop();
-		startService();//離開時再把Service開回去
-
 		super.onPause();
 	}
 	
+
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		Log.i(tag,"Fallen.onSensorChanged()");
@@ -182,14 +203,18 @@ public class Fallen extends Activity implements SensorEventListener{
 			
 		});
 		}
+		
+		//取得震動服務
+		myVibrator = (Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
+		myVibrator.vibrate(1000);//震動1000秒
+		
 	}
 
 
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub	
 	}
 	
 	/**

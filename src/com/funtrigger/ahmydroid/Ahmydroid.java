@@ -35,12 +35,11 @@ import android.widget.Toast;
 
 public class Ahmydroid extends Activity implements SensorEventListener{
 	private static final int HOW_TO_PLAY = 0;
-	private static final int START_PROTECT = 1;
-	private static final int STOP_PROTECT = 2;
+
 	/**
 	 * 記錄版本編號
 	 */
-	private String softVersion="v1.0.0.3";
+	private String softVersion="v1.0.0.4";
 	private Button button_how,button_exit;
     private SensorManager sensormanager;
     private final String tag="tag";
@@ -75,7 +74,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			@Override
 			public void onClick(View v) {
 				button_how.setVisibility(View.INVISIBLE);
-				showDialog(0);
+				showDialog(HOW_TO_PLAY);
 				
 			}
         	
@@ -105,10 +104,11 @@ public class Ahmydroid extends Activity implements SensorEventListener{
         	
         });
     }
+    
 	@Override
 	protected void onResume() {
 		
-		setImg_btn();
+		setAndroid_Machine();
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);	
 
@@ -119,11 +119,13 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		
 		super.onResume();
 	}
+	
 	@Override
 	protected void onDestroy() {
 		Log.i(tag, "Ahmydroid.onDestroy");
 		super.onDestroy();
 	}
+	
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch(id){
@@ -180,16 +182,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
      			})
  			.create();
 			return dialog0;
-		case START_PROTECT:
-			Toast.makeText(this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
-			break;
-		case STOP_PROTECT:
-			Toast.makeText(this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
-			break;
+
 		}
 		
 		return super.onCreateDialog(id);
 	}
+	
 	@Override
 	protected void onPause() {
 		sensormanager.unregisterListener(this);
@@ -197,16 +195,17 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	}
 	
 	/**
-	 * 因為一開始的小綠人圖案，會因Service是否有開啟而更換圖示
-	 * 該Method呼叫後，會將正確的圖示顯示出來
+	 * Service如果有開啟，設定讓小綠人肚子的齒輪發亮，
+	 * 否則為暗
 	 */
-	private void setImg_btn(){
+	private void setAndroid_Machine(){
 		if(checkServiceExist()==false){
 			img_btn.setBackgroundResource(R.drawable.start);
 		}else if(checkServiceExist()==true){
 			img_btn.setBackgroundResource(R.drawable.nostart);
 		}
 	}
+	
 	/**
 	 * 啟動摔落告知Service
 	 */
@@ -214,7 +213,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		Intent intent = new Intent();
 		intent.setClass(Ahmydroid.this,DropService.class);
 		Ahmydroid.this.startService(intent);
-		showDialog(START_PROTECT);
+		Toast.makeText(this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
@@ -224,7 +223,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		Intent intent = new Intent();
 		intent.setClass(this, DropService.class);
 		stopService(intent);
-		showDialog(STOP_PROTECT);
+		Toast.makeText(this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
@@ -294,7 +293,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			});
 		}
 	}
-	@Override
+	
+	@Override//控制Sensor的專屬Method
 	public void onSensorChanged(SensorEvent event) {
 
 		float[] buf=event.values;
@@ -310,7 +310,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			if(aniimg!=null){
 				
 				aniimg.stop();
-				setImg_btn();
+				setAndroid_Machine();
 				imgfall.setVisibility(View.INVISIBLE);
 				img_btn.setVisibility(View.VISIBLE);
 			}		

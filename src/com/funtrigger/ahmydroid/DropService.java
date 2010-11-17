@@ -6,11 +6,16 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.media.MediaPlayer.OnErrorListener;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -27,7 +32,16 @@ public class DropService extends Service implements SensorEventListener{
     private SensorManager sensormanager;
     WakeLock wakeLock;
     PowerManager pm;
-    
+    private MediaPlayer mp;
+    /**
+     * 告知系統跌倒聲音還在播放的單元
+     */
+	private boolean mpplaying=false;
+	/**
+	 * 用來調整音量Stream大小的啟始變數
+	 */
+	static AudioManager am;
+	
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.i(tag,"into DropService.onBind");
@@ -53,7 +67,7 @@ public class DropService extends Service implements SensorEventListener{
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);
 		List<Sensor> list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
-		sensormanager.registerListener(DropService.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);
+		sensormanager.registerListener(DropService.this,list.get(0), SensorManager.SENSOR_DELAY_GAME);
 	
 	
 		super.onCreate();
@@ -69,18 +83,18 @@ public class DropService extends Service implements SensorEventListener{
 
 		if(sensormanager!=null){
 			sensormanager.unregisterListener(this);
-		}
-		
+		}		
 		mNotificationManager.cancelAll();
 		if(wakeLock!=null){
 			wakeLock.release();
 		}
-		
-			
 		super.onDestroy();
 	}
 
-	
+/*	/**
+	 * 這段Method最主要拿來當Service打開時，螢幕會一直恆亮
+	 * 
+	 *//*
 	private void acquireWakeLock() {
         if (wakeLock == null) {
                Log.i(tag,"Acquiring wake lock");
@@ -92,12 +106,11 @@ public class DropService extends Service implements SensorEventListener{
                wakeLock.acquire();
            }
        
-   }
+   }*/
+	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		Log.i(tag, "DropService.onSensorChanged lintening");
-		
-//		acquireWakeLock();	
+		Log.i(tag, "DropService.onSensorChanged listening");
 		
 		float[] buf=event.values;
 		
@@ -108,24 +121,61 @@ public class DropService extends Service implements SensorEventListener{
 		int b=(int) Math.abs(y);
 		int c=(int) Math.abs(z);
 		if(a>15||b>15||c>15){
-			Log.i(tag, ">15");
-			
-		
 			
 			
+			pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			Log.i(tag, "power screen on? "+pm.isScreenOn());
+			//針測到螢幕是關的，才需要先播放一聲音效告知使用者
+			if(pm.isScreenOn()==false){
+				//先叫一聲，表示Gsensor有針測到掉下去，免得使用者以為沒有產生事件
+				if(mpplaying==false){
+					Log.i(tag, "into mp player");			
+					am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
+					am.setStreamVolume(AudioManager.STREAM_MUSIC, 15, 0);
+					mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
+					
+					mp.start();
+					mpplaying=true;
+				
+				mp.setOnCompletionListener(new OnCompletionListener(){
+
+					@Override
+					public void onCompletion(MediaPlayer arg0) {
+//						Log.i(tag, "into onCompletion");
+						if(mp!=null){
+							mp.release();					
+						}		
+						mpplaying=false;
+					}
+					
+				});
+				mp.setOnErrorListener(new OnErrorListener(){
+
+					@Override
+					public boolean onError(MediaPlayer mp, int what, int extra) {
+						if(mp!=null){
+							mp.release();
+						}
+						return false;
+					}
+					
+				});
+				}
+			}
+			
+			Log.i(tag, ">15");		
 			
 			Intent intent = new Intent();
 			intent.setClass(this, Fallen.class);
 
-			intent.setFlags(intent.FLAG_ACTIVITY_NEW_TASK);
+			intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 			startActivity(intent);
 		}
 	}
 
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
+		// TODO Auto-generated method stub		
 	}
-	
+
 }
