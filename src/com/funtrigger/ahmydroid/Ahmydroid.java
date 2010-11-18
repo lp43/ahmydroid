@@ -2,6 +2,9 @@ package com.funtrigger.ahmydroid;
 
 import java.util.List;
 
+import com.facebook.android.LoginPage;
+import com.facebook.android.Facebook;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -42,7 +45,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.6";
+	private String softVersion="v1.0.0.7";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -338,21 +341,32 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		}
 		
 	}
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 0, 0, R.string.about);
-		menu.getItem(0).setIcon(R.drawable.about);
-		return super.onCreateOptionsMenu(menu);
-	}
+	
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(0, 0, 0, "上傳");
+		menu.add(0, 1, 1, R.string.about);
+		menu.getItem(0).setIcon(R.drawable.facebook);
+		menu.getItem(1).setIcon(R.drawable.about);
+		return super.onCreateOptionsMenu(menu);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case 0:
+			Intent intent = new Intent();
+			intent.setClass(this, LoginPage.class);
+			startActivity(intent);
+			break;
+			
+		case 1:
 			new AlertDialog.Builder(this)
 			.setMessage(getString(R.string.app_name)+" "+ softVersion +"\n"+getString(R.string.author)+" FunTrigger\n\n"+getString(R.string.copyright)+" 2010")
 			.setIcon(R.drawable.icon)

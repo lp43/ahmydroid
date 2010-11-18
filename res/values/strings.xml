@@ -11,4 +11,11 @@
     <string name="startfallprotect">啟動「摔落告知」功能</string>
     <string name="startingfallprotect">「摔落告知」執行中</string>
     <string name="stopfallprotect">關閉「摔落告知」</string>
+
+<!--以下是Facebook用到的字串集 -->
+    <string name="request">Request!</string>
+    <string name="hello">Hello World!</string>
+    <string name="upload">Upload Photo</string>
+    <string name="post">Wall Post!</string>
+    <string name="delete">Delete Post</string>
 </resources>
