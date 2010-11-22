@@ -13,6 +13,7 @@
     <service android:name="DropService"></service>
 <activity android:name="Fallen" android:screenOrientation="nosensor" android:launchMode="singleInstance"></activity>
 <activity android:name="com.facebook.android.LoginPage"></activity>
+<activity android:name="SetNotify"></activity>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 

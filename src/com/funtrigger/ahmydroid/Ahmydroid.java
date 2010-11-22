@@ -350,9 +350,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 0, 0, "上傳");
+		menu.add(0, 0, 0, R.string.set_notify);
 		menu.add(0, 1, 1, R.string.about);
-		menu.getItem(0).setIcon(R.drawable.facebook);
+		menu.getItem(0).setIcon(R.drawable.set_notify);
 		menu.getItem(1).setIcon(R.drawable.about);
 		return super.onCreateOptionsMenu(menu);
 	}
@@ -361,8 +361,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch(item.getItemId()){
 		case 0:
+
 			Intent intent = new Intent();
-			intent.setClass(this, LoginPage.class);
+			intent.setClass(this, SetNotify.class);
 			startActivity(intent);
 			break;
 			

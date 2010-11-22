@@ -11,10 +11,12 @@
     <string name="startfallprotect">啟動「摔落告知」功能</string>
     <string name="startingfallprotect">「摔落告知」執行中</string>
     <string name="stopfallprotect">關閉「摔落告知」</string>
+    <string name="set_notify">掉落告知設定</string>
+    <string name="set_notify_mode">選擇掉落告知方式</string>
 
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>
-    <string name="hello">Hello World!</string>
+    <string name="hello">您好，您已登入FaceBook社群網站</string>
     <string name="upload">Upload Photo</string>
     <string name="post">Wall Post!</string>
     <string name="delete">Delete Post</string>

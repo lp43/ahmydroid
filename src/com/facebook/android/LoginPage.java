@@ -21,6 +21,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Calendar;
+import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +44,9 @@ public class LoginPage extends Activity {
 
     // Your Facebook Application ID must be set before running this example
     // See http://www.facebook.com/developers/createapp.php
-    public static final String APP_ID = "171403682887181";
+//    public static final String APP_ID = "175729095772478";//Example檔應用程式的ID
+    public static final String APP_ID = "171403682887181";//AnFallen的應用程式ID
+    
 
     private LoginButton mLoginButton;
     private TextView mText;
@@ -53,7 +57,9 @@ public class LoginPage extends Activity {
 
     private Facebook mFacebook;
     private AsyncFacebookRunner mAsyncRunner;
-
+    int count;
+    private String tag="tag";
+    
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -81,8 +87,24 @@ public class LoginPage extends Activity {
         mLoginButton.init(this, mFacebook);
 
         mRequestButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-            	mAsyncRunner.request("me", new SampleRequestListener());
+            
+
+			public void onClick(View v) {
+//            	mAsyncRunner.request("me", new SampleRequestListener());//原程式碼
+            	mFacebook.authorize(LoginPage.this, new String[]{"publish_stream"}, new SampleDialogListener());//這行要加，因為有時候Session會過期
+            	
+            	Bundle params = new Bundle();
+            	Date date=new Date();
+            	int hour=date.getHours();
+            	
+            	Log.i(tag, "hour: "+hour);
+            	Log.i(tag, "getMin: "+date.getMinutes());
+            	Log.i(tag, "getSec: "+date.getSeconds());
+            	count++;
+            	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是︰"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+
+            			"\n你還記得這個時候我在哪嗎？");
+            	Log.i(tag, "count: "+count);
+            	mAsyncRunner.request("me/feed", params, "POST", new SampleRequestListener());
             }
         });
         mRequestButton.setVisibility(mFacebook.isSessionValid() ?
