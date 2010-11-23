@@ -2,26 +2,29 @@
 <RelativeLayout
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
+  android:layout_height="wrap_content"
+  android:background="@drawable/background">
 
 <TextView
 	android:id="@+id/text"
 	android:layout_width="wrap_content"
 	android:layout_height="wrap_content"
-	android:text="@string/set_notify_mode"/>
+	android:text="@string/set_notify_mode"
+	android:textSize="20sp"
+	android:textColor="@color/black"/>
 
 	<Button
 	android:layout_below="@id/text"
 	android:id="@+id/gmail_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
-	android:background="@drawable/gmail"/>
+	android:background="@drawable/gmail_noset"/>
 	
 	<Button
 	android:id="@+id/msg_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
-	android:background="@drawable/message"
+	android:background="@drawable/message_noset"
 	android:layout_below="@id/text"
 	android:layout_toRightOf="@id/gmail_btn"/>
 
@@ -29,15 +32,24 @@
 	android:id="@+id/twitter_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
-	android:background="@drawable/message"
+	android:background="@drawable/twitter_noset"
 	android:layout_below="@id/gmail_btn"/>
 	
-		<Button
-	android:id="@+id/facebook_btn"
-	android:layout_width="140dip"
-	android:layout_height="140dip"
-	android:background="@drawable/facebook"
+	<com.facebook.android.LoginButton
+    android:id="@+id/facebook_btn"
+    android:background="@drawable/fb_noset"
+    android:layout_width="140dip"
+    android:layout_height="140dip" 
 	android:layout_toRightOf="@id/twitter_btn"
 	android:layout_below="@id/msg_btn"/>
+	
+	<Button
+	android:id="@+id/fb_test"
+	android:layout_width="140dip"
+	android:layout_height="70dip"
+	android:text="facebook發文測試"
+	android:layout_below="@id/facebook_btn"
+	android:layout_alignLeft="@id/facebook_btn"/>
+	
 
 </RelativeLayout>

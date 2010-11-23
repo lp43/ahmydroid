@@ -146,7 +146,7 @@ public class DropService extends Service implements SensorEventListener{
 				if(mpplaying==false){
 					Log.i(tag, "into mp player");			
 					am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
-					am.setStreamVolume(AudioManager.STREAM_MUSIC, 15, 0);
+					am.setStreamVolume(AudioManager.STREAM_MUSIC, Fallen.setVolumn, 0);
 					mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
 					
 					mp.start();

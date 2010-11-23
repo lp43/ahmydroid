@@ -42,6 +42,11 @@ import android.widget.ImageView;
  */
 public class Fallen extends Activity implements SensorEventListener{
 	/**
+	 * 測試期間，讓我可以快速更改音量的變數
+	 * 不用每次都跑到程式碼裡去找設定
+	 */
+	public static int setVolumn = 5;
+	/**
 	 * 機器人圖案的ImageView
 	 */
 	private ImageView imgfall;
@@ -90,6 +95,7 @@ public class Fallen extends Activity implements SensorEventListener{
 	Vibrator myVibrator;
 	Handler handler;
 	Runnable reg_Gsensor;
+	private int setolumn;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -168,7 +174,7 @@ public class Fallen extends Activity implements SensorEventListener{
 		handler.post(reg_Gsensor);
 		
 		//將媒體音量調整到最大，好讓使用者聽見小綠人的哀嚎聲
-		am.setStreamVolume(AudioManager.STREAM_MUSIC,15, 0);
+		am.setStreamVolume(AudioManager.STREAM_MUSIC,setVolumn, 0);
 	}
 
 	@Override//程式在按[Back鍵]或[電源鍵]，都會執行到該Method
