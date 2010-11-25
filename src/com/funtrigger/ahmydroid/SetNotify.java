@@ -1,5 +1,6 @@
 package com.funtrigger.ahmydroid;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import org.json.JSONException;
@@ -13,6 +14,9 @@ import com.facebook.android.FacebookError;
 import com.facebook.android.LoginButton;
 import com.facebook.android.R;
 import com.facebook.android.Util;
+import com.funtrigger.tools.MyLocation;
+import com.funtrigger.tools.MyTime;
+
 import android.app.Activity;
 import android.location.Location;
 import android.location.LocationListener;
@@ -51,10 +55,7 @@ public class SetNotify extends Activity {
 	 * 這個變數拿來做為當偵測到FB登入後，能夠發送訊息的Callback
 	 */
 	private final int POSTTOFACEBOOK=0;
-	/**
-	 * longitude經度,latitude緯度
-	 */
-	double longitude,latitude;
+
 	/**
 	 * 使用者設定欲接收簡訊的電話號碼
 	 */
@@ -88,13 +89,14 @@ public class SetNotify extends Activity {
 			public void handleMessage(Message msg) {
 				switch(msg.what){
 				case POSTTOFACEBOOK:
-					Bundle params = new Bundle();
-	            	Date date=new Date();	
+					Bundle params = new Bundle();	
 
+	                MyTime gettime = new MyTime();
+	              
 	            	count++;
-	            	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是︰"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+
-	            			"\n我在["+getLocation()+"]\n快用GoogleMap貼上這個經緯度找我！");
-//	            	params.putString("message", "test "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+getLocation());
+	            	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是 "+gettime.getHHMMSS()+
+	            			"\n我的座標在 "+MyLocation.getLocation(SetNotify.this)+"\n快用GoogleMap貼上這個經緯度找我！");
+
 	            	Log.i(tag, "count: "+count);
 	            	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
 					
@@ -152,55 +154,24 @@ public class SetNotify extends Activity {
 			}
 			
 		});
+		
+		twitter_btn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				
+				
+				Toast.makeText(SetNotify.this,MyLocation.getLocation(SetNotify.this) , Toast.LENGTH_SHORT).show();
+				MyLocation.resetLocation();
+			}
+			
+		});
 
 	}
 	
-	/**
-	 * 取得最後的地理座標函式
-	 * @return 呼叫此函式時，會將經緯度傳回呼叫端,回傳格式為︰緯、經度以配合Google地圖
-	 */
-	private String getLocation(){
-		LocationManager lm = (LocationManager)getSystemService(SetNotify.LOCATION_SERVICE); 
-    	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-    	if(location!=null){
-    		latitude = location.getLatitude();//查詢緯度
-    		longitude = location.getLongitude();//查詢經度
-    	}else{
-    		Log.i(tag, "location=null, start requestLocationUpdates");
-    		lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 10,  new LocationListener(){
-
-				@Override
-				public void onLocationChanged(Location location) {
-//					Toast.makeText(SetNotify.this,"LocationListener onLocationChanged" , Toast.LENGTH_SHORT).show();
-					latitude = location.getLatitude();//查詢緯度
-					longitude=location.getLongitude();//查詢經度,並存進經度
-				}
-
-				@Override
-				public void onProviderDisabled(String provider) {
-					Log.i(tag, "LocationListener onProviderDisabled");
-//					Toast.makeText(SetNotify.this,"LocationListener onProviderDisabled" , Toast.LENGTH_SHORT).show();
-				}
-
-				@Override
-				public void onProviderEnabled(String provider) {
-					Log.i(tag, "LocationListener onProviderEnabled");
-//					Toast.makeText(SetNotify.this,"LocationListener onProviderEnabled" , Toast.LENGTH_SHORT).show();
-				}
-
-				@Override
-				public void onStatusChanged(String provider,
-						int status, Bundle extras) {
-					Log.i(tag, "LocationListener onStatusChanged");
-//					Toast.makeText(SetNotify.this,"LocationListener onStatusChanged" , Toast.LENGTH_SHORT).show();
-				}
-    			
-    		});
-    	}
-    	Toast.makeText(SetNotify.this,latitude+","+longitude , Toast.LENGTH_SHORT).show();
-    	Log.i(tag,latitude+","+longitude);//顯示緯度+經度以配合Google Map格式
-		return latitude+","+longitude;
-	}
+	
+	
+	
 	
 	
 	/**

@@ -2,6 +2,8 @@ package com.funtrigger.ahmydroid;
 
 import java.util.List;
 
+import com.funtrigger.tools.MyTime;
+
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -59,7 +61,10 @@ public class DropService extends Service implements SensorEventListener{
 	 * 用來調整音量Stream大小的啟始變數
 	 */
 	static AudioManager am;
-	
+	/**
+	 * 取得時間的實體變數
+	 */
+	MyTime gettime;
 	@Override
 	public IBinder onBind(Intent intent) {
 		Log.i(tag,"into DropService.onBind");
@@ -87,7 +92,8 @@ public class DropService extends Service implements SensorEventListener{
 		List<Sensor> list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
 		sensormanager.registerListener(DropService.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);
 	
-	
+		
+		
 		super.onCreate();
 	}
 
@@ -125,7 +131,8 @@ public class DropService extends Service implements SensorEventListener{
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		Log.i(tag, "DropService.onSensorChanged listening");
+		gettime=new MyTime();
+		Log.i(tag, gettime.getHHMMSS()+" DropService.onSensorChanged listening");
 		
 		float[] buf=event.values;
 		
