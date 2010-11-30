@@ -13,43 +13,30 @@
 	android:textSize="20sp"
 	android:textColor="@color/black"/>
 
-	<Button
-	android:layout_below="@id/text"
-	android:id="@+id/gmail_btn"
-	android:layout_width="140dip"
-	android:layout_height="140dip"
-	android:background="@drawable/gmail_noset"/>
 	
 	<Button
 	android:id="@+id/msg_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
 	android:background="@drawable/message_noset"
-	android:layout_below="@id/text"
-	android:layout_toRightOf="@id/gmail_btn"/>
+	android:layout_marginTop="10dip"/>
 
+
+	
 	<Button
+	android:id="@+id/fb_btn"
+	android:layout_width="140dip"
+	android:layout_height="140dip"
+	android:background="@drawable/fb_noset"
+	android:text="facebook發文測試"
+	android:layout_alignTop="@id/msg_btn"
+	android:layout_toRightOf="@id/msg_btn"/>
+		<Button
 	android:id="@+id/twitter_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
 	android:background="@drawable/twitter_noset"
-	android:layout_below="@id/gmail_btn"/>
-	
-	<com.facebook.android.LoginButton
-    android:id="@+id/facebook_btn"
-    android:background="@drawable/fb_noset"
-    android:layout_width="140dip"
-    android:layout_height="140dip" 
-	android:layout_toRightOf="@id/twitter_btn"
-	android:layout_below="@id/msg_btn"/>
-	
-	<Button
-	android:id="@+id/fb_test"
-	android:layout_width="140dip"
-	android:layout_height="70dip"
-	android:text="facebook發文測試"
-	android:layout_below="@id/facebook_btn"
-	android:layout_alignLeft="@id/facebook_btn"/>
-	
+	android:text="地點測試"
+	android:layout_below="@id/fb_btn"/>
 
 </RelativeLayout>

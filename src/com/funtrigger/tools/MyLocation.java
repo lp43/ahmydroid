@@ -1,10 +1,13 @@
 package com.funtrigger.tools;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.text.ClipboardManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -18,7 +21,7 @@ public class MyLocation {
 	static double longitude;
 	static double latitude;
 	private static Location location;
-	
+	static SharedPreferences sharedata;
 	
 	/**
 	 * 取得最後的地理座標函式
@@ -27,11 +30,24 @@ public class MyLocation {
 	public static String getLocation(Context context){
 		LocationManager lm = (LocationManager)context.getSystemService(SetNotify.LOCATION_SERVICE);
 		
-		location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+		sharedata = context.getSharedPreferences("data", context.MODE_PRIVATE);  
+        String recProvider = sharedata.getString("provider", "auto");  
+		if(recProvider.equals("auto")){
+			String bestProvider=lm.getBestProvider(MyLocation.getBestProvider(), true);
+			Log.i(tag, "Best provider is: "+bestProvider);
+			
+			location = lm.getLastKnownLocation(bestProvider);
+			Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
+			
+		}else if(recProvider.equals("gps")){
+	    	location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+	    	Toast.makeText(context, "provider is gps", Toast.LENGTH_SHORT).show();
+		}else if(recProvider.equals("network")){
+			location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+			Toast.makeText(context, "provider is network", Toast.LENGTH_SHORT).show();
+		}
 		
-		
-		
-//    	Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
     	if(location!=null){
     		Log.i(tag, "location distance: "+String.valueOf(location.distanceTo(location)));
     		latitude = location.getLatitude();//查詢緯度
@@ -72,6 +88,11 @@ public class MyLocation {
     	}
     	Toast.makeText(context,latitude+","+longitude , Toast.LENGTH_SHORT).show();
     	Log.i(tag,latitude+","+longitude);//顯示緯度+經度以配合Google Map格式
+    	
+    	//將緯經度貼到剪貼簿
+    	ClipboardManager cbm=(ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+    	cbm.setText(latitude+","+longitude);
+    	
 		return latitude+","+longitude;
 	}
 	
@@ -82,5 +103,18 @@ public class MyLocation {
 		if(location!=null){
 			location.reset();
 		}
+	}
+	
+	/**
+	 * 讓程式去選取最好的定位方式<br/>
+	 */
+	private static Criteria getBestProvider(){
+		Criteria criteria= new Criteria();
+		criteria.setAccuracy(Criteria.ACCURACY_FINE);//设置为最大精度 
+		criteria.setAltitudeRequired(false);//不要求海拔信息 
+		criteria.setBearingRequired(false);//不要求方位信息 
+		criteria.setCostAllowed(true);//是否允许付费 
+		criteria.setPowerRequirement(Criteria.POWER_LOW);//对电量的要求
+		return criteria;
 	}
 }

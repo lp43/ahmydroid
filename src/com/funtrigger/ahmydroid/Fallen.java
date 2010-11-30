@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -96,6 +97,12 @@ public class Fallen extends Activity implements SensorEventListener{
 	Handler handler;
 	Runnable reg_Gsensor;
 	private int setolumn;
+    /**
+     * 該變數被用在告知系統，該類別啟動時，手機不能休眠，
+     * 但是因為和我後來的使用方向不符，就沒用到了
+     */
+    WakeLock wakeLock;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -105,6 +112,7 @@ public class Fallen extends Activity implements SensorEventListener{
 		
 		stopService();//進來時把Service關掉，避免重覆進入本畫面
 		
+
 		
 		//檢驗是否為螢幕鎖
 		KeyguardManager km = (KeyguardManager) this.getSystemService(
@@ -212,7 +220,6 @@ public class Fallen extends Activity implements SensorEventListener{
 		
 		super.onPause();
 	}
-	
 
 	@Override
 	public void onSensorChanged(SensorEvent event) {

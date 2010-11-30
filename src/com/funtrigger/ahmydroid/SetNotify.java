@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.BaseDialogListener;
 import com.facebook.android.BaseRequestListener;
@@ -18,6 +17,12 @@ import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MyTime;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -26,6 +31,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.telephony.SmsManager;
 import android.util.Log;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -40,8 +49,13 @@ import android.widget.Toast;
  * @author simon
  */
 public class SetNotify extends Activity {
-	Button gmail_btn,message_btn,twitter_btn,fb_test;
-	LoginButton facebook_btn;
+
+
+	SharedPreferences sp;
+	Editor sharedata;
+	
+	
+	Button message_btn,facebook_btn,twitter_btn;
 	Facebook facebook;
 	protected String tag="tag";
 	protected int count;
@@ -67,12 +81,11 @@ public class SetNotify extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_notify);
-		gmail_btn=(Button) findViewById(R.id.gmail_btn);
+		
 		message_btn=(Button) findViewById(R.id.msg_btn);
-		twitter_btn=(Button) findViewById(R.id.twitter_btn);
-//		facebook_btn=(Button) findViewById(R.id.facebook_btn);
-		facebook_btn = (LoginButton) findViewById(R.id.facebook_btn);
-		fb_test=(Button) findViewById(R.id.fb_test);
+		facebook_btn = (Button) findViewById(R.id.fb_btn);
+		twitter_btn = (Button) findViewById(R.id.twitter_btn);
+		
 		facebook=new Facebook("171403682887181");
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 		
@@ -107,27 +120,27 @@ public class SetNotify extends Activity {
 			
 		};
 		
-		
+		twitter_btn.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				MyLocation.getLocation(SetNotify.this);
+			}
+			
+		});
 		message_btn.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				SmsManager smsmanager=SmsManager.getDefault();
-				smsmanager.sendTextMessage(send_msg__to_number, null, "test", null, null);
+//				smsmanager.sendTextMessage(send_msg__to_number, null, "test", null, null);
 			}
 			
 		});
+		
 		
 		
 		facebook_btn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {		
-				facebook_btn.init(SetNotify.this, facebook);
-			}
-			
-		});
-		fb_test.setOnClickListener(new OnClickListener(){
 
 			
 
@@ -155,22 +168,98 @@ public class SetNotify extends Activity {
 			
 		});
 		
-		twitter_btn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				
-				
-				Toast.makeText(SetNotify.this,MyLocation.getLocation(SetNotify.this) , Toast.LENGTH_SHORT).show();
-				MyLocation.resetLocation();
-			}
-			
-		});
+		
 
 	}
 	
+	public boolean onCreateOptionsMenu(Menu menu) {
+
+		menu.add(0, 0, 0, "設定Provider");
+//		menu.add(0, 1, 1, "查看中獎號");
+//		menu.add(0, 2, 2, "更新");
+//		menu.add(0, 3, 3, "設定");
+//		menu.add(0, 4, 4, "關於");
+		
+		
+//		menu.getItem(0).setIcon(R.drawable.setmonth);
+//		menu.getItem(1).setIcon(R.drawable.targetnum);
+//		menu.getItem(2).setIcon(R.drawable.refresh);
+//		menu.getItem(3).setIcon(R.drawable.setting);
+//		menu.getItem(4).setIcon(R.drawable.about);
 	
-	
+		return super.onCreateOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int featureId, MenuItem item) {
+		
+		switch(item.getItemId()){
+		
+		case 0:
+			showDialog(0);
+		break;	
+		}
+		return super.onMenuItemSelected(featureId, item);
+	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
+		switch(id){
+		case 0:
+			sp = getSharedPreferences("data", 0);  
+			String recprovider=sp.getString("provider", "auto");
+			int cycle=0;
+			if(recprovider.equals("auto")){
+				cycle=0;
+			}else if(recprovider.equals("gps")){
+				cycle=1;
+			}else if(recprovider.equals("network")){
+				cycle=2;
+			}
+			builder
+			.setTitle("選擇Provider")
+			.setSingleChoiceItems(new String[]{"自動","GPS","AGPS",},cycle,new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					
+					
+					switch(which){
+						case 0:
+							sharedata = getSharedPreferences("data", 0).edit();
+	    	                sharedata.putString("provider","auto");
+	    	                sharedata.commit();
+	    	            	dismissDialog(0);
+	    					break;
+						case 1:		
+							sharedata = getSharedPreferences("data", 0).edit();
+			                sharedata.putString("provider","gps");
+			                sharedata.commit();
+							dismissDialog(0);
+							break;
+						case 2:							
+							sharedata = getSharedPreferences("data", 0).edit();
+	    	                sharedata.putString("provider","network");
+	    	                sharedata.commit();
+							dismissDialog(0);
+							break;
+					}
+					
+				}
+				
+			})
+			.setPositiveButton("取消", new DialogInterface.OnClickListener() {
+	        public void onClick(DialogInterface dialog, int whichButton) {
+	        	
+	        }
+			});
+			AlertDialog alert = builder.create();
+			return alert;
+		
+		}
+		return super.onCreateDialog(id);
+	}
 	
 	
 	
@@ -226,4 +315,5 @@ public class SetNotify extends Activity {
         }
     }
     
+
 }

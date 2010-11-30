@@ -18,6 +18,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
+import android.os.Debug;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -74,6 +75,12 @@ public class DropService extends Service implements SensorEventListener{
 	@Override
 	public void onCreate() {
 		Log.i(tag,"into DropService.onCreate");
+		
+		Debug.startMethodTracing("methodtrace");
+		
+		
+		acquireWakeLock();
+		
 		//以下的程式不能寫在onStart(),因為被TaskManager清掉後，會自動onCreate()
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
@@ -101,21 +108,23 @@ public class DropService extends Service implements SensorEventListener{
 	@Override
 	public void onDestroy() {
 		Log.i(tag,"into DropService.onDestroy");
-
+		Debug.stopMethodTracing();
 		if(sensormanager!=null){
 			sensormanager.unregisterListener(this);
 		}		
 		mNotificationManager.cancelAll();
-//		if(wakeLock!=null){
-//			wakeLock.release();
-//		}
+		if(wakeLock.isHeld()){
+			wakeLock.release();
+			Log.i(tag, "wakeLock release");
+			wakeLock=null;
+		}
 		super.onDestroy();
 	}
 
-/*	/**
+	/**
 	 * 這段Method最主要拿來當Service打開時，螢幕會一直恆亮
 	 * 
-	 *//*
+	 */
 	private void acquireWakeLock() {
         if (wakeLock == null) {
                Log.i(tag,"Acquiring wake lock");
@@ -127,7 +136,7 @@ public class DropService extends Service implements SensorEventListener{
                wakeLock.acquire();
            }
        
-   }*/
+   }
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
