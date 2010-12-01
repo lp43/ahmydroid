@@ -1,11 +1,16 @@
 package com.funtrigger.ahmydroid;
 
 import java.util.List;
+
+import com.funtrigger.tools.MySensor;
+
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -41,7 +46,7 @@ import android.widget.ImageView;
  * 註︰這個類別只會在手勢啟動後才被執行
  * @author simon
  */
-public class Fallen extends Activity implements SensorEventListener{
+public class Fallen extends Activity{
 	/**
 	 * 測試期間，讓我可以快速更改音量的變數
 	 * 不用每次都跑到程式碼裡去找設定
@@ -102,7 +107,8 @@ public class Fallen extends Activity implements SensorEventListener{
      * 但是因為和我後來的使用方向不符，就沒用到了
      */
     WakeLock wakeLock;
-	
+    MySensor mysensor;
+	private BroadcastReceiver broadcastreceiver;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -152,15 +158,17 @@ public class Fallen extends Activity implements SensorEventListener{
 		
 		am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
-		sensormanager=(SensorManager) getSystemService(SENSOR_SERVICE);
-		list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);		
+//		sensormanager=(SensorManager) getSystemService(SENSOR_SERVICE);
+//		list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);		
+		
+		this.registerReceiver(broadcastreceiver=new SensorChangedReceiver(), new IntentFilter("FALLENSENSORCHANGED"));
 		
 		//啟動一個執行緒，負責偵測Screen是否有On。
 		//這個檢查迴圈不能寫在主程式裡，否則會干擾主程序喚醒螢幕
 		new Thread(){
 			public void run(){
 				while(pm.isScreenOn()==false){
-					Log.i(tag, "into isScreenOn==false");
+//					Log.i(tag, "into isScreenOn==false");
 					if(pm.isScreenOn()==true){
 						Log.i(tag, "into isScreenOn==true");
 						break;
@@ -176,7 +184,9 @@ public class Fallen extends Activity implements SensorEventListener{
 
 			@Override
 			public void run() {
-				boolean sensormanager_register =sensormanager.registerListener(Fallen.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);	
+				mysensor=new MySensor();
+				mysensor.startSensor(Fallen.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
+//				boolean sensormanager_register =sensormanager.registerListener(Fallen.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);	
 //				Log.i(tag, "sensormanager_register "+sensormanager_register);		
 			}};
 		handler.post(reg_Gsensor);
@@ -203,76 +213,80 @@ public class Fallen extends Activity implements SensorEventListener{
 				myVibrator.cancel();//震動關掉
 			}
 			
-			startService();//離開時再把Service開回去
-			
-			if(sensormanager!=null){
-				sensormanager.unregisterListener(this);
-				Log.i(tag, "sensormanager.unregisterListener");
+			if(broadcastreceiver!=null){
+				this.unregisterReceiver(broadcastreceiver);
+			}
+//			if(sensormanager!=null){
+//				sensormanager.unregisterListener(this);
+//				Log.i(tag, "sensormanager.unregisterListener");
+//			}
+			if(mysensor!=null){
+				mysensor.stopSensor();
 			}
 			
 			if(handler!=null){
 				handler.removeCallbacks(reg_Gsensor);
 			}
 			finish();//結束掉，下次再感測時，才能從onCreate()再執行
-
-			Log.i(tag, "finish onPause()");
+			startService();//離開時再把Service開回去
+			Log.i(tag, "finish Fallen.onPause()");
 		}
 		
 		super.onPause();
 	}
 
-	@Override
-	public void onSensorChanged(SensorEvent event) {
-		Log.i(tag,"Fallen.onSensorChanged()");
-		while(aniimg.isRunning()==false){
-			aniimg.start();
-		}
-		
-		if(mpplaying==false){
-			Log.i(tag, "into mp player");
-			mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
-			mp.start();
-			mpplaying=true;
+//	@Override
+//	public void onSensorChanged(SensorEvent event) {
+//		Log.i(tag,"Fallen.onSensorChanged()");
+//		while(aniimg.isRunning()==false){
+//			aniimg.start();
+//		}
+//		
+//		if(mpplaying==false){
+//			Log.i(tag, "into mp player");
+//			mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
+//			mp.start();
+//			mpplaying=true;
+//
+//		
+//		mp.setOnCompletionListener(new OnCompletionListener(){
+//
+//			@Override
+//			public void onCompletion(MediaPlayer arg0) {
+////				Log.i(tag, "into onCompletion");
+//				if(mp!=null){
+//					mp.release();
+//				}
+//				
+//				mpplaying=false;
+//			}
+//			
+//		});
+//		mp.setOnErrorListener(new OnErrorListener(){
+//
+//			@Override
+//			public boolean onError(MediaPlayer mp, int what, int extra) {
+//				if(mp!=null){
+//					mp.release();
+//				}
+//				return false;
+//			}
+//			
+//		});
+//		}
+//		
+//		//取得震動服務
+//		myVibrator = (Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
+////		myVibrator.vibrate(1000);//震動1000秒
+//		
+//	}
 
-		
-		mp.setOnCompletionListener(new OnCompletionListener(){
 
-			@Override
-			public void onCompletion(MediaPlayer arg0) {
-//				Log.i(tag, "into onCompletion");
-				if(mp!=null){
-					mp.release();
-				}
-				
-				mpplaying=false;
-			}
-			
-		});
-		mp.setOnErrorListener(new OnErrorListener(){
-
-			@Override
-			public boolean onError(MediaPlayer mp, int what, int extra) {
-				if(mp!=null){
-					mp.release();
-				}
-				return false;
-			}
-			
-		});
-		}
-		
-		//取得震動服務
-		myVibrator = (Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
-		myVibrator.vibrate(1000);//震動1000秒
-		
-	}
-
-
-
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub	
-	}
+//
+//	@Override
+//	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+//		// TODO Auto-generated method stub	
+//	}
 	
 	/**
 	 * 啟動摔落告知Service
@@ -291,4 +305,64 @@ public class Fallen extends Activity implements SensorEventListener{
 		intent.setClass(this, DropService.class);
 		stopService(intent);
 	}
+	
+	/**
+	 * 該內部廣播接收在Fallen.java裡不斷的播動畫和音效
+	 * @author simon
+	 *
+	 */
+	public class SensorChangedReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals("FALLENSENSORCHANGED")){
+				
+				Log.i(tag, intent.getExtras().getString("filter"));
+				while(aniimg.isRunning()==false){
+					aniimg.start();
+				}
+				
+				if(mpplaying==false){
+					Log.i(tag, "into mp player");
+					mp=MediaPlayer.create(Fallen.this, Fallen.this.getResources().getIdentifier("dizzy", "raw", Fallen.this.getPackageName()));
+					mp.start();
+					mpplaying=true;
+
+				
+				mp.setOnCompletionListener(new OnCompletionListener(){
+
+					@Override
+					public void onCompletion(MediaPlayer arg0) {
+//						Log.i(tag, "into onCompletion");
+						if(mp!=null){
+							mp.release();
+						}
+						
+						mpplaying=false;
+					}
+					
+				});
+				mp.setOnErrorListener(new OnErrorListener(){
+
+					@Override
+					public boolean onError(MediaPlayer mp, int what, int extra) {
+						if(mp!=null){
+							mp.release();
+						}
+						return false;
+					}
+					
+				});
+				}
+				
+				//取得震動服務
+				myVibrator = (Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
+//				myVibrator.vibrate(1000);//震動1000秒
+				
+			}
+			
+		}
+		
+	}
+
 }

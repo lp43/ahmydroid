@@ -15,6 +15,9 @@ public class MyTime {
 	Calendar calendar;
 	private String tag="tag";
 	
+	/**
+	 * 讓建構子請求取得Calendar實體
+	 */
 	public MyTime(){
 		calendar= Calendar.getInstance();
 	}

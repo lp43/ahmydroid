@@ -45,7 +45,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.11";
+	private String softVersion="v1.0.0.12";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -146,6 +146,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	@Override
 	protected void onDestroy() {
 		Log.i(tag, "Ahmydroid.onDestroy");
+		finish();
 		super.onDestroy();
 	}
 	

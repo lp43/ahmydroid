@@ -68,3 +68,8 @@ v1.0.0.10
 11/30
 v1.0.0.11
 1.將wakeLock打開，確保手勢時可以啟動Fallen
+
+12/1
+v1.0.0.12
+1.將Sensor全部寫成MySensor類別，並在Sensor移動時，針對各個不同的判斷條件，
+發出各自的sendBroadcast讓各自的class去處理，以提高cohesion

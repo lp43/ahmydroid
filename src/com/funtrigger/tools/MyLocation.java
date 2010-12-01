@@ -13,6 +13,10 @@ import android.widget.Toast;
 
 import com.funtrigger.ahmydroid.SetNotify;
 
+/**
+ * 該類別提供各式各樣請求地理座標的函式
+ * @author simon
+ */
 public class MyLocation {
 	private static String tag="tag";
 	/**
