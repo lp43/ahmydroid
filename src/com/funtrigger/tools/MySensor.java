@@ -3,14 +3,17 @@ package com.funtrigger.tools;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.net.HttpURLConnection;
 import java.util.List;
 
+import com.funtrigger.ahmydroid.Ahmydroid;
 import com.funtrigger.ahmydroid.DropService;
 import com.funtrigger.ahmydroid.Fallen;
 
@@ -49,6 +52,7 @@ public class MySensor implements SensorEventListener{
 
 	private Context context;
 	
+	
 	/**
 	 * 啟動Sensor
 	 * @param context 傳入取得Sensor的主體
@@ -61,6 +65,11 @@ public class MySensor implements SensorEventListener{
 		List<Sensor> list=sensormanager.getSensorList(sensorType);
 		
 		sensormanager.registerListener(MySensor.this,list.get(0), sensorRate);
+		if(Ahmydroid.times==0){
+			Ahmydroid.times++;
+		}else if(Ahmydroid.times==1){
+			Ahmydroid.times--;
+		}
 	}
 	
 	
@@ -70,37 +79,13 @@ public class MySensor implements SensorEventListener{
 		}
 	}
 
-	/**
-	 * 將Log檔寫入SD卡，目的是抓Sensor的資料
-	 */
-	private void writeLogToTXT(int x,int y,int z){
-		
-
-		try {
-			if (android.os.Environment.getExternalStorageState().equals(//如果有SD卡，才寫資料
-			        android.os.Environment.MEDIA_MOUNTED)) {
-				File file=new File(Environment.getExternalStorageDirectory().getPath()+"/ahmydroidLOG.txt");
-				if(file.exists()==false){//如果沒有檔案，就寫一個檔案
-					BufferedWriter buf = new BufferedWriter(new FileWriter(Environment.getExternalStorageDirectory().getPath()+"/ahmydroidLOG.txt"));
-					 buf.write("x"+x+", y"+y+", z"+z);
-					 buf.flush();
-					 buf.close();
-				}else if(file.exists()==true){//如果有檔案，就繼續寫
-					
-				}
-				 
-			}
-
-			
-			} catch (IOException e) {
-				Log.i(tag, e.getMessage());
-			}
-	}
+	
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		gettime=new MyTime();
 		Log.i(tag, gettime.getHHMMSS()+" DropService.onSensorChanged listening");
+		
 		
 		float[] buf=event.values;
 		
@@ -110,14 +95,32 @@ public class MySensor implements SensorEventListener{
 		int a=(int) Math.abs(x);
 		int b=(int) Math.abs(y);
 		int c=(int) Math.abs(z);
+		
 		//如果是3面向都大於15，發送廣播標籤︰STARTFALLEN，目的是開啟Fallen事件
-		if(a>15||b>15||c>15){
-			writeLogToTXT(a,b,c);
+//		if(a>15||b>15||c>15){
+	/*	if(Ahmydroid.times==0){
+			MyLog.writeLogToTXT(a,b,c);
+	
+		}else if(Ahmydroid.times==1){
+			MyLog.writeLogToTXT2(a,b,c);
+			
+		}*/
+		
+		//撞到地板才產生摔落數據
+		if(a<2&&b<2&&c<2){
+			if(Ahmydroid.times==0){
+
+				WriteToTXT.writeLogToTXT("a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c));
+			}else if(Ahmydroid.times==1){
+
+				WriteToTXT.writeLogToTXT("a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c));
+			}
+			
 			Intent intent=new Intent();
 			intent.setAction("STARTFALLEN");
 			intent.putExtra("filter", "sendBroadcastFrom: STARTFALLEN");
 			context.sendBroadcast(intent);
-			Log.i(tag, "sensor>15");
+			Log.i(tag, "a,b,c<2");
 		}else{
 			//否則就是發送廣播標籤︰FALLENSENSORCHANGED，目的是Fallen裡不斷播動畫和音效
 			Intent intent2=new Intent();

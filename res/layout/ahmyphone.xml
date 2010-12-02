@@ -27,6 +27,16 @@
 	android:layout_toRightOf="@id/button_exit"
 	android:layout_marginLeft="50dip"
 	android:background="@drawable/how_button"/>
+	
+<Button
+	android:id="@+id/invisible_btn"
+	android:layout_width="120dip"
+	android:layout_height="90dip"
+	android:text="@string/how_to_play"
+	android:layout_marginLeft="50dip"
+	android:background="@drawable/limpid"
+	android:visibility="invisible"/>
+	
 <ImageButton
 	android:id="@+id/img_btn"
 	android:layout_below="@id/button_exit"

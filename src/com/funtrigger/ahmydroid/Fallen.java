@@ -29,6 +29,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -77,7 +78,7 @@ public class Fallen extends Activity{
      * 怎麼玩變數。<br/>
      * 這個變數在該類別沒有功能，所以必須把他找出來並隱藏
      */
-	private Button button_how;
+	private Button button_how,button_insvisible;
 	/**
 	 * 該變數是控制小綠人的圖形按鈕元件
 	 */
@@ -150,16 +151,23 @@ public class Fallen extends Activity{
 		button_how=(Button) findViewById(R.id.button_how);
 		img_btn=(ImageButton) findViewById(R.id.img_btn);
 		imgfall=(ImageView) findViewById(R.id.fall);
+		button_insvisible=(Button) findViewById(R.id.invisible_btn);
 		img_btn.setVisibility(View.INVISIBLE);
 		imgfall.setVisibility(View.VISIBLE);
+		button_insvisible.setVisibility(View.VISIBLE);
 		button_how.setVisibility(View.INVISIBLE);
 		imgfall.setBackgroundResource(R.anim.falling_animation);
 		aniimg=(AnimationDrawable) imgfall.getBackground();			
 		
 		am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
-//		sensormanager=(SensorManager) getSystemService(SENSOR_SERVICE);
-//		list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);		
+		button_insvisible.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				Log.i(tag, "you press button_invisible");
+			}	
+		});
 		
 		this.registerReceiver(broadcastreceiver=new SensorChangedReceiver(), new IntentFilter("FALLENSENSORCHANGED"));
 		
@@ -235,58 +243,6 @@ public class Fallen extends Activity{
 		super.onPause();
 	}
 
-//	@Override
-//	public void onSensorChanged(SensorEvent event) {
-//		Log.i(tag,"Fallen.onSensorChanged()");
-//		while(aniimg.isRunning()==false){
-//			aniimg.start();
-//		}
-//		
-//		if(mpplaying==false){
-//			Log.i(tag, "into mp player");
-//			mp=MediaPlayer.create(this, this.getResources().getIdentifier("dizzy", "raw", this.getPackageName()));
-//			mp.start();
-//			mpplaying=true;
-//
-//		
-//		mp.setOnCompletionListener(new OnCompletionListener(){
-//
-//			@Override
-//			public void onCompletion(MediaPlayer arg0) {
-////				Log.i(tag, "into onCompletion");
-//				if(mp!=null){
-//					mp.release();
-//				}
-//				
-//				mpplaying=false;
-//			}
-//			
-//		});
-//		mp.setOnErrorListener(new OnErrorListener(){
-//
-//			@Override
-//			public boolean onError(MediaPlayer mp, int what, int extra) {
-//				if(mp!=null){
-//					mp.release();
-//				}
-//				return false;
-//			}
-//			
-//		});
-//		}
-//		
-//		//取得震動服務
-//		myVibrator = (Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
-////		myVibrator.vibrate(1000);//震動1000秒
-//		
-//	}
-
-
-//
-//	@Override
-//	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-//		// TODO Auto-generated method stub	
-//	}
 	
 	/**
 	 * 啟動摔落告知Service

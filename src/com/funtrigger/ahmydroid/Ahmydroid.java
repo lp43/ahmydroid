@@ -45,7 +45,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.12";
+	private String softVersion="v1.0.0.13";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -82,6 +82,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 */
 	private static final int HOW_TO_PLAY = 0;
   
+	public static int times;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
