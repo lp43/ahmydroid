@@ -1,41 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/background">
+    android:background="@drawable/background"
+    android:id="@+id/ahmyphone_layout">
 
-	
-<Button
-	android:id="@+id/button_exit"
-	android:layout_width="150dip"
-	android:layout_height="60dip"
-	android:text="@string/exit"
-	android:textColor="@color/white"
-	android:visibility="invisible"
-	android:layout_marginLeft="5dip"
-	android:layout_marginTop="5dip"
-	android:background="@drawable/exit_button"
-	/>
 
 <Button
 	android:id="@+id/button_how"
 	android:layout_width="120dip"
 	android:layout_height="90dip"
 	android:text="@string/how_to_play"
-	android:layout_alignTop="@id/button_exit"
-	android:layout_toRightOf="@id/button_exit"
-	android:layout_marginLeft="50dip"
+	android:textColor="@color/black"
+	android:visibility="invisible"
+	android:layout_marginLeft="5dip"
+	android:layout_marginTop="10dip"
 	android:background="@drawable/how_button"/>
 	
 <Button
-	android:id="@+id/invisible_btn"
+	android:id="@+id/button_exit"
 	android:layout_width="120dip"
-	android:layout_height="90dip"
-	android:text="@string/how_to_play"
+	android:layout_height="50dip"
+	android:text="@string/exit" 
+	android:textColor="@color/white" 
+	android:layout_alignTop="@id/button_how"
+	android:layout_toRightOf="@id/button_how"
 	android:layout_marginLeft="50dip"
-	android:background="@drawable/limpid"
-	android:visibility="invisible"/>
+	android:background="@drawable/exit_button"/>
 	
 <ImageButton
 	android:id="@+id/img_btn"
@@ -52,6 +45,6 @@
 	android:layout_height="240dip"
 	android:visibility="invisible"
 	android:layout_marginLeft="30dip"
-	android:layout_marginTop="40dip"
+	android:layout_marginTop="140dip"
 	/>
 </RelativeLayout>

@@ -8,6 +8,11 @@ import java.io.RandomAccessFile;
 import android.os.Environment;
 import android.util.Log;
 
+/**
+ * 該類別提供各種函式，讓欲輸出的文字可以寫進SD卡裡
+ * @author simon
+ *
+ */
 public class WriteToTXT {
 	private static String tag="tag";
 	

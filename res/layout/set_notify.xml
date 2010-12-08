@@ -3,6 +3,7 @@
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="wrap_content"
   android:layout_height="wrap_content"
+  android:id="@+id/rl_set_notify"
   android:background="@drawable/background">
 
 <TextView
@@ -18,8 +19,9 @@
 	android:id="@+id/msg_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
-	android:background="@drawable/message_noset"
-	android:layout_marginTop="10dip"/>
+
+	android:layout_marginTop="10dip"
+	android:visibility="invisible"/>
 
 
 	
@@ -27,16 +29,18 @@
 	android:id="@+id/fb_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
-	android:background="@drawable/fb_noset"
+
 	android:text="facebook發文測試"
 	android:layout_alignTop="@id/msg_btn"
-	android:layout_toRightOf="@id/msg_btn"/>
+	android:layout_toRightOf="@id/msg_btn"
+	android:visibility="invisible"/>
 		<Button
 	android:id="@+id/twitter_btn"
 	android:layout_width="140dip"
 	android:layout_height="140dip"
 	android:background="@drawable/twitter_noset"
 	android:text="地點測試"
-	android:layout_below="@id/fb_btn"/>
+	android:layout_below="@id/fb_btn"
+	android:visibility="invisible"/>
 
 </RelativeLayout>

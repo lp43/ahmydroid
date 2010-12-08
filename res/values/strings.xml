@@ -14,6 +14,35 @@
     <string name="set_notify">掉落告知設定</string>
     <string name="set_notify_mode">選擇掉落告知方式</string>
 	<string name="post_success">Poll文成功！</string>
+	<string name="unlock">解鎖</string>
+	<string name="type_password">請輸入密碼</string>
+	<string name="type_password_again">請再次輸入密碼</string>
+	<string name="ok">確認</string>
+	<string name="cancel">取消</string>
+	<string name="data">資料︰</string>
+	<string name="status">狀態︰</string>
+	<string name="not_set">未設定</string>
+	<string name="been_set">已設定</string>
+	<string name="runnning">啟用中</string>
+	<string name="not_run">未啟用</string>
+	<string name="instruction_head">啟用後，系統會依設定，</string>
+	<string name="message_instruction">定時將定位資訊發送簡訊給指定者</string>
+	<string name="facebook_instruction">定時將定位資訊傳送至Facebook</string>
+	<string name="pick_instruction">將資訊告訴撿到的人</string>
+	<string name="default_pick_context">hi!我是王小明的手機，請你幫我拿到:台北市南港區XXX，將重金感謝！</string>
+	<string name="default_message_context">請輸入一組手機號碼</string>
+	<string name="please_choice">請選擇</string>
+	<string name="please_type">請輸入</string>
+	<string name="context_to_pick">撿到的人會看到的內容︰</string>
+	<string name="context_to_message">當手機自動發出資訊時的收件者︰</string>
+	<string name="message_context">我是「手機摔落告知」軟體，我的位置在︰#location，請告知我的主人我掉了!</string>
+	<string name="message_ps">該方式需支付簡訊費用</string>
+	<string name="facebook_ps">該方式需持續3G上網連線</string>
+	<string name="set">設定</string>
+	<string name="test">測試</string>
+	<string name="attention">注意</string>
+	<string name="attention_context">該動作需自行負擔簡訊費用，是否繼續？</string>
+	<string name="message_response">測試簡訊已寄出！</string>
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

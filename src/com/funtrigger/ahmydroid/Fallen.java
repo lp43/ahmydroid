@@ -1,8 +1,9 @@
 package com.funtrigger.ahmydroid;
 
 import java.util.List;
-
 import com.funtrigger.tools.MySensor;
+import com.funtrigger.tools.MySharedPreferences;
+import com.funtrigger.tools.ResponseDialog;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -11,6 +12,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.AnimationDrawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -28,13 +35,19 @@ import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /**
  * 在後臺運行中偵測手機是否掉落的Gsensor的Service，
@@ -48,11 +61,12 @@ import android.widget.ImageView;
  * @author simon
  */
 public class Fallen extends Activity{
+
 	/**
 	 * 測試期間，讓我可以快速更改音量的變數
 	 * 不用每次都跑到程式碼裡去找設定
 	 */
-	public static int setVolumn = 5;
+	public static int setVolumn = 2;
 	/**
 	 * 機器人圖案的ImageView
 	 */
@@ -78,7 +92,7 @@ public class Fallen extends Activity{
      * 怎麼玩變數。<br/>
      * 這個變數在該類別沒有功能，所以必須把他找出來並隱藏
      */
-	private Button button_how,button_insvisible;
+	private Button button_how,button_insvisible,button_exit;
 	/**
 	 * 該變數是控制小綠人的圖形按鈕元件
 	 */
@@ -110,6 +124,10 @@ public class Fallen extends Activity{
     WakeLock wakeLock;
     MySensor mysensor;
 	private BroadcastReceiver broadcastreceiver;
+	/**
+	 * 整個Fallen的layout變數
+	 */
+	RelativeLayout relativelayout;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +161,7 @@ public class Fallen extends Activity{
 			                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
 			                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 		                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-		                   /* | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON*/);
+		                 /* | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON*/);
 
 		setContentView(R.layout.ahmyphone);
 		Log.i(tag, "setContentView finish");
@@ -151,23 +169,40 @@ public class Fallen extends Activity{
 		button_how=(Button) findViewById(R.id.button_how);
 		img_btn=(ImageButton) findViewById(R.id.img_btn);
 		imgfall=(ImageView) findViewById(R.id.fall);
-		button_insvisible=(Button) findViewById(R.id.invisible_btn);
+		button_exit=(Button) findViewById(R.id.button_exit);
+		relativelayout = (RelativeLayout) findViewById(R.id.ahmyphone_layout);
 		img_btn.setVisibility(View.INVISIBLE);
 		imgfall.setVisibility(View.VISIBLE);
-		button_insvisible.setVisibility(View.VISIBLE);
 		button_how.setVisibility(View.INVISIBLE);
+		button_exit.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+			
+		});
+		
+		//如果拾獲者告知有啟動，則要顯示該訊息畫面
+		if(MySharedPreferences.getPreference(this, "pick_status", "").equals("true")){
+			TextView pick_context=new TextView(this);
+			pick_context.setText(MySharedPreferences.getPreference(this, "pick_message_context", getString(R.string.not_set)));
+			pick_context.setBackgroundResource(R.drawable.pick_message_background);
+			pick_context.setPadding(30, 20, 30, 60);//文字與背景的邊距
+			pick_context.setTextSize(20);
+			pick_context.setTextColor(Color.BLACK);
+			RelativeLayout.LayoutParams params_pick_context=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
+			params_pick_context.setMargins(0, 50, 0, 0);//距離主螢幕的位置
+			pick_context.setLayoutParams(params_pick_context);
+			relativelayout.addView(pick_context);
+		}
+		
+		
 		imgfall.setBackgroundResource(R.anim.falling_animation);
 		aniimg=(AnimationDrawable) imgfall.getBackground();			
 		
 		am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
-		button_insvisible.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				Log.i(tag, "you press button_invisible");
-			}	
-		});
 		
 		this.registerReceiver(broadcastreceiver=new SensorChangedReceiver(), new IntentFilter("FALLENSENSORCHANGED"));
 		
@@ -201,6 +236,25 @@ public class Fallen extends Activity{
 		
 		//將媒體音量調整到最大，好讓使用者聽見小綠人的哀嚎聲
 		am.setStreamVolume(AudioManager.STREAM_MUSIC,setVolumn, 0);
+//		relativelayout = (RelativeLayout) findViewById(R.id.ahmyphone_layout);
+		
+		button_insvisible=new Button(this);
+		button_insvisible.setText(R.string.unlock);
+		
+		button_insvisible.measure(30, 30);
+		button_insvisible.setBackgroundResource(R.drawable.small_exit);
+		button_insvisible.layout(10, 10, 10+button_insvisible.getMeasuredWidth(), 10+button_insvisible.getMeasuredHeight());
+		button_insvisible.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				Log.i(tag, "invisible exit");
+				ResponseDialog.passwordToExit(Fallen.this);
+			}
+			
+		});
+		relativelayout.addView(button_insvisible);
+		relativelayout.addView(new MyView(this),60,50);
 	}
 
 	@Override//程式在按[Back鍵]或[電源鍵]，都會執行到該Method
@@ -320,5 +374,60 @@ public class Fallen extends Activity{
 		}
 		
 	}
+	private class MyView extends View{
+		private Paint mPaint;
+		private Bitmap mBitmap;
+		private float imageX = 34f;
+        private float imageY = 32f;
+        Context context;
+        Canvas canvas;
+        
+		public MyView(Context context) {
+			super(context);
+	  
+			 
+			 mPaint = new Paint();
+			   mBitmap = BitmapFactory.decodeResource(getResources(), 
+		                R.drawable.wall); 
+			   mBitmap= Bitmap.createScaledBitmap(mBitmap, mBitmap.getWidth()*3/5, mBitmap.getHeight()*3/5,true);;
+		} 
+		//onDraw() callback
+        protected void onDraw(Canvas canvas) {
+//          canvas.drawColor(R.drawable.background);
+            mPaint.setAntiAlias(true);
+            mPaint.setColor(Color.WHITE);
+            
+            this.canvas=canvas;
+            
+            //繪製初始圖
+            canvas.drawBitmap(mBitmap, 
+                    imageX - mBitmap.getWidth() / 2, 
+                    imageY - mBitmap.getHeight() / 2, 
+                    mPaint);
+           
+        }
+        
+        //手指事件影響圖片
+        public boolean onTouchEvent(MotionEvent event) {
+            if(event.getAction() == MotionEvent.ACTION_DOWN){
+                imageX = event.getX();
+                imageY = event.getY();
+            }
+            else if(event.getAction() == MotionEvent.ACTION_MOVE){
+                imageX = event.getX();
+                imageY = event.getY();
+            }
+            else if(event.getAction() == MotionEvent.ACTION_UP){
+                imageX = event.getX();
+                imageY = event.getY();
 
+                relativelayout.removeView(MyView.this);
+            }
+
+            //請求重繪
+            invalidate();        
+            return true;
+        }
+		
+	}
 }
