@@ -52,8 +52,7 @@ public class ResponseDialog {
 	 * @param icon 想要產生的icon
 	 */
 	public static void newToast(Context context,String message,int icon){
-		
-		if(toast==null){
+
 			toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 		    View originView=toast.getView();
 		    LinearLayout layout= new LinearLayout(context);
@@ -66,8 +65,6 @@ public class ResponseDialog {
 		    toast.setView(layout);
 		    toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
 		    toast.show();
-
-		}
 		
 	}
 	

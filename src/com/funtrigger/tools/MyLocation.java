@@ -41,14 +41,14 @@ public class MyLocation {
 			Log.i(tag, "Best provider is: "+bestProvider);
 			
 			location = lm.getLastKnownLocation(bestProvider);
-			Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
+//			Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
 			
 		}else if(recProvider.equals("gps")){
 	    	location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-	    	Toast.makeText(context, "provider is gps", Toast.LENGTH_SHORT).show();
+//	    	Toast.makeText(context, "provider is gps", Toast.LENGTH_SHORT).show();
 		}else if(recProvider.equals("network")){
 			location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-			Toast.makeText(context, "provider is network", Toast.LENGTH_SHORT).show();
+//			Toast.makeText(context, "provider is network", Toast.LENGTH_SHORT).show();
 		}
 		
 
@@ -90,7 +90,7 @@ public class MyLocation {
     			
     		});
     	}
-    	Toast.makeText(context,latitude+","+longitude , Toast.LENGTH_SHORT).show();
+//    	Toast.makeText(context,latitude+","+longitude , Toast.LENGTH_SHORT).show();
     	Log.i(tag,latitude+","+longitude);//顯示緯度+經度以配合Google Map格式
     	
     	//將緯經度貼到剪貼簿

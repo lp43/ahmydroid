@@ -11,33 +11,24 @@ import com.facebook.android.BaseDialogListener;
 import com.facebook.android.BaseRequestListener;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
-import com.facebook.android.LoginButton;
 import com.facebook.android.R;
 import com.facebook.android.Util;
 import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyTime;
 import com.funtrigger.tools.ResponseDialog;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.telephony.SmsManager;
 import android.text.Html;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -46,7 +37,6 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -66,9 +56,8 @@ public class SetNotify extends Activity {
 	Editor sharedata;
 	MySetButton message_btn,facebook_btn,pick_btn/*,twitter_btn*/;
 	Facebook facebook;
-	protected static String tag="tag";
-	protected int count;
 	private AsyncFacebookRunner mAsyncRunner;
+	protected static String tag="tag";
 	/**
 	 * 呼叫Main Thread的handler
 	 */
@@ -79,10 +68,9 @@ public class SetNotify extends Activity {
 	 */
 	private final int POSTTOFACEBOOK=0;
 
-//	/**
-//	 * 使用者設定欲接收簡訊的電話號碼
-//	 */
-//	private String send_msg__to_number="0953672003";
+	/**
+	 * SetNotify.java的Layout
+	 */
 	RelativeLayout rl_set_notify;
 	
 	@Override
@@ -90,19 +78,12 @@ public class SetNotify extends Activity {
 		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.set_notify);
-		
-//		message_btn=(Button) findViewById(R.id.msg_btn);
-//		facebook_btn = (Button) findViewById(R.id.fb_btn);
-//		twitter_btn = (Button) findViewById(R.id.twitter_btn);
+
 		rl_set_notify = (RelativeLayout) findViewById(R.id.rl_set_notify);
-		facebook=new Facebook("171403682887181");
+		facebook=new Facebook("171403682887181");//Facebook網站上別摔小安的應用程式ID
 		mAsyncRunner = new AsyncFacebookRunner(facebook);
 		
-		//設定初始為灰色
-/*		gmail_btn.getBackground().setAlpha(50);
-		message_btn.getBackground().setAlpha(50);
-		twitter_btn.getBackground().setAlpha(50);
-		facebook_btn.getBackground().setAlpha(50);*/
+
 		
 		//叫出主Thread的handler並覆寫，好讓程式可以handle我們要處理的事
 		handler = new Handler(){
@@ -114,12 +95,10 @@ public class SetNotify extends Activity {
 					Bundle params = new Bundle();	
 
 	                MyTime gettime = new MyTime();
-	              
-	            	count++;
+
 	            	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是 "+gettime.getHHMMSS()+
 	            			"\n我的座標在 "+MyLocation.getLocation(SetNotify.this)+"\n快用GoogleMap貼上這個經緯度找我！");
 
-	            	Log.i(tag, "count: "+count);
 	            	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
 					
 					break;
@@ -128,22 +107,16 @@ public class SetNotify extends Activity {
 			}
 			
 		};
-
 		
 		//動態新增message button////////////////////////////
-		message_btn=new MySetButton(this,R.drawable.message_icon);
+		message_btn=new MySetButton(this,R.drawable.message_pic);
+
 		RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,110);
 		params.setMargins(0, 10, 0, 0);
 		message_btn.setLayoutParams(params);
 		
 		message_btn.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
-		message_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+getString(R.string.not_set) + "</b>" +  "<br />" +
-				"<b>" + getString(R.string.status)+getString(R.string.not_run) + "</b>" /*+  "<br />" + "<br />" +
-	            "<small>" + getString(R.string.instruction_head)+  "<br />" 
-	            +getString(R.string.message_instruction)+ "</small>"*/));
-		if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")){
-			MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
-		}
+
 		setMessageButtonStatus();
 		
 		message_btn.setOnClickListener(new OnClickListener(){
@@ -151,7 +124,8 @@ public class SetNotify extends Activity {
 					@Override
 					public void onClick(View v) {
 
-						if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")){
+						if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")|
+								MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")){
 							MySharedPreferences.addPreference(SetNotify.this, "message_status", "true");
 						}else{
 							MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
@@ -167,22 +141,26 @@ public class SetNotify extends Activity {
 			public boolean onLongClick(View v) {
 				new AlertDialog.Builder(SetNotify.this)
                 .setTitle(R.string.please_choice)
-                .setItems(new String[]{getString(R.string.set),getString(R.string.test)}, new DialogInterface.OnClickListener() {
+                .setItems(new String[]{getString(R.string.set),getString(R.string.send_test)}, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     	switch(which){
                     	case 0:
                     		LayoutInflater factory=LayoutInflater.from(SetNotify.this);
-                        	final View message_context=factory.inflate(R.layout.context_to_message, null);
-                        	final EditText type_message_number=(EditText) message_context.findViewById(R.id.type_message_number);
+                        	final View message_dialog=factory.inflate(R.layout.context_to_message, null);
+                        	final EditText type_message_number=(EditText) message_dialog.findViewById(R.id.type_message_number);
+                        	final EditText type_message_context=(EditText) message_dialog.findViewById(R.id.type_message_context);
                         	
                         	//如果不為空，則將存放在SharedPreferences的值設定到EditText
                         	if(!MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
-                        		type_message_number.setText(MySharedPreferences.getPreference(SetNotify.this, "message_number",getString(R.string.default_message_context)));
+                        		type_message_number.setText(MySharedPreferences.getPreference(SetNotify.this, "message_number",getString(R.string.default_number_context)));
+                        	}
+                        	if(!MySharedPreferences.getPreference(SetNotify.this, "message_context", "").equals("")){
+                        		type_message_context.setText(MySharedPreferences.getPreference(SetNotify.this, "message_context",getString(R.string.default_message_context)));
                         	}
                         	
                         	new AlertDialog.Builder(SetNotify.this)
                         	.setTitle(R.string.please_type)
-                        	.setView(message_context)
+                        	.setView(message_dialog)
                         	.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
 
     							@Override
@@ -191,9 +169,31 @@ public class SetNotify extends Activity {
     								
     								//如果輸入的字串是數字，才新增進SharedPreferences
     								if(SetNotify.isNumeric(type_message_number.getText().toString())){
-    									MySharedPreferences.addPreference(SetNotify.this, "message_number", type_message_number.getText().toString());
+    									MySharedPreferences.addPreference(SetNotify.this, "message_number", type_message_number.getText().toString());	
+    								}else{
+    									new AlertDialog.Builder(SetNotify.this)
+    									.setTitle(R.string.attention)
+    									.setMessage(R.string.wrong_phone_number)
+    									.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+
+
+											@Override
+											public void onClick(
+													DialogInterface dialog,
+													int which) {
+												
+											}
+
+    										
+    									})
+    									.show();
     								}
-    									
+    								
+									if(type_message_context.getText().toString().equals("")){
+										MySharedPreferences.removeKey(SetNotify.this, "message_context");
+									}else{
+										MySharedPreferences.addPreference(SetNotify.this, "message_context", type_message_context.getText().toString());
+									}
     									setMessageButtonStatus();
     								
     							}
@@ -221,9 +221,14 @@ public class SetNotify extends Activity {
                 		
                 		    @Override
                 		    public void onClick(DialogInterface dialog, int which) {
-//                		    	SmsManager smsmanager=SmsManager.getDefault();
-//        						smsmanager.sendTextMessage(MySharedPreferences.getPreference(SetNotify.this,"message_number",""), null, getString(R.string.message_context).replace("#location", MyLocation.getLocation(SetNotify.this)), null, null);
-        						ResponseDialog.newToast(SetNotify.this, getString(R.string.message_response), R.drawable.message_icon);
+
+//                		    	MySMS.sendSMS(SetNotify.this, MySharedPreferences.getPreference(SetNotify.this,"message_number",""), 
+//                		    			getString(R.string.message_context).replace("#location", MyLocation.getLocation(SetNotify.this))
+//                		    	    	+MySharedPreferences.getPreference(SetNotify.this, "message_context", getString(R.string.message_last_sentence_ifusernotype)));
+        						
+        						Toast.makeText(SetNotify.this, getString(R.string.message_context).replace("#location", MyLocation.getLocation(SetNotify.this))
+                		    	+MySharedPreferences.getPreference(SetNotify.this, "message_context", getString(R.string.message_last_sentence_ifusernotype)), Toast.LENGTH_LONG).show();
+        						ResponseDialog.newToast(SetNotify.this, getString(R.string.message_response), R.drawable.message_pic);
                 		    }})
                 		    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                 		
@@ -256,37 +261,67 @@ public class SetNotify extends Activity {
 		//////////////////////////////////////////////
 		
 		//動態新增Facebook button///////////////////////////
-		facebook_btn=new MySetButton(this,R.drawable.facebook_icon);
+		facebook_btn=new MySetButton(this,R.drawable.facebook_pic);
 		RelativeLayout.LayoutParams params_facebook=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,110);
 		params_facebook.setMargins(0, message_btn.getCompoundPaddingTop()+message_btn.getLayoutParams().height+10, 0, 0);
 		facebook_btn.setLayoutParams(params_facebook);
 		facebook_btn.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
-		facebook_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+getString(R.string.not_set) + "</b>" +  "<br />" +
-				"<b>" + getString(R.string.status)+getString(R.string.not_run) + "</b>" /*+  "<br />" + "<br />" +
-	            "<small>" + getString(R.string.instruction_head)+  "<br />" 
-	            +getString(R.string.facebook_instruction)+ "</small>"*/));
 
+		setFacebookButtonStatus();
+		
 		facebook_btn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				if(facebook!=null){
-//					Log.i(tag, "into facebook!=null");
-				
-					if(facebook.isSessionValid()==true){
-						Log.i(tag, "session valid: "+facebook.isSessionValid());
-						//當Session存在時，就不用登入了，直接發文
-						handler.sendEmptyMessage(POSTTOFACEBOOK);
-		            	
-					}else if(facebook.isSessionValid()==false){
-						Log.i(tag, "session valid: "+facebook.isSessionValid());
-						facebook.authorize(SetNotify.this, new String[]{"publish_stream"}, new LoginSuccessListener());//這行要加，因為有時候Session會過期
-					}
-					
-	            	
+				if(MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("false")|
+						MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("")){
+					MySharedPreferences.addPreference(SetNotify.this, "facebook_status", "true");
 				}else{
-					Log.i(tag, "facebook entity is null");
+					MySharedPreferences.addPreference(SetNotify.this, "facebook_status", "false");
 				}
+				setFacebookButtonStatus();
 				
+			}
+			
+		});
+		facebook_btn.setOnLongClickListener(new OnLongClickListener(){
+
+			@Override
+			public boolean onLongClick(View v) {
+				new AlertDialog.Builder(SetNotify.this)
+				.setTitle(R.string.please_choice)
+				.setItems(new String[]{getString(R.string.test)/*,getString(R.string.test)*/}, new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						switch(which){
+						case 0:
+							if(facebook!=null){
+//						Log.i(tag, "into facebook!=null");
+					
+						if(facebook.isSessionValid()==true){
+							Log.i(tag, "session valid: "+facebook.isSessionValid());
+							//當Session存在時，就不用登入了，直接發文
+							handler.sendEmptyMessage(POSTTOFACEBOOK);
+			            	
+						}else if(facebook.isSessionValid()==false){
+							Log.i(tag, "session valid: "+facebook.isSessionValid());
+							facebook.authorize(SetNotify.this, new String[]{"publish_stream"}, new LoginSuccessListener());//這行要加，因為有時候Session會過期
+						}
+						
+		            	
+					}else{
+						Log.i(tag, "facebook entity is null");
+					}
+							break;
+						}
+						
+					}	
+					
+				})
+				.show();
+		
+				
+				return false;
 			}
 			
 		});
@@ -294,7 +329,7 @@ public class SetNotify extends Activity {
 		////////////////////////////////////////////
 		
 		//動態新增拾獲者button///////////////////////////////
-		pick_btn=new MySetButton(this,R.drawable.pickup_icon);
+		pick_btn=new MySetButton(this,R.drawable.pickup_pic);
 		RelativeLayout.LayoutParams params_pick=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,110);
 		params_pick.setMargins(0, message_btn.getCompoundPaddingTop()+message_btn.getLayoutParams().height+facebook_btn.getCompoundPaddingTop()+facebook_btn.getLayoutParams().height+10, 0, 0);
 
@@ -309,7 +344,8 @@ public class SetNotify extends Activity {
 		pick_btn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
-				if(MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("false")){
+				if(MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("false")|
+						MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("")){
 					MySharedPreferences.addPreference(SetNotify.this, "pick_status", "true");
 				}else{
 					MySharedPreferences.addPreference(SetNotify.this, "pick_status", "false");
@@ -474,7 +510,78 @@ public class SetNotify extends Activity {
 	}
 	
 	/**
-	 * 該函式用來重設拾獲按鈕是否已設定
+	 * 該函式用來重設簡訊發送按鈕狀態
+	 */
+	private void setMessageButtonStatus(){
+		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
+		String message_data_status="";
+		String message_status="";
+		if(MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")|
+				MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("false")){
+			message_data_status=getString(R.string.not_set);
+			MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
+			message_status=getString(R.string.not_run);
+		}else{
+			message_data_status=getString(R.string.been_set);
+			
+			
+			if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")|
+					MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")){
+				message_status=getString(R.string.not_run);
+			}else{
+				message_status=getString(R.string.runnning);
+			}		
+			
+		}
+		
+
+
+		
+		message_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+message_data_status
+				+ "</b>" +  "<br />" +
+				"<b>" + getString(R.string.status)+message_status + "</b>" /*+  "<br />" + "<br />" +
+	            "<small>" + getString(R.string.instruction_head)+  "<br />" 
+	            +getString(R.string.facebook_instruction)+ "</small>"*/));
+	}
+	
+	/**
+	 * 該函式用來重設Facebook按鈕狀態
+	 */
+	private void setFacebookButtonStatus(){
+		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
+		String facebook_data_status="";
+		String facebook_status="";
+		if(MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", "").equals("")|
+			MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", "").equals("false")){
+//			Log.i(tag, "facebook_data_status: "+MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", ""));
+			facebook_data_status=getString(R.string.not_set);
+			facebook_status=getString(R.string.not_run);
+		}else{
+			
+			facebook_data_status=getString(R.string.been_set);
+			//有設定才能啟動Facebook通知
+			if(MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("")|
+					MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("false")){
+				facebook_status=getString(R.string.runnning);
+			}else{		
+				facebook_status=getString(R.string.not_run);
+			}
+		}
+		
+		
+		
+
+
+		
+		facebook_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+facebook_data_status
+				+ "</b>" +  "<br />" +
+				"<b>" + getString(R.string.status)+facebook_status + "</b>" /*+  "<br />" + "<br />" +
+	            "<small>" + getString(R.string.instruction_head)+  "<br />" 
+	            +getString(R.string.facebook_instruction)+ "</small>"*/));
+	}
+	
+	/**
+	 * 該函式用來重設拾獲按鈕狀態
 	 */
 	private void setPickButtonStatus(){
 		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
@@ -501,35 +608,7 @@ public class SetNotify extends Activity {
 	            "<small>" + getString(R.string.instruction_head)+  "<br />" 
 	            +getString(R.string.facebook_instruction)+ "</small>"*/));
 	}
-	
-	/**
-	 * 該函式用來重設簡訊發送按鈕是否已設定
-	 */
-	private void setMessageButtonStatus(){
-		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
-		String message_data_status="";
-		if(MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
-			message_data_status=getString(R.string.not_set);
-			MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
-		}else{
-			message_data_status=getString(R.string.been_set);
-		}
-		
-		String message_status="";
-		if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")|
-				MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")){
-			message_status=getString(R.string.not_run);
-		}else{
-			message_status=getString(R.string.runnning);
-		}
 
-		
-		message_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+message_data_status
-				+ "</b>" +  "<br />" +
-				"<b>" + getString(R.string.status)+message_status + "</b>" /*+  "<br />" + "<br />" +
-	            "<small>" + getString(R.string.instruction_head)+  "<br />" 
-	            +getString(R.string.facebook_instruction)+ "</small>"*/));
-	}
 	
 	/**
 	 * 檢查輸入是否為數字
@@ -565,6 +644,9 @@ public class SetNotify extends Activity {
                 runOnUiThread(new Runnable() {
                     public void run() {
                     	Toast.makeText(SetNotify.this, getString(R.string.post_success), Toast.LENGTH_SHORT).show();
+                    	ResponseDialog.newToast(SetNotify.this, getString(R.string.post_success2), R.drawable.facebook_pic);
+                    	MySharedPreferences.addPreference(SetNotify.this, "facebook_data_status", "true");
+                    	setFacebookButtonStatus();
                     }
                 });
                 
