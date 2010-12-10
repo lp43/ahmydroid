@@ -1,9 +1,25 @@
 package com.funtrigger.ahmydroid;
 
 import java.util.List;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.facebook.android.AsyncFacebookRunner;
+import com.facebook.android.BaseDialogListener;
+import com.facebook.android.BaseRequestListener;
+import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
+import com.facebook.android.R;
+import com.facebook.android.Util;
+
+import com.funtrigger.tools.MyDispatcher;
+import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySensor;
 import com.funtrigger.tools.MySharedPreferences;
-import com.funtrigger.tools.ResponseDialog;
+import com.funtrigger.tools.MyDialog;
+import com.funtrigger.tools.MyTime;
+import com.funtrigger.tools.SwitchService;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -12,6 +28,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -48,6 +65,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * 在後臺運行中偵測手機是否掉落的Gsensor的Service，
@@ -123,19 +141,27 @@ public class Fallen extends Activity{
      */
     WakeLock wakeLock;
     MySensor mysensor;
-	private BroadcastReceiver broadcastreceiver;
+	private BroadcastReceiver receiver_sensorchanged;
+	/**
+	 * Facebook的專屬dispatcher
+	 */
+	private BroadcastReceiver receiver_facebookdispatcher;
 	/**
 	 * 整個Fallen的layout變數
 	 */
 	RelativeLayout relativelayout;
+	/**
+	 * 將Fallen.java丟給facebookDispatcherReceiver專用
+	 */
+	static Activity activity;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		Log.i(tag, "into Fallen.onCreate()");
 		super.onCreate(savedInstanceState);
 		
-		
-		stopService();//進來時把Service關掉，避免重覆進入本畫面
+		this.activity=Fallen.this;
+		SwitchService.stopService(Fallen.this,FallDetector.class);//進來時把Service關掉，避免重覆進入本畫面
 		
 
 		
@@ -178,7 +204,8 @@ public class Fallen extends Activity{
 
 			@Override
 			public void onClick(View v) {
-				finish();
+				SwitchService.startService(Fallen.this, InfoDispatcher.class);
+
 			}
 			
 		});
@@ -204,7 +231,10 @@ public class Fallen extends Activity{
 		am=(AudioManager) getSystemService(Context.AUDIO_SERVICE);
 		
 		
-		this.registerReceiver(broadcastreceiver=new SensorChangedReceiver(), new IntentFilter("FALLENSENSORCHANGED"));
+		this.registerReceiver(receiver_sensorchanged=new SensorChangedReceiver(), new IntentFilter("FALLENSENSORCHANGED"));
+		this.registerReceiver(receiver_facebookdispatcher=new facebookDispatchReceiver(), new IntentFilter("FACEBOOKDISPATCHER"));
+		
+		
 		
 		//啟動一個執行緒，負責偵測Screen是否有On。
 		//這個檢查迴圈不能寫在主程式裡，否則會干擾主程序喚醒螢幕
@@ -236,7 +266,6 @@ public class Fallen extends Activity{
 		
 		//將媒體音量調整到最大，好讓使用者聽見小綠人的哀嚎聲
 		am.setStreamVolume(AudioManager.STREAM_MUSIC,setVolumn, 0);
-//		relativelayout = (RelativeLayout) findViewById(R.id.ahmyphone_layout);
 		
 		button_insvisible=new Button(this);
 		button_insvisible.setText(R.string.unlock);
@@ -249,7 +278,7 @@ public class Fallen extends Activity{
 			@Override
 			public void onClick(View v) {
 				Log.i(tag, "invisible exit");
-				ResponseDialog.passwordToExit(Fallen.this);
+				MyDialog.passwordToExit(Fallen.this);
 			}
 			
 		});
@@ -275,13 +304,12 @@ public class Fallen extends Activity{
 				myVibrator.cancel();//震動關掉
 			}
 			
-			if(broadcastreceiver!=null){
-				this.unregisterReceiver(broadcastreceiver);
+			if(receiver_sensorchanged!=null){
+				this.unregisterReceiver(receiver_sensorchanged);
 			}
-//			if(sensormanager!=null){
-//				sensormanager.unregisterListener(this);
-//				Log.i(tag, "sensormanager.unregisterListener");
-//			}
+			if(receiver_facebookdispatcher!=null){
+				this.unregisterReceiver(receiver_facebookdispatcher);
+			}
 			if(mysensor!=null){
 				mysensor.stopSensor();
 			}
@@ -290,31 +318,13 @@ public class Fallen extends Activity{
 				handler.removeCallbacks(reg_Gsensor);
 			}
 			finish();//結束掉，下次再感測時，才能從onCreate()再執行
-			startService();//離開時再把Service開回去
+			SwitchService.startService(Fallen.this,FallDetector.class);//離開時再把Service開回去
 			Log.i(tag, "finish Fallen.onPause()");
 		}
 		
 		super.onPause();
 	}
-
 	
-	/**
-	 * 啟動摔落告知Service
-	 */
-	private void startService(){
-		Intent intent = new Intent();
-		intent.setClass(this,DropService.class);
-		this.startService(intent);
-	}
-	
-	/**
-	 * 停止摔落告知Service
-	 */
-	private void stopService(){
-		Intent intent = new Intent();
-		intent.setClass(this, DropService.class);
-		stopService(intent);
-	}
 	
 	/**
 	 * 該內部廣播接收在Fallen.java裡不斷的播動畫和音效
@@ -374,6 +384,31 @@ public class Fallen extends Activity{
 		}
 		
 	}
+	
+	/**
+	 * 當系統廣播出要寄出facebook的訊息時，該類別會接收，並將訊息發出
+	 * @author simon
+	 * 註︰唉，只因為Service並非Activity，而Facebook類別又用到Activity的函式
+	 * 只好開這個Receiver，在Fallen.java的這裡發送facebook訊息
+	 */
+	private class facebookDispatchReceiver extends BroadcastReceiver{
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			if(intent.getAction().equals("FACEBOOKDISPATCHER")){
+				MyDispatcher mydispatcher=new MyDispatcher();
+
+				mydispatcher.facebookDispatcher(context,Fallen.activity);
+			}
+		}
+		
+	}
+	
+	/**
+	 * 密道磚塊的Canvas視圖
+	 * @author simon
+	 *
+	 */
 	private class MyView extends View{
 		private Paint mPaint;
 		private Bitmap mBitmap;

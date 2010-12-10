@@ -13,10 +13,11 @@ import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.R;
 import com.facebook.android.Util;
+import com.funtrigger.tools.MyDispatcher;
 import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyTime;
-import com.funtrigger.tools.ResponseDialog;
+import com.funtrigger.tools.MyDialog;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -59,10 +60,6 @@ public class SetNotify extends Activity {
 	private AsyncFacebookRunner mAsyncRunner;
 	protected static String tag="tag";
 	/**
-	 * 呼叫Main Thread的handler
-	 */
-	private Handler handler;
-	/**
 	 * handler裡的msg.what的各個變數名稱<br/>
 	 * 這個變數拿來做為當偵測到FB登入後，能夠發送訊息的Callback
 	 */
@@ -80,33 +77,7 @@ public class SetNotify extends Activity {
 		setContentView(R.layout.set_notify);
 
 		rl_set_notify = (RelativeLayout) findViewById(R.id.rl_set_notify);
-		facebook=new Facebook("171403682887181");//Facebook網站上別摔小安的應用程式ID
-		mAsyncRunner = new AsyncFacebookRunner(facebook);
-		
 
-		
-		//叫出主Thread的handler並覆寫，好讓程式可以handle我們要處理的事
-		handler = new Handler(){
-
-			@Override
-			public void handleMessage(Message msg) {
-				switch(msg.what){
-				case POSTTOFACEBOOK:
-					Bundle params = new Bundle();	
-
-	                MyTime gettime = new MyTime();
-
-	            	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是 "+gettime.getHHMMSS()+
-	            			"\n我的座標在 "+MyLocation.getLocation(SetNotify.this)+"\n快用GoogleMap貼上這個經緯度找我！");
-
-	            	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
-					
-					break;
-				}
-				super.handleMessage(msg);
-			}
-			
-		};
 		
 		//動態新增message button////////////////////////////
 		message_btn=new MySetButton(this,R.drawable.message_pic);
@@ -211,31 +182,29 @@ public class SetNotify extends Activity {
                     	case 1:
                     		MySharedPreferences.addPreference(SetNotify.this, "message_status", "true");
                     		setMessageButtonStatus();
-    						
-                            new AlertDialog.Builder(SetNotify.this)
-                            .setTitle(getString(R.string.attention))
-                		    .setIcon(R.drawable.warning)
-                		    .setMessage(R.string.attention_context)
-                		    
-                		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                		
-                		    @Override
-                		    public void onClick(DialogInterface dialog, int which) {
-
-//                		    	MySMS.sendSMS(SetNotify.this, MySharedPreferences.getPreference(SetNotify.this,"message_number",""), 
-//                		    			getString(R.string.message_context).replace("#location", MyLocation.getLocation(SetNotify.this))
-//                		    	    	+MySharedPreferences.getPreference(SetNotify.this, "message_context", getString(R.string.message_last_sentence_ifusernotype)));
-        						
-        						Toast.makeText(SetNotify.this, getString(R.string.message_context).replace("#location", MyLocation.getLocation(SetNotify.this))
-                		    	+MySharedPreferences.getPreference(SetNotify.this, "message_context", getString(R.string.message_last_sentence_ifusernotype)), Toast.LENGTH_LONG).show();
-        						ResponseDialog.newToast(SetNotify.this, getString(R.string.message_response), R.drawable.message_pic);
-                		    }})
-                		    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                		
-                		    @Override
-                		    public void onClick(DialogInterface dialog, int which) {
-                		    }})
-                		    .show();
+    						if(!MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
+    							 new AlertDialog.Builder(SetNotify.this)
+    	                            .setTitle(getString(R.string.attention))
+    	                		    .setIcon(R.drawable.warning)
+    	                		    .setMessage(R.string.attention_context)
+    	                		    
+    	                		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+    	                		
+    	                		    @Override
+    	                		    public void onClick(DialogInterface dialog, int which) {
+    	                		    	MyDispatcher.messageDispatcher(SetNotify.this.getApplicationContext());
+    	                		    	
+    	                		    }})
+    	                		    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+    	                		
+    	                		    @Override
+    	                		    public void onClick(DialogInterface dialog, int which) {
+    	                		    }})
+    	                		    .show();
+    						}else{
+    							 MyDialog.newDialog(SetNotify.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");
+    						}
+                           
                     		
     						
                     		break;
@@ -295,23 +264,8 @@ public class SetNotify extends Activity {
 					public void onClick(DialogInterface dialog, int which) {
 						switch(which){
 						case 0:
-							if(facebook!=null){
-//						Log.i(tag, "into facebook!=null");
-					
-						if(facebook.isSessionValid()==true){
-							Log.i(tag, "session valid: "+facebook.isSessionValid());
-							//當Session存在時，就不用登入了，直接發文
-							handler.sendEmptyMessage(POSTTOFACEBOOK);
-			            	
-						}else if(facebook.isSessionValid()==false){
-							Log.i(tag, "session valid: "+facebook.isSessionValid());
-							facebook.authorize(SetNotify.this, new String[]{"publish_stream"}, new LoginSuccessListener());//這行要加，因為有時候Session會過期
-						}
-						
-		            	
-					}else{
-						Log.i(tag, "facebook entity is null");
-					}
+							MyDispatcher mydispatcher = new MyDispatcher();
+							mydispatcher.facebookDispatcher(SetNotify.this.getApplicationContext(), SetNotify.this);
 							break;
 						}
 						
@@ -553,7 +507,6 @@ public class SetNotify extends Activity {
 		String facebook_status="";
 		if(MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", "").equals("")|
 			MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", "").equals("false")){
-//			Log.i(tag, "facebook_data_status: "+MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", ""));
 			facebook_data_status=getString(R.string.not_set);
 			facebook_status=getString(R.string.not_run);
 		}else{
@@ -562,9 +515,9 @@ public class SetNotify extends Activity {
 			//有設定才能啟動Facebook通知
 			if(MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("")|
 					MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("false")){
-				facebook_status=getString(R.string.runnning);
-			}else{		
 				facebook_status=getString(R.string.not_run);
+			}else{		
+				facebook_status=getString(R.string.runnning);
 			}
 		}
 		
@@ -609,6 +562,31 @@ public class SetNotify extends Activity {
 	            +getString(R.string.facebook_instruction)+ "</small>"*/));
 	}
 
+//	/**
+//	 * Facebook訊息發射器
+//	 */
+//	public void facebookDispacher(){
+//		facebook=new Facebook("171403682887181");//Facebook網站上別摔小安的應用程式ID
+//		mAsyncRunner = new AsyncFacebookRunner(facebook);
+////		if(facebook!=null){
+////			Log.i(tag, "into facebook!=null");
+//		
+//			if(facebook.isSessionValid()==true){
+//				Log.i(tag, "session valid: "+facebook.isSessionValid());
+//				//當Session存在時，就不用登入了，直接發文
+//				handler.sendEmptyMessage(POSTTOFACEBOOK);
+//            	
+//			}else if(facebook.isSessionValid()==false){
+//				Log.i(tag, "session valid: "+facebook.isSessionValid());
+//				facebook.authorize(SetNotify.this, new String[]{"publish_stream"}, new LoginSuccessListener());//這行要加，因為有時候Session會過期
+//			}
+//			
+//        	
+////		}else{
+////			Log.i(tag, "facebook entity is null");
+////		}
+//	}
+	
 	
 	/**
 	 * 檢查輸入是否為數字
@@ -621,60 +599,60 @@ public class SetNotify extends Activity {
 	    return pattern.matcher(str).matches();   
 	 } 
 	
-	/**
-	 * 改自Example.java範例的SampleRequestListener<br/>
-	 * Facebook源碼規範WebView完成PO文後，我們應該要寫一個監聽來做回應
-	 * 寫在onComplete()裡的是PO完文後，我們自己想做的事
-	 * @author simon
-	 *
-	 */
-    public class PostRequestListener extends BaseRequestListener {
-
-        public void onComplete(final String response) {
-            try {
-                // process the response here: executed in background thread
-
-                JSONObject json = Util.parseJson(response);
-                final String id = json.getString("id");
-                Log.i(tag, "post id: "+id);
-                // then post the processed result back to the UI thread
-                // if we do not do this, an runtime exception will be generated
-                // e.g. "CalledFromWrongThreadException: Only the original
-                // thread that created a view hierarchy can touch its views."
-                runOnUiThread(new Runnable() {
-                    public void run() {
-                    	Toast.makeText(SetNotify.this, getString(R.string.post_success), Toast.LENGTH_SHORT).show();
-                    	ResponseDialog.newToast(SetNotify.this, getString(R.string.post_success2), R.drawable.facebook_pic);
-                    	MySharedPreferences.addPreference(SetNotify.this, "facebook_data_status", "true");
-                    	setFacebookButtonStatus();
-                    }
-                });
-                
-            } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
-            } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
-            }
-        }
-    }
-    
-    /**
-     * 改自Example.java範例的SampleDialogListener<br/>
-     * 當成功登入後要做的動作可寫在onComplete()裡面
-     * 因為我的程式拿來登入+發測試文一次完成，
-     * 所以一旦偵測到Login了，就馬上sendMessage給main thead來Poll文
-     * @author simon
-     *
-     */
-    public class LoginSuccessListener extends BaseDialogListener {
-
-        public void onComplete(Bundle values) {
-        	Log.i(tag, "login success!");
-        	Log.i(tag, "access_token: "+values.getString("access_token"));
-        	//一旦偵測到Login了，就馬上sendMessage給main thead來Poll文
-        	handler.sendEmptyMessage(POSTTOFACEBOOK);
-        }
-    }
+//	/**
+//	 * 改自Example.java範例的SampleRequestListener<br/>
+//	 * Facebook源碼規範WebView完成PO文後，我們應該要寫一個監聽來做回應
+//	 * 寫在onComplete()裡的是PO完文後，我們自己想做的事
+//	 * @author simon
+//	 *
+//	 */
+//    public class PostRequestListener extends BaseRequestListener {
+//
+//        public void onComplete(final String response) {
+//            try {
+//                // process the response here: executed in background thread
+//
+//                JSONObject json = Util.parseJson(response);
+//                final String id = json.getString("id");
+//                Log.i(tag, "post id: "+id);
+//                // then post the processed result back to the UI thread
+//                // if we do not do this, an runtime exception will be generated
+//                // e.g. "CalledFromWrongThreadException: Only the original
+//                // thread that created a view hierarchy can touch its views."
+//                runOnUiThread(new Runnable() {
+//                    public void run() {
+//                    	Toast.makeText(SetNotify.this, getString(R.string.post_success), Toast.LENGTH_SHORT).show();
+//                    	MyDialog.newToast(SetNotify.this, getString(R.string.post_success2), R.drawable.facebook_pic);
+//                    	MySharedPreferences.addPreference(SetNotify.this, "facebook_data_status", "true");
+//                    	setFacebookButtonStatus();
+//                    }
+//                });
+//                
+//            } catch (JSONException e) {
+//                Log.w("Facebook-Example", "JSON Error in response");
+//            } catch (FacebookError e) {
+//                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
+//            }
+//        }
+//    }
+//    
+//    /**
+//     * 改自Example.java範例的SampleDialogListener<br/>
+//     * 當成功登入後要做的動作可寫在onComplete()裡面
+//     * 因為我的程式拿來登入+發測試文一次完成，
+//     * 所以一旦偵測到Login了，就馬上sendMessage給main thead來Poll文
+//     * @author simon
+//     *
+//     */
+//    public class LoginSuccessListener extends BaseDialogListener {
+//
+//        public void onComplete(Bundle values) {
+//        	Log.i(tag, "login success!");
+//        	Log.i(tag, "access_token: "+values.getString("access_token"));
+//        	//一旦偵測到Login了，就馬上sendMessage給main thead來Poll文
+//        	handler.sendEmptyMessage(POSTTOFACEBOOK);
+//        }
+//    }
     
 
 }

@@ -104,4 +104,19 @@ v1.0.0.15
 
 12/10
 v1.0.0.16
+1.更名︰原本DropService改為FallDetector
+2.新增MyDispatcher，將發送簡訊和Facebook文的方法寫在裡面，
+好讓Service和SetNotify裡的測試，可以共用Method，減少程式碼空間
+3.新增發送訊息Service︰InfoDispatcher，讓它去呼叫發送訊息的動作(發送訊息的動作寫在MyDispatcher裡)
+4.新增SwitchServer類別，因為現在有2個Service，
+如果在各別的程式裡啟動Service，程式碼會太龐大
+5.ResponseDialog更名為MyDialog
+6.修正Facebook按鈕昨天沒有發現的錯誤
+7.[假離開]功能實作完成，[待做]然後要關閉螢幕聲音並發送訊息告知主人。
+[待做]GPS Provider設定？
+[待做]Service被Task Manager砍殺的問題
+[待做]手機重開後要啟動Service的問題
+
+12/13
+v1.0.0.17
 1.

@@ -35,7 +35,7 @@ import android.view.Window;
  * 當掉落時，會開啟Fallen.java檔播放所有相關事件。如︰音效、震動、動畫…等
  * @author simon
  */
-public class DropService extends Service{
+public class FallDetector extends Service{
 
 
 
@@ -76,13 +76,13 @@ public class DropService extends Service{
 	
 	@Override
 	public IBinder onBind(Intent intent) {
-		Log.i(tag,"into DropService.onBind");
+		Log.i(tag,"into FallDetector.onBind");
 		return null;
 	}
 
 	@Override
 	public void onCreate() {
-		Log.i(tag,"into DropService.onCreate");
+		Log.i(tag,"into FallDetector.onCreate");
 		
 		Debug.startMethodTracing("methodtrace");
 		
@@ -108,7 +108,7 @@ public class DropService extends Service{
 		
 	
 		mysensor=new MySensor();
-		mysensor.startSensor(DropService.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
+		mysensor.startSensor(FallDetector.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
 		
 		super.onCreate();
 	}
@@ -116,7 +116,7 @@ public class DropService extends Service{
 
 	@Override
 	public void onDestroy() {
-		Log.i(tag,"into DropService.onDestroy");
+		Log.i(tag,"into FallDetector.onDestroy");
 		Debug.stopMethodTracing();
 	
 		mysensor.stopSensor();

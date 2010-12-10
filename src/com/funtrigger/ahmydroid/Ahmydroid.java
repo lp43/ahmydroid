@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.facebook.android.LoginPage;
 import com.facebook.android.Facebook;
+import com.funtrigger.tools.SwitchService;
 
 import android.app.Activity;
 import android.app.ActivityManager;
@@ -45,7 +46,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.15";
+	private String softVersion="v1.0.0.16";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -118,10 +119,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			@Override
 			public void onClick(View v) {
 				if(checkServiceExist()==false){
-					startService();
+					SwitchService.startService(Ahmydroid.this,FallDetector.class);
+					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
 					img_btn.setBackgroundResource(R.drawable.nostart);
 				}else if(checkServiceExist()==true){
-					stopService();
+					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
+					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
 					img_btn.setBackgroundResource(R.drawable.start);
 				}
 				
@@ -232,25 +235,6 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		}
 	}
 	
-	/**
-	 * 啟動摔落告知Service
-	 */
-	private void startService(){
-		Intent intent = new Intent();
-		intent.setClass(Ahmydroid.this,DropService.class);
-		Ahmydroid.this.startService(intent);
-		Toast.makeText(this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
-	}
-	
-	/**
-	 * 停止摔落告知Service
-	 */
-	private void stopService(){
-		Intent intent = new Intent();
-		intent.setClass(this, DropService.class);
-		stopService(intent);
-		Toast.makeText(this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
-	}
 	
 	/**
 	 * 專門檢查摔落告知的Service是否有開啟,

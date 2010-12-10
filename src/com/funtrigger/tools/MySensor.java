@@ -14,7 +14,7 @@ import java.net.HttpURLConnection;
 import java.util.List;
 
 import com.funtrigger.ahmydroid.Ahmydroid;
-import com.funtrigger.ahmydroid.DropService;
+import com.funtrigger.ahmydroid.FallDetector;
 import com.funtrigger.ahmydroid.Fallen;
 
 import android.content.Context;

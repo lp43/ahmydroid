@@ -17,7 +17,7 @@ import android.widget.Toast;
  * @author simon
  *
  */
-public class ResponseDialog {
+public class MyDialog {
 
 	private static String tag="tag"; 
 	public static Toast toast;
@@ -25,6 +25,7 @@ public class ResponseDialog {
 	/**
 	 * 顯示訊息視窗，並接收傳來的參數<br/>
 	 * @param context 產生此視窗的主體
+     * @param title 想要顯示的視窗標題
 	 * @param message 想要顯示的訊息內容
 	 * @param icon 想要顯示的icon
 	 */

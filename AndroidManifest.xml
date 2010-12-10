@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.funtrigger.ahmydroid"
-      android:versionCode="16" android:versionName="1.0.0.15">
+      android:versionCode="17" android:versionName="1.0.0.16">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:label="@string/app_name" android:name=".Ahmydroid" android:screenOrientation="nosensor" android:launchMode="singleInstance">
             <intent-filter>
@@ -10,10 +10,11 @@
             </intent-filter>
         </activity>
 
-    <service android:name="DropService"></service>
+    <service android:name="FallDetector"></service>
 <activity android:name="Fallen" android:screenOrientation="nosensor" android:launchMode="singleInstance"></activity>
 <activity android:name="com.facebook.android.LoginPage"></activity>
-<activity android:name="SetNotify" android:screenOrientation="nosensor"></activity>
+<activity android:name="SetNotify" android:screenOrientation="unspecified" android:configChanges="orientation"></activity>
+<service android:name="InfoDispatcher"></service>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 

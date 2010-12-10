@@ -13,7 +13,7 @@
     <string name="stopfallprotect">關閉「摔落告知」</string>
     <string name="set_notify">掉落告知設定</string>
     <string name="set_notify_mode">選擇掉落告知方式</string>
-	<string name="post_success">發文成功！</string>
+	<string name="post_success">Facebook發文成功！</string>
 	<string name="post_success2">請至Facebook的塗鴨牆查看！</string>
 	<string name="unlock">解鎖</string>
 	<string name="type_password">請輸入密碼</string>
@@ -47,7 +47,7 @@
 	<string name="attention">注意</string>
 	<string name="attention_context">該動作需自行負擔簡訊費用，是否繼續？</string>
 	<string name="message_response">測試簡訊已寄出！</string>
-	<string name="wrong_phone_number">手機號碼格式錯誤！無法存檔</string>
+	<string name="wrong_phone_number">手機號碼格式錯誤或尚未輸入！</string>
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>
