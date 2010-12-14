@@ -96,17 +96,20 @@ public class FallDetector extends Service{
 		
 		PendingIntent pIntent = PendingIntent.getActivity(this,0,new Intent(this, Ahmydroid.class),PendingIntent.FLAG_UPDATE_CURRENT);
 		notification.setLatestEventInfo(this,getString(R.string.app_name),getString(R.string.startingfallprotect),pIntent);
-
+		
 //		notification.defaults=Notification.DEFAULT_SOUND;//開啟音效
 		
 		//啟動震動
 		long[] vibrate = {0,100,200,300};
 		notification.vibrate = vibrate;
 		
-		mNotificationManager.notify(0,notification);
-		startForeground(0,notification);//將Service強制在前景執行
+		if(notification!=null){
+			Log.i(tag, "notification!=null");
+			startForeground(1,notification);//將Service強制在前景執行
+		}
+		mNotificationManager.notify(1,notification);
 		
-	
+		
 		mysensor=new MySensor();
 		mysensor.startSensor(FallDetector.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
 		
@@ -115,12 +118,26 @@ public class FallDetector extends Service{
 
 
 	@Override
+	public int onStartCommand(Intent intent, int flags, int startId) {
+//		return super.onStartCommand(intent, flags, startId);
+		return START_FLAG_REDELIVERY;
+	}
+
+//	@Override
+//	public void onStart(Intent intent, int startId) {
+//		Log.i(tag, "FallDetector.onStart");
+//		startForeground(0,notification);//將Service強制在前景執行
+//		super.onStart(intent, startId);
+//	}
+
+	@Override
 	public void onDestroy() {
 		Log.i(tag,"into FallDetector.onDestroy");
 		Debug.stopMethodTracing();
-	
+		
 		mysensor.stopSensor();
 		mNotificationManager.cancelAll();
+		  stopForeground(true);
 		if(wakeLock.isHeld()){
 			wakeLock.release();
 			Log.i(tag, "wakeLock release");

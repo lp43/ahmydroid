@@ -1,5 +1,7 @@
 package com.funtrigger.ahmydroid;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.facebook.android.LoginPage;
@@ -8,6 +10,7 @@ import com.funtrigger.tools.SwitchService;
 
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -46,7 +49,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.16";
+	private String softVersion="v1.0.0.17";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -86,7 +89,17 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	public static int times;
 	
     @Override
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		if(event.getKeyCode()==event.KEYCODE_BACK){
+			Log.i(tag, "key_back");
+		}
+		return super.dispatchKeyEvent(event);
+//		return true;
+	}
+
+	@Override
     public void onCreate(Bundle savedInstanceState) {
+		Log.i(tag, "Ahmydroid.onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.ahmyphone);
         button_how=(Button) findViewById(R.id.button_how);
@@ -110,7 +123,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 			@Override
 			public void onClick(View v) {
-				finish();
+//				finish();
+				ActivityManager activitymanager= (ActivityManager) Ahmydroid.this.getSystemService(ACTIVITY_SERVICE);
+				List<RunningAppProcessInfo> list=activitymanager.getRunningAppProcesses();
+				for(RunningAppProcessInfo a:list){
+					
+					Log.i(tag, "packageName:"+a.processName);
+				}
+				
+				
 			}
         	
         });
@@ -135,7 +156,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
     
 	@Override
 	protected void onResume() {
-		
+		Log.i(tag, "Ahmydroid.onResume");
 		setAndroid_Machine();
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);	
@@ -219,6 +240,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	
 	@Override
 	protected void onPause() {
+		Log.i(tag, "Ahmydroid.onPause");
 		sensormanager.unregisterListener(this);
 		super.onPause();
 	}
