@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.facebook.android.LoginPage;
 import com.facebook.android.Facebook;
+import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.SwitchService;
 
 import android.app.Activity;
@@ -49,7 +50,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.17";
+	private String softVersion="v1.0.0.18";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -141,10 +142,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			public void onClick(View v) {
 				if(checkServiceExist()==false){
 					SwitchService.startService(Ahmydroid.this,FallDetector.class);
+					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
 					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
 					img_btn.setBackgroundResource(R.drawable.nostart);
 				}else if(checkServiceExist()==true){
 					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
+					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
 					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
 					img_btn.setBackgroundResource(R.drawable.start);
 				}

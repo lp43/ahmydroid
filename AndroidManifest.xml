@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.funtrigger.ahmydroid"
-      android:versionCode="18" android:versionName="1.0.0.17">
+      android:versionName="1.0.0.18" android:versionCode="19">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:label="@string/app_name" android:name=".Ahmydroid" android:screenOrientation="nosensor" android:launchMode="singleInstance">
             <intent-filter>
@@ -15,6 +15,11 @@
 <activity android:name="com.facebook.android.LoginPage"></activity>
 <activity android:name="SetNotify" android:screenOrientation="unspecified" android:configChanges="orientation"></activity>
 <service android:name="InfoDispatcher"></service>
+
+<receiver android:name="BootCompletedReceiver">
+<intent-filter>
+<action android:name="android.intent.action.BOOT_COMPLETED" />
+</intent-filter></receiver>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 
@@ -26,6 +31,9 @@
 <uses-permission android:name="android.permission.INTERNET"></uses-permission>
 <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
+
+
+<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
 
 
 </manifest> 

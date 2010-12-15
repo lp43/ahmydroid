@@ -41,13 +41,20 @@
 	<string name="message_last_sentence_ifusernotype">請告訴我的主人，幫我找到回家的路！</string>
 	<string name="message_ps">該方式需支付簡訊費用</string>
 	<string name="facebook_ps">該方式需持續3G上網連線</string>
+	<string name="and">和</string>
 	<string name="set">設定</string>
 	<string name="test">測試</string>
+	<string name="clear_username">清除帳密</string>
+	<string name="username_cleared">帳密清除完成！</string>
 	<string name="send_test">發送測試</string>
 	<string name="attention">注意</string>
 	<string name="attention_context">該動作需自行負擔簡訊費用，是否繼續？</string>
 	<string name="message_response">測試簡訊已寄出！</string>
 	<string name="wrong_phone_number">手機號碼格式錯誤或尚未輸入！</string>
+	<string name="facebook_message_head">嗨！我是你的手機，我掉了！</string>
+	<string name="facebook_message_time">剛剛我看了系統時間是 #time</string>
+	<string name="facebook_message_location">我的位置在 #location</string>
+	<string name="facebook_message_last">快用GoogleMap貼上這個經緯度找我！</string>
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

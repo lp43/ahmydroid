@@ -3,6 +3,7 @@ package com.funtrigger.ahmydroid;
 import java.util.List;
 
 import com.funtrigger.tools.MySensor;
+import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyTime;
 
 import android.app.Notification;
@@ -105,9 +106,9 @@ public class FallDetector extends Service{
 		
 		if(notification!=null){
 			Log.i(tag, "notification!=null");
-			startForeground(1,notification);//將Service強制在前景執行
+			startForeground(R.string.app_name,notification);//將Service強制在前景執行
 		}
-		mNotificationManager.notify(1,notification);
+		mNotificationManager.notify(R.string.app_name,notification);
 		
 		
 		mysensor=new MySensor();
@@ -241,4 +242,5 @@ public class FallDetector extends Service{
 		}
 		
 	}
+
 }

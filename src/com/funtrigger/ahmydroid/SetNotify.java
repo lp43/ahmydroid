@@ -18,6 +18,9 @@ import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyTime;
 import com.funtrigger.tools.MyDialog;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -38,6 +41,7 @@ import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
+import android.webkit.CookieManager;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -258,7 +262,7 @@ public class SetNotify extends Activity {
 			public boolean onLongClick(View v) {
 				new AlertDialog.Builder(SetNotify.this)
 				.setTitle(R.string.please_choice)
-				.setItems(new String[]{getString(R.string.test)/*,getString(R.string.test)*/}, new DialogInterface.OnClickListener(){
+				.setItems(new String[]{getString(R.string.set)+getString(R.string.and)+getString(R.string.test),getString(R.string.clear_username)}, new DialogInterface.OnClickListener(){
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -266,6 +270,31 @@ public class SetNotify extends Activity {
 						case 0:
 							MyDispatcher mydispatcher = new MyDispatcher();
 							mydispatcher.facebookDispatcher(SetNotify.this.getApplicationContext(), SetNotify.this);
+							new Thread(){
+								public void run(){
+									while(MyDispatcher.id.equals("")){}
+									SetNotify.this.runOnUiThread(new Runnable(){
+										public void run(){
+											setFacebookButtonStatus();	
+										}
+									});
+								}
+							}.start();
+							
+							break;
+						case 1:
+							CookieManager cookie=CookieManager.getInstance();
+							cookie.removeAllCookie();
+							MySharedPreferences.addPreference(SetNotify.this, "facebook_data_status", "false");
+							setFacebookButtonStatus();
+							//AccountManager管不到FB
+//							AccountManager am=AccountManager.get(SetNotify.this);
+//							
+//							for(Account ac:am.getAccounts()){
+//								Log.i(tag, "ac name: "+ac.name);
+//								am.removeAccount(ac, null, null);
+//							}
+							MyDialog.newToast(SetNotify.this, getString(R.string.username_cleared), 0);
 							break;
 						}
 						
@@ -501,7 +530,7 @@ public class SetNotify extends Activity {
 	/**
 	 * 該函式用來重設Facebook按鈕狀態
 	 */
-	private void setFacebookButtonStatus(){
+	public void setFacebookButtonStatus(){
 		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
 		String facebook_data_status="";
 		String facebook_status="";

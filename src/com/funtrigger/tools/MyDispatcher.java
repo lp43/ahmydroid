@@ -1,5 +1,7 @@
 package com.funtrigger.tools;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -29,6 +31,7 @@ public class MyDispatcher {
 	Context context;
 	AsyncFacebookRunner mAsyncRunner;
 	private String tag="tag";
+	public static String id="";
 	
 	/**
 	 * SMS簡訊發射器
@@ -58,15 +61,7 @@ public class MyDispatcher {
 			if(facebook.isSessionValid()==true){
 				Log.i(tag, "session valid: "+facebook.isSessionValid());
 				//當Session存在時，就不用登入了，直接發文
-				Bundle params = new Bundle();	
-
-                MyTime gettime = new MyTime();
-
-            	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是 "+gettime.getHHMMSS()+
-            			"\n我的座標在 "+MyLocation.getLocation(context)+"\n快用GoogleMap貼上這個經緯度找我！");
-
-            	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
-				
+				sendFacebookMessageContext();
             	
 			}else if(facebook.isSessionValid()==false){
 				Log.i(tag, "session valid: "+facebook.isSessionValid());
@@ -79,6 +74,24 @@ public class MyDispatcher {
 //		}
 	}
 	
+	/**
+	 * 寄送Facebook的發文內容
+	 */
+	private void sendFacebookMessageContext(){
+		Bundle params = new Bundle();	
+
+        MyTime mytime = new MyTime();
+
+    	params.putString("message", context.getString(R.string.facebook_message_head)+"\n"+
+    			context.getString(R.string.facebook_message_time).replace("#time", mytime.getHHMMSS())+"\n"+
+    			context.getString(R.string.facebook_message_location).replace("#location", MyLocation.getLocation(context))+"\n"+
+    			context.getString(R.string.facebook_message_last));
+
+    	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
+		
+    	MySharedPreferences.addPreference(context, "facebook_data_status", "true");
+    	
+	}
 	/**
 	 * 改自Example.java範例的SampleRequestListener<br/>
 	 * Facebook源碼規範WebView完成PO文後，我們應該要寫一個監聽來做回應
@@ -93,7 +106,7 @@ public class MyDispatcher {
                 // process the response here: executed in background thread
 
                 JSONObject json = Util.parseJson(response);
-                final String id = json.getString("id");
+                id = json.getString("id");
                 Log.i(tag, "post id: "+id);
                 // then post the processed result back to the UI thread
                 // if we do not do this, an runtime exception will be generated
@@ -103,8 +116,7 @@ public class MyDispatcher {
                     public void run() {
                     	Toast.makeText(context, context.getString(R.string.post_success), Toast.LENGTH_SHORT).show();
                     	MyDialog.newToast(context, context.getString(R.string.post_success2), R.drawable.facebook_pic);
-                    	
-                 
+
                     }
                 });
                 
@@ -130,14 +142,7 @@ public class MyDispatcher {
         	Log.i(tag, "login success!");
         	Log.i(tag, "access_token: "+values.getString("access_token"));
         	//一旦偵測到Login了，就馬上sendMessage給main thead來Poll文
-        	Bundle params = new Bundle();	
-
-            MyTime gettime = new MyTime();
-
-        	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是 "+gettime.getHHMMSS()+
-        			"\n我的座標在 "+MyLocation.getLocation(context)+"\n快用GoogleMap貼上這個經緯度找我！");
-
-        	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
+        	sendFacebookMessageContext();
         }
     }
 }
