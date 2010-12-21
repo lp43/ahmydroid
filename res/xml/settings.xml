@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Copyright (C) 2010 AhmyDroid by FunTrigger
+該xml資料是Setting畫面的xml佈局，使用Preference類別來定義畫面
+-->
+
+<PreferenceScreen
+    android:title="@string/set" xmlns:android="http://schemas.android.com/apk/res/android">
+    
+    <PreferenceCategory
+           android:title="@string/alarm_set"/>           
+      <CheckBoxPreference
+            android:key="pick"
+            android:title="@string/pick_feature"
+            android:summary="@string/pick_feature_instroduction"/>             
+      <EditTextPreference
+            android:title="@string/pick_set"
+            android:dependency="pick"
+            android:dialogLayout="@layout/context_to_pick"
+            android:dialogIcon="@drawable/pickup_spic"/>  
+      <EditTextPreference
+      		android:key="password"
+            android:title="@string/unlock_password_set"
+            android:dialogLayout="@layout/create_new_password"
+            android:dialogIcon="@drawable/verify"
+            android:summary="@string/unlock_password_instroduction"/> 
+                            
+   <PreferenceCategory
+           android:title="@string/location_setting"/>       
+       <CheckBoxPreference
+             android:key="location"
+             android:title="@string/location_feature"
+             android:summary="@string/location_feature_instroduction"/>
+                        
+       <CheckBoxPreference
+             android:key="message"
+             android:title="@string/message_feature"
+             android:summary="@string/message_feature_instroduction"
+             android:dependency="location"/>             
+       <EditTextPreference
+             android:title="@string/message_set"
+             android:dependency="message"
+             android:dialogLayout="@layout/context_to_message"
+             android:dialogIcon="@drawable/message_spic"/>
+             
+       <CheckBoxPreference
+             android:key="facebook"
+             android:title="@string/facebook_feature"
+             android:summary="@string/facebook_feature_instroduction"
+             android:dependency="location"/>             
+       <EditTextPreference
+             android:title="@string/facebook_set"
+             android:dependency="facebook"/>
+
+</PreferenceScreen>

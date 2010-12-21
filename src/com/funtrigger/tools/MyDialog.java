@@ -1,5 +1,7 @@
 package com.funtrigger.tools;
 
+import com.facebook.android.R;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -8,8 +10,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -82,9 +86,14 @@ public class MyDialog {
              .setView(EntryView)
              .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.ok), new DialogInterface.OnClickListener() {
                  public void onClick(DialogInterface dialog, int whichButton) {
-                	 //TODO 這裡必須還要寫核對帳密的機制
-                     Activity fallen=(Activity)context;
-                     fallen.finish();
+                	 EditText password=(EditText) EntryView.findViewById(R.id.password_to_exit);
+                	 if(password.getText().toString().equals(MySharedPreferences.getPreference(context, "unlock_password", ""))){
+                		  Activity fallen=(Activity)context;
+                          fallen.finish();
+                	 }else{
+                		  newDialog(context,context.getString(R.string.attention),context.getString(R.string.type_wrong_password),"warning");
+                	 }
+                   
                  }
              })
              .setNegativeButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.cancel), new DialogInterface.OnClickListener() {
@@ -93,22 +102,61 @@ public class MyDialog {
              })
              .show();
 	}
-
+	/**
+	 * 如果之前有存密碼，當使用者又按一次設定解鎖密碼，會進來這裡要求先輸入之前的密碼，
+	 * 才能重新設定密碼
+	 * @param context 要做事情的呼叫主體
+	 */
+	public static void passwordToChangePass(final Context context){
+		 LayoutInflater factory = LayoutInflater.from(context);
+         final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.password_to_exit), null);
+         new AlertDialog.Builder(context)
+             .setTitle(context.getResources().getText(com.funtrigger.ahmydroid.R.string.please_type))
+             .setView(EntryView)
+             .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.ok), new DialogInterface.OnClickListener() {
+                 public void onClick(DialogInterface dialog, int whichButton) {
+                	 EditText password=(EditText) EntryView.findViewById(R.id.password_to_exit);
+                	 if(password.getText().toString().equals(MySharedPreferences.getPreference(context, "unlock_password", ""))){
+                		 createNewPassword(context,R.string.password_modify);
+                	 }else{
+                		  newDialog(context,context.getString(R.string.attention),context.getString(R.string.type_wrong_password),"warning");
+                	 }
+                   
+                 }
+             })
+             .setNegativeButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.cancel), new DialogInterface.OnClickListener() {
+                 public void onClick(DialogInterface dialog, int whichButton) {
+                 }
+             })
+             .show();
+	}
 	/**
 	 * 使用者在設定新帳號密碼時，會被呼叫的視窗
 	 * @param context 啟動該視窗的呼叫主體
 	 */
-	public static void createNewPassword(Context context){
-		 LayoutInflater factory = LayoutInflater.from(context);
-        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.password_to_exit), null);
+	public static void createNewPassword(final Context context,int title){
+		LayoutInflater factory = LayoutInflater.from(context);
+        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.create_new_password), null);
         new AlertDialog.Builder(context)
             .setIcon(context.getResources().getDrawable(com.funtrigger.ahmydroid.R.drawable.verify))
-            .setTitle(context.getResources().getText(com.funtrigger.ahmydroid.R.string.exit))
+            .setTitle(title)
             .setView(EntryView)
             .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.ok), new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
+                	
 
-                    /* User clicked OK so do some stuff */
+                		Log.i(tag, "into unlock_password no data");
+                		EditText password1=(EditText) EntryView.findViewById(R.id.password_first_type);
+	                	EditText password2=(EditText) EntryView.findViewById(R.id.password_second_type);
+	                	if(password1.getText().toString().equals(password2.getText().toString())){
+	                		MySharedPreferences.addPreference(context, "unlock_password", password1.getText().toString());
+	                		newToast(context,context.getString(R.string.password_saved),R.drawable.verify);
+	                	}else{
+	                		MyDialog.newDialog(context, context.getString(R.string.attention), context.getString(R.string.type_dismatch), "warning");
+	                	}
+                	
+	                	
+                	
                 }
             })
             .setNegativeButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.cancel), new DialogInterface.OnClickListener() {
@@ -120,6 +168,26 @@ public class MyDialog {
             .show();
 	}
 	
+	/**
+	 * 該訊息視窗用來顯示每種告知功能的介紹
+	 * @param context
+	 */
+	public static void helpDialog(final Context context,int icon,String title,String content){
+		LayoutInflater factory = LayoutInflater.from(context);
+        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.help), null);
+        TextView helpContent=(TextView) EntryView.findViewById(R.id.help_context);
+        helpContent.setText(content);
+        new AlertDialog.Builder(context)
+            .setIcon(icon)
+            .setTitle(title)
+            .setView(EntryView)
+            .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.ok), new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                }
+            })
+
+            .show();
+	}
     /**
      * 這個函式專用來清除已顯示中的橘子Toast
      */

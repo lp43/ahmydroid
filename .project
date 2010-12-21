@@ -32,9 +32,9 @@
 	</natures>
 	<linkedResources>
 		<link>
-			<name>FacebookSDK</name>
+			<name>FacebookSDK_src</name>
 			<type>2</type>
-			<locationURI>_android_FacebookSDK/src</locationURI>
+			<locationURI>_android_FacebookSDK_9c850f74/src</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>

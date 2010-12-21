@@ -85,7 +85,7 @@ public class FallDetector extends Service{
 	public void onCreate() {
 		Log.i(tag,"into FallDetector.onCreate");
 		
-		Debug.startMethodTracing("methodtrace");
+//		Debug.startMethodTracing("methodtrace");
 		
 		this.registerReceiver(broadcastreceiver=new DropReceiver(), new IntentFilter("STARTFALLEN"));
 		acquireWakeLock();
@@ -118,11 +118,11 @@ public class FallDetector extends Service{
 	}
 
 
-	@Override
-	public int onStartCommand(Intent intent, int flags, int startId) {
-//		return super.onStartCommand(intent, flags, startId);
-		return START_FLAG_REDELIVERY;
-	}
+//	@Override
+//	public int onStartCommand(Intent intent, int flags, int startId) {
+////		return super.onStartCommand(intent, flags, startId);
+//		return START_FLAG_REDELIVERY;
+//	}
 
 //	@Override
 //	public void onStart(Intent intent, int startId) {
@@ -134,7 +134,7 @@ public class FallDetector extends Service{
 	@Override
 	public void onDestroy() {
 		Log.i(tag,"into FallDetector.onDestroy");
-		Debug.stopMethodTracing();
+//		Debug.stopMethodTracing();
 		
 		mysensor.stopSensor();
 		mNotificationManager.cancelAll();

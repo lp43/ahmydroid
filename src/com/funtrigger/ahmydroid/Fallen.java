@@ -10,9 +10,7 @@ import com.facebook.android.BaseDialogListener;
 import com.facebook.android.BaseRequestListener;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
-import com.facebook.android.R;
 import com.facebook.android.Util;
-
 import com.funtrigger.tools.MyDispatcher;
 import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySensor;
@@ -110,7 +108,17 @@ public class Fallen extends Activity{
      * 怎麼玩變數。<br/>
      * 這個變數在該類別沒有功能，所以必須把他找出來並隱藏
      */
-	private Button button_how,button_insvisible,button_exit;
+	private Button button_how;
+    /**
+     * 隱藏按鈕。<br/>
+     * 這個按鈕按下去才會真的關閉小安
+     */
+	private Button button_insvisible;
+    /**
+     * 假離開按鈕。<br/>
+     * 這個按鈕按下去會馬上發送簡訊或Facebook
+     */	
+	private Button button_exit;
 	/**
 	 * 該變數是控制小綠人的圖形按鈕元件
 	 */

@@ -40,9 +40,15 @@ public class MyLocation {
 			String bestProvider=lm.getBestProvider(MyLocation.getBestProvider(), true);
 			Log.i(tag, "Best provider is: "+bestProvider);
 			
-			location = lm.getLastKnownLocation(bestProvider);
-//			Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
-			
+			//這斷判斷是針對若取回來的最佳Provider為空，則強制指派Provider是AGPS
+			if(bestProvider!=null){
+				location = lm.getLastKnownLocation(bestProvider);
+				
+				Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
+			}else{
+				//TODO 開啟對話框請使用者先啟動系統定位
+			}
+
 		}else if(recProvider.equals("gps")){
 	    	location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 //	    	Toast.makeText(context, "provider is gps", Toast.LENGTH_SHORT).show();

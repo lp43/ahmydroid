@@ -84,7 +84,7 @@ public class SetNotify extends Activity {
 
 		
 		//動態新增message button////////////////////////////
-		message_btn=new MySetButton(this,R.drawable.message_pic);
+		message_btn=new MySetButton(this,R.drawable.message_pic,R.drawable.message_spic);
 
 		RelativeLayout.LayoutParams params=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,110);
 		params.setMargins(0, 10, 0, 0);
@@ -92,177 +92,167 @@ public class SetNotify extends Activity {
 		
 		message_btn.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
 
-		setMessageButtonStatus();
+		refreshMessageButtonStatus();
 		
 		message_btn.setOnClickListener(new OnClickListener(){
 		
 					@Override
 					public void onClick(View v) {
+						new AlertDialog.Builder(SetNotify.this)
+		                .setTitle(R.string.please_choice)
+		                .setItems(new String[]{getString(R.string.set),getString(R.string.send_test),getString(R.string.help),"開關"}, new DialogInterface.OnClickListener() {
+		                    public void onClick(DialogInterface dialog, int which) {
+		                    	switch(which){
+		                    	case 0:
+		                    		LayoutInflater factory=LayoutInflater.from(SetNotify.this);
+		                        	final View message_dialog=factory.inflate(R.layout.context_to_message, null);
+		                        	final EditText type_message_number=(EditText) message_dialog.findViewById(R.id.type_message_number);
+		                        	final EditText type_message_context=(EditText) message_dialog.findViewById(R.id.type_message_context);
+		                        	
+		                        	//如果不為空，則將存放在SharedPreferences的值設定到EditText
+		                        	if(!MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
+		                        		type_message_number.setText(MySharedPreferences.getPreference(SetNotify.this, "message_number",getString(R.string.default_number_context)));
+		                        	}
+		                        	if(!MySharedPreferences.getPreference(SetNotify.this, "message_context", "").equals("")){
+		                        		type_message_context.setText(MySharedPreferences.getPreference(SetNotify.this, "message_context",getString(R.string.default_message_context)));
+		                        	}
+		                        	
+		                        	new AlertDialog.Builder(SetNotify.this)
+		                        	.setTitle(R.string.please_type)
+		                        	.setView(message_dialog)
+		                        	.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
 
-						if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")|
-								MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")){
-							MySharedPreferences.addPreference(SetNotify.this, "message_status", "true");
-						}else{
-							MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
-						}
-					
-						setMessageButtonStatus();
+		    							@Override
+		    							public void onClick(DialogInterface dialog,
+		    									int which) {
+		    								
+		    								//如果輸入的字串是數字，才新增進SharedPreferences
+		    								if(SetNotify.isNumeric(type_message_number.getText().toString())){
+		    									MySharedPreferences.addPreference(SetNotify.this, "message_number", type_message_number.getText().toString());	
+		    								}else{
+		    									new AlertDialog.Builder(SetNotify.this)
+		    									.setTitle(R.string.attention)
+		    									.setMessage(R.string.wrong_phone_number)
+		    									.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+
+
+													@Override
+													public void onClick(
+															DialogInterface dialog,	int which) {
+														
+													}
+
+		    										
+		    									})
+		    									.show();
+		    								}
+		    								
+		    								
+											if(type_message_context.getText().toString().equals("")){
+												MySharedPreferences.removeKey(SetNotify.this, "message_context");
+											}else{
+												MySharedPreferences.addPreference(SetNotify.this, "message_context", type_message_context.getText().toString());
+											}
+											refreshMessageButtonStatus();
+		    								
+		    							}
+		                        		
+		                        	})
+		                        	.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+		    							
+		    							@Override
+		    							public void onClick(DialogInterface dialog, int which) {
+		    							}
+		    						})
+		                        	.show();
+		                    		break;
+		                    		
+		                    	case 1:
+		                    		MySharedPreferences.addPreference(SetNotify.this, "message_status", "true");
+		                    		refreshMessageButtonStatus();
+		    						if(!MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
+		    							 new AlertDialog.Builder(SetNotify.this)
+		    	                            .setTitle(getString(R.string.attention))
+		    	                		    .setIcon(R.drawable.warning)
+		    	                		    .setMessage(R.string.attention_context)
+		    	                		    
+		    	                		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+		    	                		
+		    	                		    @Override
+		    	                		    public void onClick(DialogInterface dialog, int which) {
+		    	                		    	MyDispatcher.messageDispatcher(SetNotify.this.getApplicationContext());
+		    	                		    	
+		    	                		    }})
+		    	                		    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+		    	                		
+		    	                		    @Override
+		    	                		    public void onClick(DialogInterface dialog, int which) {
+		    	                		    }})
+		    	                		    .show();
+		    						}else{
+		    							 MyDialog.newDialog(SetNotify.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");
+		    						}
+		                    		break;
+		                    	case 2:
+		                    		MyDialog.helpDialog(SetNotify.this,R.drawable.message_spic, getString(R.string.SMS)+getString(R.string.notify), 
+		                    				getString(R.string.instruction_head)+getString(R.string.message_instruction)+"\n"+"\n"+getString(R.string.ps)+getString(R.string.message_ps));
+		                    		break;
+		                    	case 3:
+		                    		if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")|
+		    								MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")){
+		    							MySharedPreferences.addPreference(SetNotify.this, "message_status", "true");
+		    						}else{
+		    							MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
+		    						}
+		    					
+		    						refreshMessageButtonStatus();
+		                    	}
+		                    	
+		                    	
+		                    }
+		                })
+		                .setPositiveButton(R.string.cancel, new  DialogInterface.OnClickListener(){
+
+							@Override
+							public void onClick(DialogInterface dialog, int which) {	
+							}
+		                	
+		                })
+		                .show();
+						Log.i(tag, String.valueOf(MySharedPreferences.getPreference(SetNotify.this, "message_status", "")));
+					       			
 					}
 					
 				});
-		message_btn.setOnLongClickListener(new OnLongClickListener(){
-
-			@Override
-			public boolean onLongClick(View v) {
-				new AlertDialog.Builder(SetNotify.this)
-                .setTitle(R.string.please_choice)
-                .setItems(new String[]{getString(R.string.set),getString(R.string.send_test)}, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                    	switch(which){
-                    	case 0:
-                    		LayoutInflater factory=LayoutInflater.from(SetNotify.this);
-                        	final View message_dialog=factory.inflate(R.layout.context_to_message, null);
-                        	final EditText type_message_number=(EditText) message_dialog.findViewById(R.id.type_message_number);
-                        	final EditText type_message_context=(EditText) message_dialog.findViewById(R.id.type_message_context);
-                        	
-                        	//如果不為空，則將存放在SharedPreferences的值設定到EditText
-                        	if(!MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
-                        		type_message_number.setText(MySharedPreferences.getPreference(SetNotify.this, "message_number",getString(R.string.default_number_context)));
-                        	}
-                        	if(!MySharedPreferences.getPreference(SetNotify.this, "message_context", "").equals("")){
-                        		type_message_context.setText(MySharedPreferences.getPreference(SetNotify.this, "message_context",getString(R.string.default_message_context)));
-                        	}
-                        	
-                        	new AlertDialog.Builder(SetNotify.this)
-                        	.setTitle(R.string.please_type)
-                        	.setView(message_dialog)
-                        	.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
-
-    							@Override
-    							public void onClick(DialogInterface dialog,
-    									int which) {
-    								
-    								//如果輸入的字串是數字，才新增進SharedPreferences
-    								if(SetNotify.isNumeric(type_message_number.getText().toString())){
-    									MySharedPreferences.addPreference(SetNotify.this, "message_number", type_message_number.getText().toString());	
-    								}else{
-    									new AlertDialog.Builder(SetNotify.this)
-    									.setTitle(R.string.attention)
-    									.setMessage(R.string.wrong_phone_number)
-    									.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
-
-
-											@Override
-											public void onClick(
-													DialogInterface dialog,
-													int which) {
-												
-											}
-
-    										
-    									})
-    									.show();
-    								}
-    								
-									if(type_message_context.getText().toString().equals("")){
-										MySharedPreferences.removeKey(SetNotify.this, "message_context");
-									}else{
-										MySharedPreferences.addPreference(SetNotify.this, "message_context", type_message_context.getText().toString());
-									}
-    									setMessageButtonStatus();
-    								
-    							}
-                        		
-                        	})
-                        	.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-    							
-    							@Override
-    							public void onClick(DialogInterface dialog, int which) {
-    							}
-    						})
-                        	.show();
-                    		break;
-                    		
-                    	case 1:
-                    		MySharedPreferences.addPreference(SetNotify.this, "message_status", "true");
-                    		setMessageButtonStatus();
-    						if(!MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")){
-    							 new AlertDialog.Builder(SetNotify.this)
-    	                            .setTitle(getString(R.string.attention))
-    	                		    .setIcon(R.drawable.warning)
-    	                		    .setMessage(R.string.attention_context)
-    	                		    
-    	                		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-    	                		
-    	                		    @Override
-    	                		    public void onClick(DialogInterface dialog, int which) {
-    	                		    	MyDispatcher.messageDispatcher(SetNotify.this.getApplicationContext());
-    	                		    	
-    	                		    }})
-    	                		    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-    	                		
-    	                		    @Override
-    	                		    public void onClick(DialogInterface dialog, int which) {
-    	                		    }})
-    	                		    .show();
-    						}else{
-    							 MyDialog.newDialog(SetNotify.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");
-    						}
-                           
-                    		
-    						
-                    		break;
-                    	}
-                    	
-                    	
-                    }
-                })
-                .setPositiveButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {	
-					}
-                	
-                })
-                .show();
-			
-			       			return false;
-			}
-			
-		});
+		
 		rl_set_notify.addView(message_btn);
 		//////////////////////////////////////////////
 		
 		//動態新增Facebook button///////////////////////////
-		facebook_btn=new MySetButton(this,R.drawable.facebook_pic);
+		facebook_btn=new MySetButton(this,R.drawable.facebook_pic,R.drawable.facebook_spic);
 		RelativeLayout.LayoutParams params_facebook=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,110);
 		params_facebook.setMargins(0, message_btn.getCompoundPaddingTop()+message_btn.getLayoutParams().height+10, 0, 0);
 		facebook_btn.setLayoutParams(params_facebook);
 		facebook_btn.setGravity(Gravity.CENTER_VERTICAL|Gravity.LEFT);
 
-		setFacebookButtonStatus();
+		refreshFacebookButtonStatus();
 		
 		facebook_btn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
+				
+/*				//點擊就更換按鈕啟動狀態的程式碼
 				if(MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("false")|
 						MySharedPreferences.getPreference(SetNotify.this, "facebook_status", "").equals("")){
 					MySharedPreferences.addPreference(SetNotify.this, "facebook_status", "true");
 				}else{
 					MySharedPreferences.addPreference(SetNotify.this, "facebook_status", "false");
 				}
-				setFacebookButtonStatus();
+				refreshFacebookButtonStatus();*/
 				
-			}
-			
-		});
-		facebook_btn.setOnLongClickListener(new OnLongClickListener(){
-
-			@Override
-			public boolean onLongClick(View v) {
 				new AlertDialog.Builder(SetNotify.this)
 				.setTitle(R.string.please_choice)
-				.setItems(new String[]{getString(R.string.set)+getString(R.string.and)+getString(R.string.test),getString(R.string.clear_username)}, new DialogInterface.OnClickListener(){
+				.setItems(new String[]{getString(R.string.set)+getString(R.string.and)+getString(R.string.test),getString(R.string.clear_username),getString(R.string.help)}, new DialogInterface.OnClickListener(){
 
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -275,7 +265,7 @@ public class SetNotify extends Activity {
 									while(MyDispatcher.id.equals("")){}
 									SetNotify.this.runOnUiThread(new Runnable(){
 										public void run(){
-											setFacebookButtonStatus();	
+											refreshFacebookButtonStatus();	
 										}
 									});
 								}
@@ -286,7 +276,7 @@ public class SetNotify extends Activity {
 							CookieManager cookie=CookieManager.getInstance();
 							cookie.removeAllCookie();
 							MySharedPreferences.addPreference(SetNotify.this, "facebook_data_status", "false");
-							setFacebookButtonStatus();
+							refreshFacebookButtonStatus();
 							//AccountManager管不到FB
 //							AccountManager am=AccountManager.get(SetNotify.this);
 //							
@@ -296,23 +286,32 @@ public class SetNotify extends Activity {
 //							}
 							MyDialog.newToast(SetNotify.this, getString(R.string.username_cleared), 0);
 							break;
+						case 2:
+							MyDialog.helpDialog(SetNotify.this,R.drawable.facebook_spic, getString(R.string.facebook)+getString(R.string.notify), 
+                    				getString(R.string.instruction_head)+getString(R.string.facebook_instruction)+"\n"+"\n"+getString(R.string.ps)+getString(R.string.facebook_ps));
+							break;
 						}
 						
 					}	
 					
 				})
-				.show();
-		
-				
-				return false;
+				.setPositiveButton(R.string.cancel, new  DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {	
+				}
+                	
+                })
+				.show();		
 			}
 			
 		});
+		
 		rl_set_notify.addView(facebook_btn);	
 		////////////////////////////////////////////
 		
 		//動態新增拾獲者button///////////////////////////////
-		pick_btn=new MySetButton(this,R.drawable.pickup_pic);
+		pick_btn=new MySetButton(this,R.drawable.pickup_pic,R.drawable.pickup_spic);
 		RelativeLayout.LayoutParams params_pick=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,110);
 		params_pick.setMargins(0, message_btn.getCompoundPaddingTop()+message_btn.getLayoutParams().height+facebook_btn.getCompoundPaddingTop()+facebook_btn.getLayoutParams().height+10, 0, 0);
 
@@ -322,11 +321,13 @@ public class SetNotify extends Activity {
 			MySharedPreferences.addPreference(SetNotify.this, "pick_status", "false");
 		}
 		
-		setPickButtonStatus();
+		refreshPickButtonStatus();
 
 		pick_btn.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View v) {
+				
+/*				//點擊就更換按鈕啟動狀態的程式碼
 				if(MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("false")|
 						MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("")){
 					MySharedPreferences.addPreference(SetNotify.this, "pick_status", "true");
@@ -334,18 +335,10 @@ public class SetNotify extends Activity {
 					MySharedPreferences.addPreference(SetNotify.this, "pick_status", "false");
 				}
 			
-				setPickButtonStatus();
-			}
-			
-		});
-		
-		//設定pick_btn長按事件
-		pick_btn.setOnLongClickListener(new OnLongClickListener(){
-			@Override
-			public boolean onLongClick(View v) {
+				refreshPickButtonStatus();*/
 				new AlertDialog.Builder(SetNotify.this)
                 .setTitle(R.string.please_choice)
-                .setItems(new String[]{getString(R.string.set),getString(R.string.test)}, new DialogInterface.OnClickListener() {
+                .setItems(new String[]{getString(R.string.set),getString(R.string.test),getString(R.string.set_unlock_password),getString(R.string.help)}, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     	switch(which){
                     	case 0:
@@ -369,7 +362,7 @@ public class SetNotify extends Activity {
     									int which) {
     								
     									MySharedPreferences.addPreference(SetNotify.this, "pick_message_context", type_pick_context.getText().toString());
-    									setPickButtonStatus();
+    									refreshPickButtonStatus();
     								
     							}
                         		
@@ -384,11 +377,26 @@ public class SetNotify extends Activity {
                     		break;
                     	case 1:
                     		MySharedPreferences.addPreference(SetNotify.this, "pick_status", "true");
-                    		setPickButtonStatus();
+                    		refreshPickButtonStatus();
                     		Intent intent = new Intent();
                     		intent.setClass(SetNotify.this, Fallen.class);
                     		startActivity(intent);
                     		break;
+                    	case 2:
+                    		//如果之前沒存密碼，就新增，否則要先輸入舊密碼，才能修改密碼
+                    		if(MySharedPreferences.getPreference(SetNotify.this, "unlock_password", "").equals("")|
+                    				MySharedPreferences.getPreference(SetNotify.this, "unlock_password", "").equals("false")){
+                    			MyDialog.createNewPassword(SetNotify.this,R.string.password_create);
+                    		}else{
+                    			MyDialog.passwordToChangePass(SetNotify.this);
+                    		}
+                    		
+                    		break;
+                    	case 3:
+                    		MyDialog.helpDialog(SetNotify.this,R.drawable.pickup_spic, getString(R.string.pick)+getString(R.string.notify), 
+                    				getString(R.string.instruction_head)+getString(R.string.pick_instruction));
+                    		break;
+
                     	}
                     	
                     	
@@ -402,11 +410,11 @@ public class SetNotify extends Activity {
                 	
                 })
                 .show();
+				
+			}
 			
-			       			return false;
-			       			}
-						
 		});
+		
 		
 		rl_set_notify.addView(pick_btn);	
 		/////////////////////////////////////////////
@@ -495,31 +503,28 @@ public class SetNotify extends Activity {
 	/**
 	 * 該函式用來重設簡訊發送按鈕狀態
 	 */
-	private void setMessageButtonStatus(){
+	private void refreshMessageButtonStatus(){
 		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
 		String message_data_status="";
 		String message_status="";
 		if(MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("")|
-				MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("false")){
-			message_data_status=getString(R.string.not_set);
+			MySharedPreferences.getPreference(SetNotify.this, "message_number", "").equals("false")){
 			MySharedPreferences.addPreference(SetNotify.this, "message_status", "false");
+			message_data_status=getString(R.string.not_set);
 			message_status=getString(R.string.not_run);
 		}else{
 			message_data_status=getString(R.string.been_set);
 			
-			
+			//有設定才能啟動SMS通知
 			if(MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("")|
-					MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")){
+				MySharedPreferences.getPreference(SetNotify.this, "message_status", "").equals("false")){
 				message_status=getString(R.string.not_run);
 			}else{
 				message_status=getString(R.string.runnning);
 			}		
 			
 		}
-		
-
-
-		
+			Log.i(tag, "ready to switch");
 		message_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+message_data_status
 				+ "</b>" +  "<br />" +
 				"<b>" + getString(R.string.status)+message_status + "</b>" /*+  "<br />" + "<br />" +
@@ -530,12 +535,13 @@ public class SetNotify extends Activity {
 	/**
 	 * 該函式用來重設Facebook按鈕狀態
 	 */
-	public void setFacebookButtonStatus(){
+	public void refreshFacebookButtonStatus(){
 		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
 		String facebook_data_status="";
 		String facebook_status="";
 		if(MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", "").equals("")|
 			MySharedPreferences.getPreference(SetNotify.this, "facebook_data_status", "").equals("false")){
+			MySharedPreferences.addPreference(SetNotify.this, "facebook_status", "false");
 			facebook_data_status=getString(R.string.not_set);
 			facebook_status=getString(R.string.not_run);
 		}else{
@@ -550,11 +556,6 @@ public class SetNotify extends Activity {
 			}
 		}
 		
-		
-		
-
-
-		
 		facebook_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+facebook_data_status
 				+ "</b>" +  "<br />" +
 				"<b>" + getString(R.string.status)+facebook_status + "</b>" /*+  "<br />" + "<br />" +
@@ -565,24 +566,26 @@ public class SetNotify extends Activity {
 	/**
 	 * 該函式用來重設拾獲按鈕狀態
 	 */
-	private void setPickButtonStatus(){
+	private void refreshPickButtonStatus(){
 		//如果SharedPreferences裡有設定，資料就顯示為[已設定]
 		String pick_data_status="";
-		if(MySharedPreferences.getPreference(SetNotify.this, "pick_message_context", "").equals("")){
-			pick_data_status=getString(R.string.not_set);
-			MySharedPreferences.addPreference(SetNotify.this, "pick_status", "false");
-		}else{
-			pick_data_status=getString(R.string.been_set);
-		}
-		
 		String pick_status="";
-		if(MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("")|
-				MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("false")){
+		if(MySharedPreferences.getPreference(SetNotify.this, "pick_message_context", "").equals("")|
+			MySharedPreferences.getPreference(SetNotify.this, "pick_message_context", "").equals("false")){
+			MySharedPreferences.addPreference(SetNotify.this, "pick_status", "false");
+			pick_data_status=getString(R.string.not_set);
 			pick_status=getString(R.string.not_run);
 		}else{
-			pick_status=getString(R.string.runnning);
+			
+			pick_data_status=getString(R.string.been_set);
+			//有設定才能啟動拾獲者通知
+			if(MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("")|
+					MySharedPreferences.getPreference(SetNotify.this, "pick_status", "").equals("false")){
+				pick_status=getString(R.string.not_run);
+			}else{		
+				pick_status=getString(R.string.runnning);
+			}
 		}
-
 		
 		pick_btn.setText(Html.fromHtml("<b>" + getString(R.string.data)+pick_data_status
 				+ "</b>" +  "<br />" +

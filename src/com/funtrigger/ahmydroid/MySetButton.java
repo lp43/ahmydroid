@@ -14,9 +14,9 @@ public class MySetButton extends Button {
 //		super(context);
 //		createButton(context,icon);
 //	}
-	public MySetButton(Context context,int icon) {
+	public MySetButton(Context context,int icon,int check_icon) {
 		super(context);
-		createButton(context,icon);
+		createButton(context,icon,check_icon);
 	}
 	
 
@@ -30,9 +30,10 @@ public class MySetButton extends Button {
 		// TODO Auto-generated constructor stub
 	}
 
-	private void createButton(Context context,int icon){
+	private void createButton(Context context,int icon,int check_icon){
 		setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_ground));
-		setCompoundDrawablesWithIntrinsicBounds(icon, 0, 0, 0);
+		
+		setCompoundDrawablesWithIntrinsicBounds(icon, 0, check_icon,0);
 		setSingleLine(false);
 	}
 	

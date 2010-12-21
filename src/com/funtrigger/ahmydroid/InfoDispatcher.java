@@ -34,9 +34,9 @@ public class InfoDispatcher extends Service {
 	 */
 	public void checkSettingStatus(){
 		message_status=MySharedPreferences.getPreference(this, "message_status", "");
-//		Log.i(tag, "message_status:"+ MySharedPreferences.getPreference(this, "message_status", ""));
+		Log.i(tag, "message_status:"+ MySharedPreferences.getPreference(this, "message_status", ""));
 		facebook_status=MySharedPreferences.getPreference(this, "facebook_status", "");
-//		Log.i(tag, "facebook_status:"+ MySharedPreferences.getPreference(this, "facebook_status", ""));
+		Log.i(tag, "facebook_status:"+ MySharedPreferences.getPreference(this, "facebook_status", ""));
 	}
 	
 	@Override
