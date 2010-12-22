@@ -4,7 +4,8 @@
 -->
 
 <PreferenceScreen
-    android:title="@string/set" xmlns:android="http://schemas.android.com/apk/res/android">
+    android:title="@string/set" xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="data">
     
     <PreferenceCategory
            android:title="@string/alarm_set"/>           
@@ -13,9 +14,11 @@
             android:title="@string/pick_feature"
             android:summary="@string/pick_feature_instroduction"/>             
       <EditTextPreference
+      		android:key="pick_context"
             android:title="@string/pick_set"
             android:dependency="pick"
-            android:dialogLayout="@layout/context_to_pick"
+            android:dialogMessage="@string/pick_message"
+            android:defaultValue="@string/pick_default_context"
             android:dialogIcon="@drawable/pickup_spic"/>  
       <EditTextPreference
       		android:key="password"

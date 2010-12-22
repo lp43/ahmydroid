@@ -349,7 +349,7 @@ public class SetNotify extends Activity {
                         	
                         	//如果不為空，則將存放在SharedPreferences的值設定到EditText
                         	if(!MySharedPreferences.getPreference(SetNotify.this, "pick_message_context", "").equals("")){
-                        		type_pick_context.setText(MySharedPreferences.getPreference(SetNotify.this, "pick_message_context",getString(R.string.default_pick_context)));
+                        		type_pick_context.setText(MySharedPreferences.getPreference(SetNotify.this, "pick_message_context",getString(R.string.pick_default_context)));
                         	}
                         	
                         	new AlertDialog.Builder(SetNotify.this)
@@ -394,7 +394,7 @@ public class SetNotify extends Activity {
                     		break;
                     	case 3:
                     		MyDialog.helpDialog(SetNotify.this,R.drawable.pickup_spic, getString(R.string.pick)+getString(R.string.notify), 
-                    				getString(R.string.instruction_head)+getString(R.string.pick_instruction));
+                    				getString(R.string.instruction_head)+getString(R.string.pick_message));
                     		break;
 
                     	}

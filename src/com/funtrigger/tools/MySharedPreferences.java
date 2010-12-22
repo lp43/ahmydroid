@@ -3,6 +3,7 @@ package com.funtrigger.tools;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 
 /**
  * 該類別簡化了使用SharedPreferences的步驟
@@ -16,7 +17,9 @@ public class MySharedPreferences {
 	 * @param putValue 欲放入的value值
 	 */
 	public static void addPreference(Context context,String putKey,String putValue){
-		final Editor sharedata = context.getSharedPreferences("data", 0).edit();
+		//將Preferences改指派到總資源裡，而不是自創的data檔裡，這樣才取的到PreferenceActivity的值
+		final Editor sharedata = PreferenceManager.getDefaultSharedPreferences(context).edit();
+//		final Editor sharedata = context.getSharedPreferences("data", 0).edit();
 		sharedata.putString(putKey,putValue);
 		sharedata.commit();
 	}
@@ -25,12 +28,28 @@ public class MySharedPreferences {
 	 * 取得SharedPreferences資料
 	 * @param context 呼叫SharedPreferences的主體
 	 * @param getKey 欲取得內容的相對應key值
-	 * @return 取到的value值，如果沒取到值回傳null字串
+	 * @return 取到的value值，如果沒取到值回傳defaultValue值
 	 */
 	public static String getPreference(Context context,String getKey,String defaultValue){
-		SharedPreferences sharedata = context.getSharedPreferences("data", 0);
+		//將Preferences改指派到總資源裡，而不是自創的data檔裡，這樣才取的到PreferenceActivity的值
+		SharedPreferences sharedata=PreferenceManager.getDefaultSharedPreferences(context);
+//		SharedPreferences sharedata = context.getSharedPreferences("data", 0);
 	
 		return sharedata.getString(getKey, defaultValue);
+	}
+	
+	/**
+	 * 取得SharedPreferences資料
+	 * @param context 呼叫SharedPreferences的主體
+	 * @param getKey 欲取得內容的相對應key值
+	 * @param defaultValue 若沒抓到值的預設回傳值
+	 * @return 取到的value值，如果沒取到值回傳defaultValue值
+	 */
+	public static Boolean getPreference(Context context,String getKey,boolean defaultValue){
+		SharedPreferences sharedata=PreferenceManager.getDefaultSharedPreferences(context);
+//		SharedPreferences sharedata = context.getSharedPreferences("data", 0);
+	
+		return sharedata.getBoolean(getKey, defaultValue);
 	}
 	
 	/**

@@ -34,7 +34,7 @@ public class MyDialog {
 	 * @param icon 想要顯示的icon
 	 */
 	public static void newDialog(Context context,String title,String message,String icon){
-		Log.i(tag, "into CongraturationsDialog.newDialog");
+		Log.i(tag, "into MyDialog.newDialog");
         new AlertDialog.Builder(context)
             .setTitle(title)
 		    .setIcon(context.getResources().getIdentifier(icon,"drawable",context.getPackageName()))

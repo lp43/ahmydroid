@@ -26,6 +26,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -47,6 +48,7 @@ import android.os.Handler;
 import android.os.PowerManager;
 import android.os.Vibrator;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -218,10 +220,12 @@ public class Fallen extends Activity{
 			
 		});
 		
+//		Log.i(tag, "pick status: "+String.valueOf(MySharedPreferences.getPreference(this, "pick", false)));
+//		Log.i(tag, "pick status: "+String.valueOf(PreferenceManager.getDefaultSharedPreferences(this.getApplicationContext()).getBoolean("pick", false)));
 		//如果拾獲者告知有啟動，則要顯示該訊息畫面
-		if(MySharedPreferences.getPreference(this, "pick_status", "").equals("true")){
+		if(MySharedPreferences.getPreference(this, "pick", false).equals(true) /*&& !MySharedPreferences.getPreference(this, "pick_context", "").equals("")//本來還多設如果設定內文不為空，才顯示拾獲者字樣*/){
 			TextView pick_context=new TextView(this);
-			pick_context.setText(MySharedPreferences.getPreference(this, "pick_message_context", getString(R.string.not_set)));
+			pick_context.setText(MySharedPreferences.getPreference(this, "pick_context", ""));
 			pick_context.setBackgroundResource(R.drawable.pick_message_background);
 			pick_context.setPadding(30, 20, 30, 60);//文字與背景的邊距
 			pick_context.setTextSize(20);

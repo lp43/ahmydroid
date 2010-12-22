@@ -35,12 +35,12 @@
 	<string name="instruction_head">啟用後，系統會依設定，</string>
 	<string name="message_instruction">將定位資訊發送簡訊給指定者</string>
 	<string name="facebook_instruction">將定位資訊傳送至Facebook</string>
-	<string name="pick_instruction">將您設定的資訊告訴撿到的人</string>
+	
 	<string name="SMS">簡訊</string>
 	<string name="facebook">Facebook</string>
 	<string name="pick">拾獲者</string>
 	<string name="notify">告知</string>
-	<string name="default_pick_context">你好。我是蘇豫芬的手機，請幫我把手機交給王小明，他的電話是12345，將重金感謝！</string>
+	
 	<string name="default_number_context">請輸入一組手機號碼</string>
 	<string name="default_message_context">告訴收件者要怎麼幫你把手機拿回來，若無設定則使用預設值</string>
 	<string name="please_choice">請選擇</string>
@@ -69,23 +69,26 @@
 	<string name="facebook_message_last">快用GoogleMap貼上這個經緯度找我！</string>
 	
 	<!-- 以下是試著重寫的Setting -->
-	<string name="location_setting">2.發訊告知設定</string>
+	<string name="location_setting">2 發訊告知設定</string>
 	<string name="location_feature">定位功能</string>	
 	<string name="location_feature_instroduction">啟動後，系統才能依手機定位以簡訊或Facebook發出地理位置</string>
 	<string name="other_set">其它設定</string>
-	<string name="alarm_set">1.警報畫面設定</string>
-	<string name="unlock_password_set">警報解除密碼</string>
+	<string name="alarm_set">1 警報畫面設定</string>
+	<string name="unlock_password_set">2.警報解除密碼</string>
 	<string name="unlock_password_instroduction">當警報畫面被開啟時，需撥開畫面左上角磚塊，輸入該密碼，才會解除警報</string>
-	<string name="pick_feature">拾獲者告知</string>
+	<string name="pick_feature">1.拾獲者告知</string>
 	<string name="pick_set">拾獲者設定</string>
+	<string name="pick_message">將您設定的資訊告訴撿到的人</string>
+	<string name="pick_default_context">你好。我是蘇豫芬的手機，請幫我把手機交給王小明，他的電話是12345，將重金感謝！</string>
 	<string name="pick_feature_instroduction">當手機掉到地上時，系統會依您的文字設定，將訊息顯示給撿到的人看到</string>
-	<string name="message_feature">簡訊告知</string>
+	<string name="message_feature">1.簡訊告知</string>
 	<string name="message_feature_instroduction">需支付簡訊費用。啟用後系統會依設定，將資訊發送給指定</string>
 	<string name="message_set">簡訊設定</string>
-	<string name="facebook_feature">Facebook告知</string>
+	<string name="facebook_feature">2.Facebook告知</string>
 	<string name="facebook_feature_instroduction">需保持3G上網狀態。啟用後系統會將定位資訊傳送至Facebook</string>
 	<string name="facebook_set">Facebook設定</string>
 	<string name="need_old_password">需要舊密碼</string>
+	<string name="reset_new_password">設定新密碼</string>
 		
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>
