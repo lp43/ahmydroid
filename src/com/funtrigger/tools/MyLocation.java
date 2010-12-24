@@ -37,7 +37,7 @@ public class MyLocation {
 		sharedata = context.getSharedPreferences("data", context.MODE_PRIVATE);  
         String recProvider = sharedata.getString("provider", "auto");  
 		if(recProvider.equals("auto")){
-			String bestProvider=lm.getBestProvider(MyLocation.getBestProvider(), true);
+			String bestProvider=getBestProvider(context);
 			Log.i(tag, "Best provider is: "+bestProvider);
 			
 			//這斷判斷是針對若取回來的最佳Provider為空，則強制指派Provider是AGPS
@@ -116,15 +116,23 @@ public class MyLocation {
 	}
 	
 	/**
-	 * 讓程式去選取最好的定位方式<br/>
+	 * 讓程式去選取最好的定位方式標準<br/>
 	 */
-	private static Criteria getBestProvider(){
+	private static Criteria getBestCriteria(){
 		Criteria criteria= new Criteria();
 		criteria.setAccuracy(Criteria.ACCURACY_FINE);//设置为最大精度 
 		criteria.setAltitudeRequired(false);//不要求海拔信息 
 		criteria.setBearingRequired(false);//不要求方位信息 
 		criteria.setCostAllowed(true);//是否允许付费 
 		criteria.setPowerRequirement(Criteria.POWER_LOW);//对电量的要求
+
 		return criteria;
+	}
+	
+	public static String getBestProvider(Context context){
+		LocationManager lm = (LocationManager)context.getSystemService(SetNotify.LOCATION_SERVICE);
+
+		return lm.getBestProvider(getBestCriteria(), true);
+		
 	}
 }

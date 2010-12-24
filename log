@@ -139,3 +139,9 @@ v1.0.0.19
 v1.0.0.20
 1.[待做]拾獲者內文設定被寫到Preference裡了，layout待刪
 2.PreferenceScreen裡開啟拾獲者和新增密碼可以對程式做實際的控制了
+
+12/24
+v1.0.0.21
+1.簡訊告知完成
+2.Facebook告知完成
+3.新增Service: TimeService計時器

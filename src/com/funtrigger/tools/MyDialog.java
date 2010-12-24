@@ -1,6 +1,8 @@
 package com.funtrigger.tools;
 
 import com.facebook.android.R;
+import com.funtrigger.ahmydroid.Fallen;
+import com.funtrigger.ahmydroid.TimeService;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -49,7 +51,37 @@ public class MyDialog {
    .show();
    }
 	
+	/**
+	 * 新增一個訊息視窗，OK鍵的名稱、listener皆自訂
+	 * @param context 產生此視窗的主體
+	 * @param icon 想要顯示的icon
+	 * @param title 想要顯示的視窗標題
+	 * @param message 想要顯示的訊息內容
+	 * @param positiveText 原本OK位置的命名
+	 * @param positivelistener OK按鈕的監聽事件
+	 */
+	public static void newOneBtnDialog(Context context,int icon,String title,String message,String positiveText,DialogInterface.OnClickListener positivelistener){
+		Log.i(tag, "into MyDialog.newOneBtnDialog");
+        new AlertDialog.Builder(context)
+            .setTitle(title)
+		    .setIcon(icon)
+		    .setMessage(message)
+		    .setPositiveButton(positiveText, positivelistener)
+
+   .show();
+   }
 	
+	
+	public static void newTwoBtnDialog(Context context,int icon,String title,String message,String positiveText,DialogInterface.OnClickListener positivelistener,String negativeText,DialogInterface.OnClickListener negativelistener){
+		Log.i(tag, "into MyDialog.newTwoBtnDialog");
+        new AlertDialog.Builder(context)
+            .setTitle(title)
+		    .setIcon(icon)
+		    .setMessage(message)
+		    .setPositiveButton(positiveText, positivelistener)
+		    .setNegativeButton(negativeText, negativelistener)
+   .show();
+   }
 	/**
 	 * 該視窗是Toast視窗
 	 * @param context 產生此視窗的主體
@@ -78,6 +110,7 @@ public class MyDialog {
 	 * @param context 要做事情的呼叫主體
 	 */
 	public static void passwordToExit(final Context context){
+		
 		 LayoutInflater factory = LayoutInflater.from(context);
          final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.password_to_exit), null);
          new AlertDialog.Builder(context)
@@ -90,6 +123,8 @@ public class MyDialog {
                 	 if(password.getText().toString().equals(MySharedPreferences.getPreference(context, "unlock_password", ""))){
                 		  Activity fallen=(Activity)context;
                           fallen.finish();
+                     
+                          
                 	 }else{
                 		  newDialog(context,context.getString(R.string.attention),context.getString(R.string.type_wrong_password),"warning");
                 	 }
@@ -101,6 +136,7 @@ public class MyDialog {
                  }
              })
              .show();
+
 	}
 	/**
 	 * 如果之前有存密碼，當使用者又按一次設定解鎖密碼，會進來這裡要求先輸入之前的密碼，

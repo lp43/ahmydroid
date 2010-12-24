@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
 
 
-      <TextView 
+<ScrollView
+xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:visibility="visible">
+	<RelativeLayout
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content">
+      <TextView
+      	android:id="@+id/num_title"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:layout_marginLeft="20dip"
@@ -16,12 +21,12 @@
             
     <EditText
         android:id="@+id/type_message_number"
+        android:layout_below="@id/num_title"
         android:layout_height="wrap_content"
         android:layout_width="fill_parent"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:scrollHorizontally="false"
-        android:autoText="false"
+        android:scrollHorizontally="true"
         android:capitalize="none"
         android:lines="1"
         android:gravity="top"
@@ -29,19 +34,50 @@
         android:hint="@string/default_number_context"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
         
-    <EditText
-        android:id="@+id/type_message_context"
+     <TextView
+     	android:id="@+id/msg_title" 
+     	android:layout_below="@id/type_message_number"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent"
+        android:layout_width="wrap_content"
         android:layout_marginLeft="20dip"
         android:layout_marginRight="20dip"
-        android:scrollHorizontally="false"
-        android:autoText="false"
-        android:capitalize="none"
-        android:lines="4"
-        android:gravity="top"
-        android:singleLine="false"
-        android:hint="@string/default_message_context"
-        android:textAppearance="?android:attr/textAppearanceMedium"/>
+        android:text="@string/context_title"
+        android:gravity="left"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+      <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/msg_title"
+		android:background="@drawable/paper"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="20dip">
+	     <TextView
+	    	android:id="@+id/msg_sys_ctx"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:layout_marginLeft="20dip"
+	        android:layout_marginRight="20dip"
+	        android:text="@string/system_message_context"
+	        android:textColor="@color/black"
+	        android:gravity="left"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />        
+	    <EditText
+	        android:id="@+id/type_message_context"
+	        android:layout_below="@id/msg_sys_ctx"
+	        android:layout_height="wrap_content"
+	        android:layout_width="fill_parent"
+	        android:layout_marginLeft="20dip"
+	        android:layout_marginRight="20dip"
+	        android:autoText="false"
+	        android:capitalize="none"
+	        android:background="@drawable/paper"
+	        android:lines="6"
+	        android:textColor="@color/black"
+	        android:hint="@string/msg_addtion"
+	        android:gravity="top"  
+	        android:text="@string/type_message_context"
+	        android:textAppearance="?android:attr/textAppearanceMedium"/>
+	        </RelativeLayout>
+        </RelativeLayout>
         
-</LinearLayout>
+   </ScrollView>     

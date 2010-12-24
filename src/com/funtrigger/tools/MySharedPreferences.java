@@ -23,7 +23,14 @@ public class MySharedPreferences {
 		sharedata.putString(putKey,putValue);
 		sharedata.commit();
 	}
-	
+
+	public static void addPreference(Context context,String putKey,Boolean putValue){
+		//將Preferences改指派到總資源裡，而不是自創的data檔裡，這樣才取的到PreferenceActivity的值
+		final Editor sharedata = PreferenceManager.getDefaultSharedPreferences(context).edit();
+//		final Editor sharedata = context.getSharedPreferences("data", 0).edit();
+		sharedata.putBoolean(putKey,putValue);
+		sharedata.commit();
+	}
 	/**
 	 * 取得SharedPreferences資料
 	 * @param context 呼叫SharedPreferences的主體

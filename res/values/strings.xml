@@ -25,7 +25,6 @@
 	<string name="password_create">新增密碼</string>
 	<string name="password_modify">修改密碼</string>
 	<string name="ok">確認</string>
-	<string name="cancel">取消</string>
 	<string name="data">資料︰</string>
 	<string name="status">狀態︰</string>
 	<string name="not_set">未設定</string>
@@ -35,18 +34,14 @@
 	<string name="instruction_head">啟用後，系統會依設定，</string>
 	<string name="message_instruction">將定位資訊發送簡訊給指定者</string>
 	<string name="facebook_instruction">將定位資訊傳送至Facebook</string>
-	
 	<string name="SMS">簡訊</string>
 	<string name="facebook">Facebook</string>
 	<string name="pick">拾獲者</string>
 	<string name="notify">告知</string>
-	
-	<string name="default_number_context">請輸入一組手機號碼</string>
 	<string name="default_message_context">告訴收件者要怎麼幫你把手機拿回來，若無設定則使用預設值</string>
 	<string name="please_choice">請選擇</string>
 	<string name="please_type">請輸入</string>
-	<string name="context_to_pick">撿到的人會看到的內容︰</string>
-	<string name="context_to_message">當手機自動發出資訊時的收件者︰</string>
+	<string name="context_to_pick">撿到的人會看到的內容︰</string>	
 	<string name="message_context">我是「手機摔落告知」軟體，我的位置在︰#location，</string>
 	<string name="message_last_sentence_ifusernotype">請告訴我的主人，幫我找到回家的路！</string>
 	<string name="ps">註︰</string>
@@ -61,8 +56,7 @@
 	<string name="attention">注意</string>
 	<string name="help">說明</string>
 	<string name="attention_context">該動作需自行負擔簡訊費用，是否繼續？</string>
-	<string name="message_response">測試簡訊已寄出！</string>
-	<string name="wrong_phone_number">手機號碼格式錯誤或尚未輸入！</string>
+	<string name="message_response">測試簡訊已寄出！</string>	
 	<string name="facebook_message_head">嗨！我是你的手機，我掉了！</string>
 	<string name="facebook_message_time">剛剛我看了系統時間是 #time</string>
 	<string name="facebook_message_location">我的位置在 #location</string>
@@ -70,7 +64,11 @@
 	
 	<!-- 以下是試著重寫的Setting -->
 	<string name="location_setting">2 發訊告知設定</string>
-	<string name="location_feature">定位功能</string>	
+	<string name="location_feature">定位功能</string>
+	<string name="location_dialog_context">必須先將GPS或WiFi定位開啟，才能獲得地理座標。待設定完，再請您回來設定。</string>
+	<string name="location_dialog_diff_context">您系統的GPS/WiFi定位被關掉了，您是否重新開啟？</string>
+	<string name="go_to">前往開啟</string>
+	<string name="cancel">取消</string>	
 	<string name="location_feature_instroduction">啟動後，系統才能依手機定位以簡訊或Facebook發出地理位置</string>
 	<string name="other_set">其它設定</string>
 	<string name="alarm_set">1 警報畫面設定</string>
@@ -82,13 +80,23 @@
 	<string name="pick_default_context">你好。我是蘇豫芬的手機，請幫我把手機交給王小明，他的電話是12345，將重金感謝！</string>
 	<string name="pick_feature_instroduction">當手機掉到地上時，系統會依您的文字設定，將訊息顯示給撿到的人看到</string>
 	<string name="message_feature">1.簡訊告知</string>
-	<string name="message_feature_instroduction">需支付簡訊費用。啟用後系統會依設定，將資訊發送給指定</string>
+	<string name="message_feature_instroduction">需支付簡訊費用。啟用後系統會依設定，將資訊發送給指定者</string>
 	<string name="message_set">簡訊設定</string>
 	<string name="facebook_feature">2.Facebook告知</string>
 	<string name="facebook_feature_instroduction">需保持3G上網狀態。啟用後系統會將定位資訊傳送至Facebook</string>
 	<string name="facebook_set">Facebook設定</string>
 	<string name="need_old_password">需要舊密碼</string>
 	<string name="reset_new_password">設定新密碼</string>
+	<string name="context_to_message">收件者手機號碼︰</string>	
+	<string name="default_number_context">手機掉時，你希望系統自動通知誰？</string>
+	<string name="context_title">通知的內文︰</string>
+	<string name="system_message_context">我是手機掉落告知系統，現在時間是#time，地點在#location，</string>
+	<string name="type_message_context">請你告訴我主人手機掉了，好嗎？</string>
+	<string name="wrong_phone_number">手機號碼格式錯誤！</string>
+	<string name="reset">重新設定</string>
+	<string name="msg_addtion">還希望跟收件者說些什麼？點我設定</string>
+	<string name="facebook_data_set">帳號密碼設定完成</string>
+	<string name="facebook_data_not_set">尚未設定帳號密碼</string>
 		
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

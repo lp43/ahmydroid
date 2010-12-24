@@ -172,7 +172,7 @@ public class Fallen extends Activity{
 		
 		this.activity=Fallen.this;
 		SwitchService.stopService(Fallen.this,FallDetector.class);//進來時把Service關掉，避免重覆進入本畫面
-		
+		SwitchService.startService(Fallen.this, TimeService.class);
 
 		
 		//檢驗是否為螢幕鎖
@@ -338,6 +338,14 @@ public class Fallen extends Activity{
 	}
 	
 	
+	@Override
+	protected void onDestroy() {
+		Log.i(tag, "Fallen.onDestroy");
+		SwitchService.stopService(Fallen.this, TimeService.class);
+		super.onDestroy();
+	}
+
+
 	/**
 	 * 該內部廣播接收在Fallen.java裡不斷的播動畫和音效
 	 * @author simon

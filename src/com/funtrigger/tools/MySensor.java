@@ -97,7 +97,7 @@ public class MySensor implements SensorEventListener{
 		int c=(int) Math.abs(z);
 		
 		//如果是3面向都大於15，發送廣播標籤︰STARTFALLEN，目的是開啟Fallen事件
-		if(a>15||b>15||c>15){
+//		if(a>15||b>15||c>15){
 	/*	if(Ahmydroid.times==0){
 			MyLog.writeLogToTXT(a,b,c);
 	
@@ -107,7 +107,7 @@ public class MySensor implements SensorEventListener{
 		}*/
 		
 		//撞到地板才產生摔落數據
-//		if(a<2&&b<2&&c<2){
+		if(a<2&&b<2&&c<2){
 			if(Ahmydroid.times==0){
 
 				WriteToTXT.writeLogToTXT("a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c));

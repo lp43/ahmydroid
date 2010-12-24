@@ -11,7 +11,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 public class InfoDispatcher extends Service {
-	String message_status,facebook_status;
+	boolean message_status,facebook_status;
 	private String tag="tag";
 	
 	@Override
@@ -33,10 +33,10 @@ public class InfoDispatcher extends Service {
 	 * 檢查各種掉落通知的設定值
 	 */
 	public void checkSettingStatus(){
-		message_status=MySharedPreferences.getPreference(this, "message_status", "");
-		Log.i(tag, "message_status:"+ MySharedPreferences.getPreference(this, "message_status", ""));
-		facebook_status=MySharedPreferences.getPreference(this, "facebook_status", "");
-		Log.i(tag, "facebook_status:"+ MySharedPreferences.getPreference(this, "facebook_status", ""));
+		message_status=MySharedPreferences.getPreference(this, "message", false);
+		Log.i(tag, "message_status:"+ String.valueOf(MySharedPreferences.getPreference(this, "message", false)));
+		facebook_status=MySharedPreferences.getPreference(this, "facebook", false);
+		Log.i(tag, "facebook_status:"+ String.valueOf(MySharedPreferences.getPreference(this, "facebook", false)));
 	}
 	
 	@Override
@@ -49,11 +49,11 @@ public class InfoDispatcher extends Service {
 	 * 判斷並啟動各種發送訊息
 	 */
 	public void dispatcher(){
-		if(message_status.equals("true")){
+		if(message_status==true){
 			Log.i(tag, "message_dispatch");
 			MyDispatcher.messageDispatcher(this);
 		}
-		if(facebook_status.equals("true")){
+		if(facebook_status==true){
 			Log.i(tag, "facebook_dispatch");
 			/*發送要寄Facebook訊息的廣播
 			  註︰本來直接寄出廣播即可，但因為Facebook類別需要Activity參數
