@@ -11,8 +11,6 @@ import android.text.ClipboardManager;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.funtrigger.ahmydroid.SetNotify;
-
 /**
  * 該類別提供各式各樣請求地理座標的函式
  * @author simon
@@ -32,7 +30,7 @@ public class MyLocation {
 	 * @return 呼叫此函式時，會將經緯度傳回呼叫端,回傳格式為︰緯、經度以配合Google地圖
 	 */
 	public static String getLocation(Context context){
-		LocationManager lm = (LocationManager)context.getSystemService(SetNotify.LOCATION_SERVICE);
+		LocationManager lm = (LocationManager)context.getSystemService(context.LOCATION_SERVICE);
 		
 		sharedata = context.getSharedPreferences("data", context.MODE_PRIVATE);  
         String recProvider = sharedata.getString("provider", "auto");  
@@ -130,7 +128,7 @@ public class MyLocation {
 	}
 	
 	public static String getBestProvider(Context context){
-		LocationManager lm = (LocationManager)context.getSystemService(SetNotify.LOCATION_SERVICE);
+		LocationManager lm = (LocationManager)context.getSystemService(context.LOCATION_SERVICE);
 
 		return lm.getBestProvider(getBestCriteria(), true);
 		

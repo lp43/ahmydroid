@@ -3,6 +3,9 @@ package com.funtrigger.ahmydroid;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import com.funtrigger.tools.MySharedPreferences;
+import com.funtrigger.tools.SwitchService;
+
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
@@ -22,11 +25,11 @@ public class TimeService extends Service {
 	/**
 	 * 發射訊息的第1時間
 	 */
-	public static int startTime=3000;
+	public static int startTime;
 	/**
 	 * 發射訊息的持續間隔
 	 */
-	public static int loopPeriod=4000;
+	public static int loopPeriod=0;
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -37,10 +40,13 @@ public class TimeService extends Service {
 	@Override
 	public void onCreate() {
 		Log.i(tag, "TimeService.onCreate");
+		startTime=Integer.valueOf(MySharedPreferences.getPreference(TimeService.this, "dispatcher_first_time", "0"));
+		Log.i(tag, "startTime is: "+startTime);
 		timeCounter=startTime;
 		
 		//如果Service被創立之初，就發現沒有開啟定時通報
 		//就把自己關掉
+		//註︰這行不能刪，否則下次會從onStart()開始
 		if(startTime==0){
 			stopSelf();
 		}
@@ -91,6 +97,8 @@ public class TimeService extends Service {
 		@Override
 		public void run() {
 			Log.i(tag, "into MyTime run()");
+			
+			SwitchService.startService(TimeService.this, InfoDispatcher.class);
 			
 			timeCounter+=loopPeriod;
 			Log.i(tag, "timeCounter: "+timeCounter);

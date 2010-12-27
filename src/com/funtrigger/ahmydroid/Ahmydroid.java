@@ -28,12 +28,15 @@ import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
+import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -50,7 +53,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.21";
+	private String softVersion="v1.0.0.22";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -124,15 +127,16 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 			@Override
 			public void onClick(View v) {
-//				finish();
-				ActivityManager activitymanager= (ActivityManager) Ahmydroid.this.getSystemService(ACTIVITY_SERVICE);
-				List<RunningAppProcessInfo> list=activitymanager.getRunningAppProcesses();
-				for(RunningAppProcessInfo a:list){
-					
-					Log.i(tag, "packageName:"+a.processName);
-				}
+				finish();
+//				ActivityManager activitymanager= (ActivityManager) Ahmydroid.this.getSystemService(ACTIVITY_SERVICE);
+//				List<RunningAppProcessInfo> list=activitymanager.getRunningAppProcesses();
+//				for(RunningAppProcessInfo a:list){
+//					
+//					Log.i(tag, "packageName:"+a.processName);
+//				}
 				
-				
+				Log.i(tag, "dispatcher time is : "+MySharedPreferences.getPreference(Ahmydroid.this, "dispatcher_first_time", "0"));
+			
 			}
         	
         });
@@ -147,6 +151,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 					img_btn.setBackgroundResource(R.drawable.nostart);
 				}else if(checkServiceExist()==true){
 					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
+					
 					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
 					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
 					img_btn.setBackgroundResource(R.drawable.start);
@@ -160,6 +165,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	@Override
 	protected void onResume() {
 		Log.i(tag, "Ahmydroid.onResume");
+		
+		
+		
 		setAndroid_Machine();
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);	
@@ -273,7 +281,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 //		Log.i(tag, "packagename: "+this.getPackageName());
 		
 		for(RunningServiceInfo service_name:service){
-//			Log.i(tag, "exist service: "+service_name.process);
+			Log.i(tag, "exist service: "+service_name.process);
 			if(service_name.process.equals(this.getPackageName())){
 				return_field=true;
 				break;

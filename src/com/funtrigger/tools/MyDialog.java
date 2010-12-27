@@ -122,6 +122,7 @@ public class MyDialog {
                 	 EditText password=(EditText) EntryView.findViewById(R.id.password_to_exit);
                 	 if(password.getText().toString().equals(MySharedPreferences.getPreference(context, "unlock_password", ""))){
                 		  Activity fallen=(Activity)context;
+                		  SwitchService.stopService(context, TimeService.class);
                           fallen.finish();
                      
                           

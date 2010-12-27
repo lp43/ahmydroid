@@ -9,6 +9,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.facebook.android.AsyncFacebookRunner;
@@ -19,7 +20,7 @@ import com.facebook.android.FacebookError;
 import com.facebook.android.R;
 import com.facebook.android.Util;
 import com.funtrigger.ahmydroid.Fallen;
-import com.funtrigger.ahmydroid.SetNotify;
+import com.funtrigger.ahmydroid.Settings;
 
 /**
  * 系統發送各種訊息的管理類別
@@ -30,20 +31,30 @@ public class MyDispatcher {
 	Activity activity;
 	Context context;
 	AsyncFacebookRunner mAsyncRunner;
-	private String tag="tag";
+	private static String tag="tag";
 	public static String id="";
 	
 	/**
 	 * SMS簡訊發射器
 	 */
 	public static void messageDispatcher(Context context){
+		Log.i(tag, "cellphone num is: "+MySharedPreferences.getPreference(context,"message_number",""));
+		
+		String msg_sys_cnx=context.getResources().getString(R.string.system_message_context);
+		MyTime mytime=new MyTime();
+		msg_sys_cnx=msg_sys_cnx.replace("#time", mytime.getHHMM());
+		msg_sys_cnx=msg_sys_cnx.replace("#location", MyLocation.getLocation(context));	
+		
 //		MySMS.sendSMS(context, MySharedPreferences.getPreference(context,"message_number",""), 
-//		context.getString(R.string.message_context).replace("#location", MyLocation.getLocation(context))
+//		msg_sys_cnx
 //		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)));
 
-	Toast.makeText(context, context.getString(R.string.message_context).replace("#location", MyLocation.getLocation(context))
-	+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)), Toast.LENGTH_LONG).show();
-	MyDialog.newToast(context, context.getString(R.string.message_response), R.drawable.message_pic);		
+		Toast.makeText(context, msg_sys_cnx
+		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)), Toast.LENGTH_LONG).show();
+		MyDialog.newToast(context, context.getString(R.string.message_response), R.drawable.message_pic);
+	
+		Log.i(tag, "message_send success!");
+	
 	}
 
 
@@ -90,7 +101,7 @@ public class MyDispatcher {
     	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
 		
     	MySharedPreferences.addPreference(context, "facebook_data_status", "true");
-    	
+    	Log.i(tag, "facebook_send success!");
 	}
 	/**
 	 * 改自Example.java範例的SampleRequestListener<br/>

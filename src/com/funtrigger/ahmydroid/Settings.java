@@ -34,7 +34,7 @@ import android.widget.TextView;
 public class Settings extends PreferenceActivity {
 	PreferenceScreen preferenceScreen;
 	EditTextPreference unlock_password,message_context_setting;
-	CheckBoxPreference location;
+	CheckBoxPreference location,message_checkbox,facebook_checkbox;
 	Preference facebook_set;
 	protected String tag="tag";
 	Dialog dialog;
@@ -49,7 +49,11 @@ public class Settings extends PreferenceActivity {
         preferenceScreen=this.getPreferenceScreen();  
         
         unlock_password=(EditTextPreference)preferenceScreen.findPreference("password");
+        
         location=(CheckBoxPreference) preferenceScreen.findPreference("location");
+        message_checkbox=(CheckBoxPreference) preferenceScreen.findPreference("message");
+        facebook_checkbox=(CheckBoxPreference) preferenceScreen.findPreference("facebook");
+        
         message_context_setting=(EditTextPreference)preferenceScreen.findPreference("message_context_setting");
         facebook_set=preferenceScreen.findPreference("facebook_set");
         
@@ -106,7 +110,11 @@ public class Settings extends PreferenceActivity {
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
 				if(MyLocation.getBestProvider(Settings.this)==null){
+				//系統若沒有開啟任何的定位，則將[定位功能]、[簡訊告知]、[Facebook告知]3項checkbox都取消掉
 				location.setChecked(false);
+				message_checkbox.setChecked(false);
+				facebook_checkbox.setChecked(false);
+				
 				MyDialog.newOneBtnDialog(Settings.this, R.drawable.warning,getString(R.string.attention), getString(R.string.location_dialog_context), getString(R.string.go_to),new DialogInterface.OnClickListener(){
 
 					@Override
@@ -116,7 +124,17 @@ public class Settings extends PreferenceActivity {
 				
 				});				
 					
-				}			
+				
+				}else{
+					if(location.isChecked()==true){
+//						Log.i(tag, "set location checkbox is true");
+					}else{
+						Log.i(tag, "set location checkbox is false");
+						message_checkbox.setChecked(false);
+						facebook_checkbox.setChecked(false);
+					}
+				}
+				
 				return true;
 			}
         	
@@ -264,7 +282,10 @@ public class Settings extends PreferenceActivity {
 		//如果程式發現系統GPS被關，而程式還是開著的設定時的動作
 		if(location.isChecked()==true & MyLocation.getBestProvider(Settings.this)==null){
 			Log.i(tag,"location & provider different,into setChecked(false)");
+			//如果偵測到統沒開定位，而程式有開，則將[定位功能]、[簡訊告知]、[Facebook告知]都關閉
 			location.setChecked(false);
+			message_checkbox.setChecked(false);
+			facebook_checkbox.setChecked(false);
 		}
 		super.onResume();
 	}

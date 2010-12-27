@@ -164,6 +164,10 @@ public class Fallen extends Activity{
 	 * 將Fallen.java丟給facebookDispatcherReceiver專用
 	 */
 	static Activity activity;
+	/**
+	 * 關閉螢幕的控制變數
+	 */
+	WindowManager.LayoutParams lp;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -172,8 +176,9 @@ public class Fallen extends Activity{
 		
 		this.activity=Fallen.this;
 		SwitchService.stopService(Fallen.this,FallDetector.class);//進來時把Service關掉，避免重覆進入本畫面
-		SwitchService.startService(Fallen.this, TimeService.class);
+		SwitchService.startService(Fallen.this, TimeService.class);//啟動TimeService,時間到時發訊息
 
+		lp=this.getWindow().getAttributes();
 		
 		//檢驗是否為螢幕鎖
 		KeyguardManager km = (KeyguardManager) this.getSystemService(
@@ -214,8 +219,12 @@ public class Fallen extends Activity{
 
 			@Override
 			public void onClick(View v) {
-				SwitchService.startService(Fallen.this, InfoDispatcher.class);
-
+//				SwitchService.startService(Fallen.this, InfoDispatcher.class);
+				
+				Log.i(tag, "press button_exit button");
+				finish();
+//				lp.screenBrightness=0.0f;
+//				getWindow().setAttributes(lp);
 			}
 			
 		});
@@ -339,9 +348,17 @@ public class Fallen extends Activity{
 	
 	
 	@Override
+	protected void onResume() {
+		
+//		lp.screenBrightness=0.5f;
+//		getWindow().setAttributes(lp);
+		super.onResume();
+	}
+
+	@Override
 	protected void onDestroy() {
 		Log.i(tag, "Fallen.onDestroy");
-		SwitchService.stopService(Fallen.this, TimeService.class);
+//		SwitchService.stopService(Fallen.this, TimeService.class);
 		super.onDestroy();
 	}
 
