@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.facebook.android.LoginPage;
 import com.facebook.android.Facebook;
+import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.SwitchService;
 
@@ -53,7 +54,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.22";
+	private String softVersion="v1.0.0.23";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -88,23 +89,27 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 該變數用在onCreateDialog的switch case裡，
 	 * 主要目的用來告知使用者怎麼玩這隻Apk的訊息視窗
 	 */
-	private static final int HOW_TO_PLAY = 0;
+	private static final int HOW_TO_USE_1 = 1;
+	private static final int HOW_TO_USE_2 = 2;
+	private static final int HOW_TO_USE_3 = 3;
+	private static final int HOW_TO_USE_4 = 4;
+	private static final int HOW_TO_USE_5 = 5;
   
 	public static int times;
-	
-    @Override
-	public boolean dispatchKeyEvent(KeyEvent event) {
-		if(event.getKeyCode()==event.KEYCODE_BACK){
-			Log.i(tag, "key_back");
-		}
-		return super.dispatchKeyEvent(event);
-//		return true;
-	}
+
 
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		Log.i(tag, "Ahmydroid.onCreate");
         super.onCreate(savedInstanceState);
+        
+        //可能使用者選擇背景持續發送訊息，因此再次進入主畫面時，
+        //TimeService沒有關閉，導致小綠人開關產生問題
+        //故要在畫面未設定前，將TimeService關掉
+        if(checkServiceExist(".TimeService")==true){
+        	SwitchService.stopService(Ahmydroid.this, TimeService.class);
+        }
+        
         setContentView(R.layout.ahmyphone);
         button_how=(Button) findViewById(R.id.button_how);
         button_exit=(Button) findViewById(R.id.button_exit);
@@ -112,12 +117,13 @@ public class Ahmydroid extends Activity implements SensorEventListener{
         imgfall=(ImageView) findViewById(R.id.fall);
         img_btn.setBackgroundResource(R.drawable.nostart);
         
+        //開啟使用教學
         button_how.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				button_how.setVisibility(View.INVISIBLE);
-				showDialog(HOW_TO_PLAY);
+				showDialog(HOW_TO_USE_1);
 				
 			}
         	
@@ -127,15 +133,10 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 			@Override
 			public void onClick(View v) {
-				finish();
-//				ActivityManager activitymanager= (ActivityManager) Ahmydroid.this.getSystemService(ACTIVITY_SERVICE);
-//				List<RunningAppProcessInfo> list=activitymanager.getRunningAppProcesses();
-//				for(RunningAppProcessInfo a:list){
-//					
-//					Log.i(tag, "packageName:"+a.processName);
-//				}
+//				finish();
+			
 				
-				Log.i(tag, "dispatcher time is : "+MySharedPreferences.getPreference(Ahmydroid.this, "dispatcher_first_time", "0"));
+//				Log.i(tag, "dispatcher time is : "+MySharedPreferences.getPreference(Ahmydroid.this, "dispatcher_first_time", "0"));
 			
 			}
         	
@@ -144,12 +145,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 			@Override
 			public void onClick(View v) {
-				if(checkServiceExist()==false){
+				if(checkServiceExist(".FallDetector")==false){
 					SwitchService.startService(Ahmydroid.this,FallDetector.class);
 					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
 					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
 					img_btn.setBackgroundResource(R.drawable.nostart);
-				}else if(checkServiceExist()==true){
+				}else if(checkServiceExist(".FallDetector")==true){
 					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
 					
 					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
@@ -190,63 +191,94 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	@Override
 	protected Dialog onCreateDialog(int id) {
 		switch(id){
-		case HOW_TO_PLAY:
-			AlertDialog dialog0=new AlertDialog.Builder(Ahmydroid.this)
- 	    	.setTitle("怎麼玩？")
- 			.setMessage("當小An跌倒時，他會希望你扶他一把。")
+		case HOW_TO_USE_1:
+			AlertDialog dialog1=MyDialog.tuitionOneBtnDialog(Ahmydroid.this, R.string.welcome, R.drawable.how_to_use_1, R.string.how_to_use_1, R.string.next, new DialogInterface.OnClickListener(){
 
- 			.setPositiveButton("了解了！", new DialogInterface.OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					showDialog(HOW_TO_USE_2);
+					
+				}
+				
+			});
+			return dialog1;
+			
+		case HOW_TO_USE_2:
+			AlertDialog dialog2=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.warning_ui, R.drawable.warning_ui, R.string.how_to_use_2, 
+					new DialogInterface.OnClickListener(){
 
- 				@Override
- 				public void onClick(DialogInterface dialog, int which) {
- 					dismissDialog(0);
- 					
- 					button_exit.setVisibility(View.VISIBLE);
- 					List<Sensor> list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
- 					sensormanager.registerListener(Ahmydroid.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);	
- 				}
- 				})
- 			.setNegativeButton("還是不懂", new DialogInterface.OnClickListener() {
-
- 				@Override
- 				public void onClick(DialogInterface dialog, int which) {
- 					new AlertDialog.Builder(Ahmydroid.this)
- 		 	    	.setTitle("提示")
- 		 			.setMessage("待會請把手機平放時，\n會發生事件。")
-
- 		 			.setPositiveButton("了解了！", new DialogInterface.OnClickListener() {
-
- 		 				@Override
- 		 				public void onClick(DialogInterface dialog, int which) {
- 		 					dismissDialog(0);
- 		 					button_exit.setVisibility(View.VISIBLE);
- 		 					button_how.setVisibility(View.INVISIBLE);
- 		 					List<Sensor> list=sensormanager.getSensorList(Sensor.TYPE_ACCELEROMETER);
- 		 					sensormanager.registerListener(Ahmydroid.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);	
- 		 				}
- 		 				})
- 		 			.show();
- 				}
- 				})
- 			.setOnKeyListener(new OnKeyListener(){
-
-					@Override
-					public boolean onKey(DialogInterface dialog, int keyCode,
-							KeyEvent event) {
-						if(keyCode==KeyEvent.KEYCODE_SEARCH|keyCode==KeyEvent.KEYCODE_BACK){
-							finish();
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							showDialog(HOW_TO_USE_1);
+							
+						}
+				
+					}, new DialogInterface.OnClickListener(){
+		
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							showDialog(HOW_TO_USE_3);
+							
 						}
 						
-						return true;
-					}
-     				
-     			})
- 			.create();
-			return dialog0;
+					});
+			return dialog2;
+			
+		case HOW_TO_USE_3:
+			AlertDialog dialog3=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.unlock_ui, R.drawable.unlock_ui, R.string.how_to_use_3, 
+					new DialogInterface.OnClickListener(){
 
-		}
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							showDialog(HOW_TO_USE_2);
+							
+						}
+				
+					}, new DialogInterface.OnClickListener(){
 		
-		return super.onCreateDialog(id);
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							showDialog(HOW_TO_USE_4);
+							
+						}
+						
+					});
+			return dialog3;
+			
+		case HOW_TO_USE_4:
+			AlertDialog dialog4=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.send_txt, R.drawable.notify_all, R.string.how_to_use_4, 
+					new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							showDialog(HOW_TO_USE_3);
+							
+						}
+				
+					}, new DialogInterface.OnClickListener(){
+		
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							showDialog(HOW_TO_USE_5);
+							
+						}
+						
+					});
+			return dialog4;
+		
+		case HOW_TO_USE_5:
+			AlertDialog dialog5=MyDialog.tuitionOneBtnDialog(Ahmydroid.this, R.string.thank, R.drawable.icon, R.string.how_to_use_5, R.string.exit, new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+				}
+				
+			});
+			return dialog5;
+		}
+		return null;
+		
+		
 	}
 	
 	@Override
@@ -261,9 +293,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 否則為暗
 	 */
 	private void setAndroid_Machine(){
-		if(checkServiceExist()==false){
+		if(checkServiceExist(".FallDetector")==false){
 			img_btn.setBackgroundResource(R.drawable.start);
-		}else if(checkServiceExist()==true){
+		}else if(checkServiceExist(".FallDetector")==true){
 			img_btn.setBackgroundResource(R.drawable.nostart);
 		}
 	}
@@ -274,15 +306,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 預設為false;
 	 * @return 若有開啟回傳為true,否則為false
 	 */
-	private boolean checkServiceExist(){
+	private boolean checkServiceExist(String checkServiceName){
 		boolean return_field=false;
 		ActivityManager activityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE); 
 		List<ActivityManager.RunningServiceInfo> service=activityManager.getRunningServices(100);
 //		Log.i(tag, "packagename: "+this.getPackageName());
 		
 		for(RunningServiceInfo service_name:service){
-			Log.i(tag, "exist service: "+service_name.process);
-			if(service_name.process.equals(this.getPackageName())){
+			Log.i(tag, "exist service: "+service_name.service.getShortClassName());
+			if(service_name.service.getShortClassName().equals(checkServiceName)){
 				return_field=true;
 				break;
 			}

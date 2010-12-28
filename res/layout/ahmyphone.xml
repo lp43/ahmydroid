@@ -12,7 +12,7 @@
 	android:id="@+id/button_how"
 	android:layout_width="120dip"
 	android:layout_height="90dip"
-	android:text="@string/how_to_play"
+	android:text="@string/how_to_use"
 	android:textColor="@color/black"
 	android:visibility="invisible"
 	android:layout_marginLeft="5dip"

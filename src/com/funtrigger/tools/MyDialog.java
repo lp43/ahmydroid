@@ -206,7 +206,7 @@ public class MyDialog {
 	}
 	
 	/**
-	 * 該訊息視窗用來顯示每種告知功能的介紹
+	 * 該訊息視窗用來顯示每種告知功能的說明介紹
 	 * @param context
 	 */
 	public static void helpDialog(final Context context,int icon,String title,String content){
@@ -225,6 +225,59 @@ public class MyDialog {
 
             .show();
 	}
+
+	/**
+	 * 單按鈕使用教學的視窗
+	 * @param context 呼叫該視窗的主體
+     * @param msg_pic 欲顯示的內文圖示
+	 * @param msg_context 欲顯示的內文文字
+	 * @param PositiveBtnName 單擊按鈕的文字顯示
+	 * @param positiveDialogListener 當按[下一個]/[結束]的反應監聽
+	 */
+	public static AlertDialog tuitionOneBtnDialog(final Context context, int title,int msg_pic,int msg_context,int PositiveBtnName,DialogInterface.OnClickListener positiveDialogListener){
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
+        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
+        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
+        tu_pic.setImageResource(msg_pic);
+        tu_cnx.setText(msg_context);
+        
+        return new AlertDialog.Builder(context)
+            .setTitle(title)
+            .setView(EntryView)
+            .setPositiveButton(PositiveBtnName, positiveDialogListener)
+           
+            .create();
+	}
+	
+	/**
+	 * 雙按鈕使用教學的視窗
+	 * @param context 呼叫該視窗的主體
+     * @param msg_pic 欲顯示的內文圖示
+	 * @param msg_context 欲顯示的內文文字
+	 * @param positiveDialogListener 當按[上一個]的反應監聽
+	 * @param negativeDialogListener 當按[下一個]的反應監聽
+	 */
+	public static AlertDialog tuitionTwoBtnDialog(final Context context, int title,int msg_pic,int msg_context,DialogInterface.OnClickListener positiveDialogListener,DialogInterface.OnClickListener negativeDialogListener){
+		
+		LayoutInflater factory = LayoutInflater.from(context);
+        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
+        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
+        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
+        tu_pic.setImageResource(msg_pic);
+        tu_cnx.setText(msg_context);
+        
+        return new AlertDialog.Builder(context)
+            .setTitle(title)
+            .setView(EntryView)
+            
+            .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.previous), positiveDialogListener)
+            .setNegativeButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.next), negativeDialogListener)
+            .create();
+	}
+	
+	
     /**
      * 這個函式專用來清除已顯示中的橘子Toast
      */

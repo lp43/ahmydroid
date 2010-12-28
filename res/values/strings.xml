@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-	
-	<!-- 以下是試著重寫的Setting -->
+
 	<string name="app_name">別摔小An(droid)</string>
-    <string name="how_to_play">怎麼玩?</string>
+    <string name="how_to_use">新手教學</string>
     <string name="exit">離開</string>
     <string name="about">關於</string>
     <string name="author">作者</string>
@@ -13,7 +12,7 @@
     <string name="startfallprotect">啟動「摔落告知」功能</string>
     <string name="startingfallprotect">「摔落告知」執行中</string>
     <string name="stopfallprotect">關閉「摔落告知」</string>
-    <string name="set_notify">掉落告知設定</string>
+    <string name="set_notify">摔落告知設定</string>
 	<string name="location_setting">2 發訊告知設定</string>
 	<string name="location_feature">定位功能</string>
 	<string name="location_dialog_context">必須先將GPS或WiFi定位開啟，才能獲得地理座標。待設定完，再請您回來設定。</string>
@@ -34,12 +33,12 @@
 	<string name="message_feature_instroduction">需支付簡訊費用。啟用後系統會依設定，將資訊發送給指定者</string>
 	<string name="message_set">簡訊設定</string>
 	<string name="facebook_feature">2.Facebook告知</string>
-	<string name="facebook_feature_instroduction">需保持3G上網狀態。啟用後系統會將定位資訊傳送至Facebook</string>
+	<string name="facebook_feature_instroduction">需保持3G上網狀態。啟用後系統會將定位資訊傳送至你的塗鴨牆中</string>
 	<string name="facebook_set">Facebook設定</string>
 	<string name="need_old_password">需要舊密碼</string>
 	<string name="reset_new_password">設定新密碼</string>
 	<string name="context_to_message">收件者手機號碼︰</string>	
-	<string name="default_number_context">手機掉時，你希望系統自動通知誰？</string>
+	<string name="default_number_context">手機掉時，你希望系統自動通知誰的手機？</string>
 	<string name="context_title">通知的內文︰</string>
 	<string name="system_message_context">我是手機掉落告知系統，現在時間是#time，地點在#location，</string>
 	<string name="type_message_context">請你告訴我主人手機掉了，好嗎？</string>
@@ -50,12 +49,9 @@
 	<string name="facebook_data_not_set">尚未設定帳號密碼</string>
 	<string name="first_dispatcher_time">發訊啟動時間</string>
 	<string name="first_dispatcher_time_instruduction">當警報畫面被開啟時，若未輸入[警報解除密碼]，系統會依時發出定理位置</string>
-	<string name="facebook">Facebook</string>
-	<string name="notify">告知</string>
-	<string name="instruction_head">啟用後，系統會依設定，</string>
-	<string name="facebook_instruction">將定位資訊傳送至Facebook</string>
+	<string name="facebook_instruction">1.帳號密碼設定完後，請勿清除，否則無法自動發佈訊息。\n\n2.發佈過程中若螢幕被關閉，也可能無法發送Facebook！</string>
 	<string name="post_success">Facebook發文成功！</string>
-	<string name="post_success2">請至Facebook的塗鴨牆查看！</string>
+	<string name="post_success2">請至Facebook塗鴨牆查看！</string>
 	<string name="unlock">解鎖</string>
 	<string name="message_last_sentence_ifusernotype">請告訴我的主人，幫我找到回家的路！</string>
 	<string name="set">設定</string>
@@ -72,8 +68,7 @@
 	<string name="username_cleared">帳密清除完成！</string>
 	<string name="test">測試</string>
 	<string name="clear_username">清除帳密</string>
-	<string name="help">說明</string>
-	<string name="ps">註︰</string>
+	<string name="help">說明 (必看)</string>
 	<string name="ok">確認</string>
 	<string name="password_modify">修改密碼</string>
 	<string name="please_type">請輸入</string>
@@ -82,8 +77,26 @@
 	<string name="facebook_message_time">剛剛我看了系統時間是 #time</string>
 	<string name="facebook_message_location">我的位置在 #location</string>
 	<string name="facebook_message_last">快用GoogleMap貼上這個經緯度找我！</string>
+	<string name="password_can_be_null">密碼可不設</string>
 	
-		
+	<!-- 以下是使用教學檔裡的字串 -->
+	<string name="previous">上一個</string>
+	<string name="next">下一個</string>
+	<string name="welcome">歡迎使用 1/5</string>
+	<string name="how_to_use_1">「別摔小安」是一套摔落告知軟體，啟動後會在背景長駐。\n
+								當你的手機掉落並摔到，會開啟「警報畫面」來通知您手機掉了。</string>
+ 	<string name="warning_ui">警報畫面 2/5</string>
+ 	<string name="how_to_use_2">「警報畫面」是當您的手機摔落時，Android機器人跌倒並通知您的畫面。\n
+ 								您必須撥開左上方的隱藏磚塊，並輸入[警報解除密碼]解鎖。</string>
+ 	<string name="unlock_ui">警報解除密碼 3/5</string>							
+ 	<string name="how_to_use_3">「警報解除密碼」是在警報畫面左上方的隱藏密碼。\n
+ 								你必須撥開該磚塊並輸入密碼，否則程式會[發送訊息告知]。</string>							
+	<string name="send_txt">發送訊息告知 4/5</string>
+	<string name="how_to_use_4">若您開啟「發訊告知」，程式會依您所設定的時間，將目前手機經緯度資訊傳至別人的簡訊或自己的Facebook塗鴨牆中。</string>
+	<string name="thank">感謝您的使用 5/5</string>
+	<string name="how_to_use_5">如果有更好的建議，歡迎來信︰\n
+								lp43simon@gmail.com \n
+							    謝謝您使用「別摔小安」。</string>
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

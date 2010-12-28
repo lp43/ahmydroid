@@ -254,8 +254,7 @@ public class Settings extends PreferenceActivity {
 							MyDialog.newToast(Settings.this, getString(R.string.username_cleared), 0);
 							break;
 						case 2:
-							MyDialog.helpDialog(Settings.this,R.drawable.facebook_spic, getString(R.string.facebook)+getString(R.string.notify), 
-                    				getString(R.string.instruction_head)+getString(R.string.facebook_instruction)+"\n"+"\n"+getString(R.string.ps)+getString(R.string.facebook_ps));
+							MyDialog.helpDialog(Settings.this,R.drawable.facebook_spic, getString(R.string.facebook_feature),getString(R.string.facebook_instruction));
 							break;
 						}
 						
