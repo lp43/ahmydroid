@@ -54,7 +54,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.23";
+	private String softVersion="v1.0.0.24";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -94,8 +94,6 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	private static final int HOW_TO_USE_3 = 3;
 	private static final int HOW_TO_USE_4 = 4;
 	private static final int HOW_TO_USE_5 = 5;
-  
-	public static int times;
 
 
 	@Override
@@ -313,7 +311,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 //		Log.i(tag, "packagename: "+this.getPackageName());
 		
 		for(RunningServiceInfo service_name:service){
-			Log.i(tag, "exist service: "+service_name.service.getShortClassName());
+//			Log.i(tag, "exist service: "+service_name.service.getShortClassName());
 			if(service_name.service.getShortClassName().equals(checkServiceName)){
 				return_field=true;
 				break;

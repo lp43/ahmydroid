@@ -132,9 +132,9 @@ public class MyDispatcher {
                 });
                 
             } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
+                Log.i(tag, "JSONException"+e.getMessage());
             } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
+            	Log.i(tag, "FacebookError"+e.getMessage());
             }
         }
     }

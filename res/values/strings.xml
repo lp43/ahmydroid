@@ -20,7 +20,7 @@
 	<string name="go_to">前往開啟</string>
 	<string name="cancel">取消</string>	
 	<string name="location_feature_instroduction">啟動後，系統才能依手機定位以簡訊或Facebook發出地理位置</string>
-	<string name="other_set">其它設定</string>
+	<string name="other_set">3 其它設定</string>
 	<string name="alarm_set">1 警報畫面設定</string>
 	<string name="unlock_password_set">2.警報解除密碼</string>
 	<string name="unlock_password_instroduction">當警報畫面被開啟時，需撥開畫面左上角磚塊，輸入該密碼，才會解除警報</string>
@@ -45,8 +45,8 @@
 	<string name="wrong_phone_number">手機號碼格式錯誤！</string>
 	<string name="reset">重新設定</string>
 	<string name="msg_addtion">還希望跟收件者說些什麼？點我設定</string>
-	<string name="facebook_data_set">帳號密碼設定完成</string>
-	<string name="facebook_data_not_set">尚未設定帳號密碼</string>
+	<string name="data_set">設定完成</string>
+	<string name="data_not_set">未設定</string>
 	<string name="first_dispatcher_time">發訊啟動時間</string>
 	<string name="first_dispatcher_time_instruduction">當警報畫面被開啟時，若未輸入[警報解除密碼]，系統會依時發出定理位置</string>
 	<string name="facebook_instruction">1.帳號密碼設定完後，請勿清除，否則無法自動發佈訊息。\n\n2.發佈過程中若螢幕被關閉，也可能無法發送Facebook！</string>
@@ -78,6 +78,8 @@
 	<string name="facebook_message_location">我的位置在 #location</string>
 	<string name="facebook_message_last">快用GoogleMap貼上這個經緯度找我！</string>
 	<string name="password_can_be_null">密碼可不設</string>
+	<string name="sensitivity_set">靈敏度設定</string>
+	<string name="sensitivity_instruction">設定摔落感測器的靈敏度，越低越不容易啟動警報畫面</string>
 	
 	<!-- 以下是使用教學檔裡的字串 -->
 	<string name="previous">上一個</string>

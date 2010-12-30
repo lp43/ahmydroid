@@ -68,6 +68,16 @@
        		 android:key="facebook_set"
              android:title="@string/facebook_set"
              android:dependency="facebook"
-             android:summary="@string/facebook_data_not_set"/>
+             android:summary="@string/data_not_set"/>
 
+   <PreferenceCategory
+           android:title="@string/other_set"/>  
+         <ListPreference
+       		android:key="sensitivity"
+       		android:title="@string/sensitivity_set"
+       		android:summary="@string/sensitivity_instruction"
+       		android:entryValues="@array/sensitive_entryValues"
+       		android:entries="@array/sensitive_entries"
+       		android:defaultValue="0"/>     
+           
 </PreferenceScreen>

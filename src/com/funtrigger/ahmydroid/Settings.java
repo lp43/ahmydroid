@@ -175,24 +175,25 @@ public class Settings extends PreferenceActivity {
 			public boolean onPreferenceChange(Preference preference,
 					Object newValue) {
 					MySharedPreferences.addPreference(Settings.this, "message_context", msg_context.getText().toString());
-				if(isNumeric(msg_num.getText().toString())){
-					MySharedPreferences.addPreference(Settings.this, "message_number", msg_num.getText().toString());	
+					
+				if(msg_num.getText().toString().equals("")){
+					MySharedPreferences.addPreference(Settings.this, "message_number", msg_num.getText().toString());
+					message_context_setting.setSummary(R.string.data_not_set);
+				}else if(isNumeric(msg_num.getText().toString())){
+					MySharedPreferences.addPreference(Settings.this, "message_number", msg_num.getText().toString());
+					message_context_setting.setSummary(R.string.data_set);
 				}else{
-					MyDialog.newDialog(Settings.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");	
+					MyDialog.newDialog(Settings.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");
+					message_context_setting.setSummary(R.string.data_not_set);
 				}
+				
 				Log.i(tag, "msg_num: "+MySharedPreferences.getPreference(Settings.this, "message_number", ""));
 				Log.i(tag, "msg_context: "+MySharedPreferences.getPreference(Settings.this, "message_context", ""));
 				
 				return true;
 			}
         	
-        });      
-        
-//        if(MySharedPreferences.getPreference(Settings.this, "facebook_set", false).equals(true)){
-//        	facebook_set.setSummary(R.string.facebook_data_set);		
-//        }else{
-//        	facebook_set.setSummary(R.string.facebook_data_not_set);
-//        }
+        });             
         
         
         
@@ -200,13 +201,8 @@ public class Settings extends PreferenceActivity {
         final CookieManager cookie=CookieManager.getInstance();
         Log.i(tag, "Cookie: "+cookie.getCookie("http://www.facebook.com"));
         
-        facebook_set.setSummary(cookie.getCookie("http://www.facebook.com")==null?R.string.facebook_data_not_set:R.string.facebook_data_set);
-        
-//        if(!cookie.getCookie("http://www.facebook.com").equals("")){
-//        	facebook_set.setSummary(R.string.facebook_data_set);
-//        }else{
-//        	facebook_set.setSummary(R.string.facebook_data_not_set);
-//        }
+        message_context_setting.setSummary(MySharedPreferences.getPreference(this, "message_number", "").equals("")?R.string.data_not_set:R.string.data_set);
+        facebook_set.setSummary(cookie.getCookie("http://www.facebook.com")==null?R.string.data_not_set:R.string.data_set);        
         
         
         facebook_set.setOnPreferenceClickListener(new OnPreferenceClickListener(){
@@ -229,7 +225,7 @@ public class Settings extends PreferenceActivity {
 									Settings.this.runOnUiThread(new Runnable(){
 										public void run(){
 //											MySharedPreferences.addPreference(Settings.this, "facebook_set", true);
-											facebook_set.setSummary(R.string.facebook_data_set);		
+											facebook_set.setSummary(R.string.data_set);		
 										}
 									});
 								}
@@ -242,7 +238,7 @@ public class Settings extends PreferenceActivity {
 							cookie.removeAllCookie();
 							
 //							MySharedPreferences.addPreference(Settings.this, "facebook_set", false);
-							facebook_set.setSummary(R.string.facebook_data_not_set);
+							facebook_set.setSummary(R.string.data_not_set);
 							
 							//AccountManager管不到FB
 //							AccountManager am=AccountManager.get(SetNotify.this);

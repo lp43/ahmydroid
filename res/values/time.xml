@@ -7,9 +7,6 @@
             <item>30秒後</item>
             <item>1分鐘後</item>
             <item>1.5分鐘後</item>
-            <item>2分鐘後</item>
-            <item>3分鐘後</item>
-            <item>5分鐘後</item>
         </string-array>
         
          <string-array name="entryValues">
@@ -19,9 +16,6 @@
             <item>30000</item>
             <item>60000</item>
             <item>90000</item>
-            <item>120000</item>
-            <item>180000</item>
-            <item>300000</item>
         </string-array>
     </resources>
 

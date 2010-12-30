@@ -112,24 +112,10 @@ public class FallDetector extends Service{
 		
 		
 		mysensor=new MySensor();
-		mysensor.startSensor(FallDetector.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
+		mysensor.startSensor(FallDetector.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL );
 		
 		super.onCreate();
 	}
-
-
-//	@Override
-//	public int onStartCommand(Intent intent, int flags, int startId) {
-////		return super.onStartCommand(intent, flags, startId);
-//		return START_FLAG_REDELIVERY;
-//	}
-
-//	@Override
-//	public void onStart(Intent intent, int startId) {
-//		Log.i(tag, "FallDetector.onStart");
-//		startForeground(0,notification);//將Service強制在前景執行
-//		super.onStart(intent, startId);
-//	}
 
 	@Override
 	public void onDestroy() {
@@ -225,7 +211,7 @@ public class FallDetector extends Service{
 	}
 
 	/**
-	 * 該內部廣播接收用在當力道大於15時，啟動Fallen.java
+	 * 該內部廣播接收用在當力道指定力道時，啟動Fallen.java
 	 * @author simon
 	 *
 	 */
