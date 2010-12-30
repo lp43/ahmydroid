@@ -32,7 +32,7 @@ public class MyDispatcher {
 	Context context;
 	AsyncFacebookRunner mAsyncRunner;
 	private static String tag="tag";
-	public static String id="";
+	public static String post_id="";
 	
 	/**
 	 * SMS簡訊發射器
@@ -117,8 +117,8 @@ public class MyDispatcher {
                 // process the response here: executed in background thread
 
                 JSONObject json = Util.parseJson(response);
-                id = json.getString("id");
-                Log.i(tag, "post id: "+id);
+                post_id = json.getString("id");
+                Log.i(tag, "post id: "+post_id);
                 // then post the processed result back to the UI thread
                 // if we do not do this, an runtime exception will be generated
                 // e.g. "CalledFromWrongThreadException: Only the original
@@ -127,7 +127,9 @@ public class MyDispatcher {
                     public void run() {
                     	Toast.makeText(context, context.getString(R.string.post_success), Toast.LENGTH_SHORT).show();
                     	MyDialog.newToast(context, context.getString(R.string.post_success2), R.drawable.facebook_pic);
-
+                    	Settings.setFacebookStatus(true);
+                    	//一顯示使用者資料設定後，馬上將post_id清除
+                    	post_id="";
                     }
                 });
                 

@@ -24,6 +24,7 @@ import android.preference.Preference.OnPreferenceClickListener;
 import android.preference.PreferenceActivity;
 import android.preference.PreferenceScreen;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -32,13 +33,16 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 public class Settings extends PreferenceActivity {
-	PreferenceScreen preferenceScreen;
-	EditTextPreference unlock_password,message_context_setting;
-	CheckBoxPreference location,message_checkbox,facebook_checkbox;
-	Preference facebook_set;
-	protected String tag="tag";
-	Dialog dialog;
-	EditText password1,password2,oldpassword,msg_num,msg_context;
+	private PreferenceScreen preferenceScreen;
+	private EditTextPreference unlock_password;
+	private CheckBoxPreference location,message_checkbox;
+	private static CheckBoxPreference facebook_checkbox;
+	private static Preference facebook_set;
+	private Preference message_context_setting;
+	private String tag="tag";
+	private Dialog dialog;
+	private EditText password1,password2,oldpassword,msg_num,msg_context;
+	private static CookieManager cookie;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,8 +58,17 @@ public class Settings extends PreferenceActivity {
         message_checkbox=(CheckBoxPreference) preferenceScreen.findPreference("message");
         facebook_checkbox=(CheckBoxPreference) preferenceScreen.findPreference("facebook");
         
-        message_context_setting=(EditTextPreference)preferenceScreen.findPreference("message_context_setting");
+        message_context_setting=preferenceScreen.findPreference("message_context_setting");
         facebook_set=preferenceScreen.findPreference("facebook_set");
+        
+        //將Cookie先叫出來，好讓等等的Facebook能用
+        CookieSyncManager.createInstance(Settings.this);
+        cookie=CookieManager.getInstance();
+
+        
+        //顯示Message和Facebook為未設定或已設定
+        message_context_setting.setSummary(MySharedPreferences.getPreference(this, "message_number", "").equals("")?R.string.data_not_set:R.string.data_set);
+        facebook_set.setSummary(cookie.getCookie("http://www.facebook.com")==null?R.string.data_not_set:R.string.data_set);
         
          //設定單擊unlock_password的視窗顯示狀態
         if(!MySharedPreferences.getPreference(Settings.this, "unlock_password", "").equals("")){
@@ -140,131 +153,62 @@ public class Settings extends PreferenceActivity {
         	
         });
         
-        message_context_setting.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+        //本來點選message_checkbox只要純勾選和反勾選
+        //但為了讓第1次使用的使用者能更方便，程式這一段做到
+        //當偵測到是第1次使用，沒有值時，點message_checkbox可以直接開設定值
+        message_checkbox.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				dialog=message_context_setting.getDialog();
-				//讓鍵盤暫時隱藏
-				dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
-
-				msg_num=(EditText) dialog.findViewById(R.id.type_message_number);
-				msg_context=(EditText) dialog.findViewById(R.id.type_message_context);
-				TextView msg_sys_cnx=(TextView) dialog.findViewById(R.id.msg_sys_ctx);
 				
-				MyTime mytime=new MyTime();
-				//將時間和地點換成當下的值
-				msg_sys_cnx.setText(msg_sys_cnx.getText().toString().replace("#time", mytime.getHHMM()));
-				msg_sys_cnx.setText(msg_sys_cnx.getText().toString().replace("#location", MyLocation.getLocation(Settings.this)));
-				
-				if(!MySharedPreferences.getPreference(Settings.this, "message_number", "").equals("")){
-					msg_num.setText(MySharedPreferences.getPreference(Settings.this, "message_number", ""));
+				if(MySharedPreferences.getPreference(Settings.this, "message_number", "").equals("")){
+					Log.i(tag, "into message_checkbox==null");				
+					message_checkbox.setChecked(false);
+					startMsgDialog();
 				}
-
-					msg_context.setText(MySharedPreferences.getPreference(Settings.this, "message_context", ""));
-
-				
-				return true;
+				return false;
 			}
         	
         });
         
-        message_context_setting.setOnPreferenceChangeListener(new OnPreferenceChangeListener(){
+        
+        message_context_setting.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
 			@Override
-			public boolean onPreferenceChange(Preference preference,
-					Object newValue) {
-					MySharedPreferences.addPreference(Settings.this, "message_context", msg_context.getText().toString());
-					
-				if(msg_num.getText().toString().equals("")){
-					MySharedPreferences.addPreference(Settings.this, "message_number", msg_num.getText().toString());
-					message_context_setting.setSummary(R.string.data_not_set);
-				}else if(isNumeric(msg_num.getText().toString())){
-					MySharedPreferences.addPreference(Settings.this, "message_number", msg_num.getText().toString());
-					message_context_setting.setSummary(R.string.data_set);
-				}else{
-					MyDialog.newDialog(Settings.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");
-					message_context_setting.setSummary(R.string.data_not_set);
-				}
+			public boolean onPreferenceClick(Preference preference) {				
 				
-				Log.i(tag, "msg_num: "+MySharedPreferences.getPreference(Settings.this, "message_number", ""));
-				Log.i(tag, "msg_context: "+MySharedPreferences.getPreference(Settings.this, "message_context", ""));
-				
+				startMsgDialog();
 				return true;
 			}
         	
-        });             
+        });
+   
+
+        //Facebook勾選選項
+        facebook_checkbox.setOnPreferenceClickListener(new OnPreferenceClickListener(){
+
+			@Override
+			public boolean onPreferenceClick(Preference preference) {
+
+				if(cookie.getCookie("http://www.facebook.com")==null||
+						cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0)==-1){	
+					setFacebookStatus(false);
+					
+					Log.i(tag, "cookie: "+cookie.getCookie("http://www.facebook.com"));
+					startFacebookDialog();
+					
+				}
+				return false;
+			}
+        	
+        });
         
-        
-        
-        CookieSyncManager.createInstance(Settings.this);
-        final CookieManager cookie=CookieManager.getInstance();
-        Log.i(tag, "Cookie: "+cookie.getCookie("http://www.facebook.com"));
-        
-        message_context_setting.setSummary(MySharedPreferences.getPreference(this, "message_number", "").equals("")?R.string.data_not_set:R.string.data_set);
-        facebook_set.setSummary(cookie.getCookie("http://www.facebook.com")==null?R.string.data_not_set:R.string.data_set);        
-        
-        
+        //Facebook設定
         facebook_set.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
 			@Override
 			public boolean onPreferenceClick(Preference preference) {
-				new AlertDialog.Builder(Settings.this)
-				.setTitle(R.string.please_choice)
-				.setItems(new String[]{getString(R.string.set)+getString(R.string.and)+getString(R.string.test),getString(R.string.clear_username),getString(R.string.help)}, new DialogInterface.OnClickListener(){
-
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						switch(which){
-						case 0:
-							MyDispatcher mydispatcher = new MyDispatcher();
-							mydispatcher.facebookDispatcher(Settings.this.getApplicationContext(), Settings.this);
-							new Thread(){
-								public void run(){
-									while(MyDispatcher.id.equals("")){}
-									Settings.this.runOnUiThread(new Runnable(){
-										public void run(){
-//											MySharedPreferences.addPreference(Settings.this, "facebook_set", true);
-											facebook_set.setSummary(R.string.data_set);		
-										}
-									});
-								}
-							}.start();
-							
-							break;
-						case 1:
-							CookieSyncManager.createInstance(Settings.this);							
-							CookieManager cookie=CookieManager.getInstance();
-							cookie.removeAllCookie();
-							
-//							MySharedPreferences.addPreference(Settings.this, "facebook_set", false);
-							facebook_set.setSummary(R.string.data_not_set);
-							
-							//AccountManager管不到FB
-//							AccountManager am=AccountManager.get(SetNotify.this);
-//							
-//							for(Account ac:am.getAccounts()){
-//								Log.i(tag, "ac name: "+ac.name);
-//								am.removeAccount(ac, null, null);
-//							}
-							MyDialog.newToast(Settings.this, getString(R.string.username_cleared), 0);
-							break;
-						case 2:
-							MyDialog.helpDialog(Settings.this,R.drawable.facebook_spic, getString(R.string.facebook_feature),getString(R.string.facebook_instruction));
-							break;
-						}
-						
-					}	
-					
-				})
-				.setPositiveButton(R.string.cancel, new  DialogInterface.OnClickListener(){
-
-				@Override
-				public void onClick(DialogInterface dialog, int which) {	
-				}
-                	
-                })
-				.show();		
+				startFacebookDialog();
 				return true;
 			}
         });
@@ -345,6 +289,9 @@ public class Settings extends PreferenceActivity {
      	 });
     }
     
+    /**
+     * 前往Android系統的AGPS/GPS開啟畫面
+     */
     private void gotoSettingPage(){
     	Intent intent = new Intent();
 		intent.setAction(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
@@ -361,4 +308,216 @@ public class Settings extends PreferenceActivity {
 //	    Log.i(tag, "isNumeric:"+String.valueOf(pattern.matcher(str).matches()));
 	    return pattern.matcher(str).matches();   
 	 } 
+	
+	/**
+	 * 將Message的設定畫面叫出來
+	 */
+	private void startMsgDialog(){
+		LayoutInflater factory= LayoutInflater.from(Settings.this);
+		final View EntryView = factory.inflate(R.layout.context_to_message, null);
+		
+		MyTime mytime=new MyTime();
+		//將時間和地點換成當下的值
+		
+		//將簡訊內文的第1行裡的經緯度抓一抓
+		TextView sys_cnx=(TextView) message_checkbox.getView(EntryView,null).findViewById(R.id.msg_sys_ctx);
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#time", mytime.getHHMM()));
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", MyLocation.getLocation(Settings.this)));
+		
+		final EditText num=(EditText) message_checkbox.getView(EntryView,null).findViewById(R.id.type_message_number);
+		final EditText msg_cnx=(EditText) message_checkbox.getView(EntryView,null).findViewById(R.id.type_message_context);
+		
+		//如果手機號碼和內文之前有存，也顯示出來
+		num.setText(MySharedPreferences.getPreference(this, "message_number", ""));
+		msg_cnx.setText(MySharedPreferences.getPreference(this, "message_context", getString(R.string.type_message_context)));
+		
+		 new AlertDialog.Builder(Settings.this)
+            .setTitle(getString(R.string.message_set))
+		    .setIcon(R.drawable.message_spic)
+		    .setView(EntryView)
+		    .setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog,
+						int which) {				
+					
+					//不管電話號碼對不對，簡訊的內文都先存進去再說
+					MySharedPreferences.addPreference(Settings.this, "message_context", msg_cnx.getText().toString());
+					
+//					Log.i(tag, "edittext= "+num.getText().toString());
+					if(num.getText().toString().equals("")){
+						MySharedPreferences.addPreference(Settings.this, "message_number", "");
+						message_checkbox.setChecked(false);
+						message_context_setting.setSummary(R.string.data_not_set);
+					}else if(!num.getText().toString().equals("")){
+						
+						if(isNumeric(num.getText().toString())){
+							MySharedPreferences.addPreference(Settings.this, "message_number", num.getText().toString());
+							message_context_setting.setSummary(R.string.data_set);
+							message_checkbox.setChecked(true);
+						}else{
+							MyDialog.newDialog(Settings.this, getString(R.string.attention), getString(R.string.wrong_phone_number), "warning");
+							message_checkbox.setChecked(false);
+						}
+						
+					}
+					
+				}
+		    	
+		    })
+		    .setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog,
+						int which) {
+					
+						if(MySharedPreferences.getPreference(Settings.this, "message_number", "").equals("")){
+							//如果沒資料了，則將勾勾取消
+							message_checkbox.setChecked(false);
+						}			
+					
+				}
+		    }
+		    )
+   .show();
+	}
+	
+	
+	/**
+	 * 將Facebook設定畫面叫出來
+	 */
+	private void startFacebookDialog(){
+		
+		MyDialog.newOneBtnDialog(Settings.this, R.drawable.facebook_spic, getString(R.string.facebook_set), getString(R.string.facebook_instruction), getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//如果檢查Cookie沒有資料,設定帳密
+				if(cookie.getCookie("http://www.facebook.com")==null||
+						cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0)==-1){	
+					setFacebookStatus(false);
+					
+					//連到Facebook去設定帳密
+					MyDispatcher mydispatcher = new MyDispatcher();
+					mydispatcher.facebookDispatcher(Settings.this.getApplicationContext(), Settings.this);
+					
+				}else{
+					//出現視窗問是否要清除的詢問畫面
+					Log.i(tag, "cookie: "+cookie.getCookie("http://www.facebook.com"));
+					Log.i(tag, "cookie INDEX: "+cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0));
+					
+					
+					MyDialog.newTwoBtnDialog(Settings.this, R.drawable.warning, getString(R.string.attention), getString(R.string.has_old_cookie), 
+							getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									//先清除Cookie，並將顯示畫面的值設一設
+									cookie.removeAllCookie();
+
+									facebook_set.setSummary(R.string.data_not_set);
+									facebook_checkbox.setChecked(false);
+									
+									//再連到Facebook去設定帳密
+									MyDispatcher mydispatcher = new MyDispatcher();
+									mydispatcher.facebookDispatcher(Settings.this.getApplicationContext(), Settings.this);
+								}
+						
+					}, getString(R.string.cancel), new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							//按取消時，什麼事也不做
+						}
+						
+					});
+				}
+					
+				
+				
+			}
+			
+		});
+		
+//		new AlertDialog.Builder(Settings.this)
+//		.setTitle(R.string.please_choice)
+//		.setItems(new String[]{getString(R.string.set)+getString(R.string.and)+getString(R.string.test),getString(R.string.clear_username),getString(R.string.help)}, new DialogInterface.OnClickListener(){
+//
+//			@Override
+//			public void onClick(DialogInterface dialog, int which) {
+//				switch(which){
+//				case 0:
+//					
+//					facebook_checkbox.setChecked(false);
+//					
+//					MyDispatcher mydispatcher = new MyDispatcher();
+//					mydispatcher.facebookDispatcher(Settings.this.getApplicationContext(), Settings.this);
+//					new Thread(){
+//						public void run(){
+//							while(MyDispatcher.post_id.equals("")){}
+//							Settings.this.runOnUiThread(new Runnable(){
+//								public void run(){
+//									facebook_checkbox.setChecked(true);
+//									facebook_set.setSummary(R.string.data_set);		
+//								}
+//							});
+//						}
+//					}.start();
+//					
+//					break;
+//				case 1:
+//
+//					cookie.removeAllCookie();
+//					
+////					MySharedPreferences.addPreference(Settings.this, "facebook_set", false);
+//					facebook_set.setSummary(R.string.data_not_set);
+//					facebook_checkbox.setChecked(false);
+//					//AccountManager管不到FB
+////					AccountManager am=AccountManager.get(SetNotify.this);
+////					
+////					for(Account ac:am.getAccounts()){
+////						Log.i(tag, "ac name: "+ac.name);
+////						am.removeAccount(ac, null, null);
+////					}
+//					MyDialog.newToast(Settings.this, getString(R.string.username_cleared), 0);
+//					break;
+//				case 2:
+//					MyDialog.helpDialog(Settings.this,R.drawable.facebook_spic, getString(R.string.facebook_feature),getString(R.string.facebook_instruction));
+//					if(Settings.cookie.getCookie("http://www.facebook.com")==null){
+//						Log.i(tag, "cookie: "+Settings.cookie.getCookie("http://www.facebook.com"));
+//						facebook_checkbox.setChecked(false);
+//					}
+//					
+//					break;
+//				}
+//				
+//			}	
+//			
+//		})
+//		.setPositiveButton(R.string.cancel, new  DialogInterface.OnClickListener(){
+//
+//		@Override
+//		public void onClick(DialogInterface dialog, int which) {	
+//		}
+//	    	
+//	    })
+//		.show();		
+	}
+	
+	/**
+	 * 設定Facebook在Settings裡的設定狀態
+	 * @param 傳進來若為true,則將畫面設為打勾和已設定
+	 */
+	public static void setFacebookStatus(boolean status){
+		if(status==true){
+			facebook_set.setSummary(R.string.data_set);
+			facebook_checkbox.setChecked(true);
+		}else{
+			facebook_set.setSummary(R.string.data_not_set);
+			facebook_checkbox.setChecked(false);
+		}
+		
+	}
+	
 }

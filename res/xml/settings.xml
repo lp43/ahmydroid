@@ -52,13 +52,16 @@
              android:title="@string/message_feature"
              android:summary="@string/message_feature_instroduction"
              android:dependency="location"/>             
-       <EditTextPreference
+      <Preference
        		 android:key="message_context_setting"
              android:title="@string/message_set"
              android:dependency="message"
-             android:dialogLayout="@layout/context_to_message"
+            
              android:dialogIcon="@drawable/message_spic"/>
              
+               <!--android:dialogLayout="@layout/context_to_message"-->
+               
+               
        <CheckBoxPreference
              android:key="facebook"
              android:title="@string/facebook_feature"

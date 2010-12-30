@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
     <resources>
         <string-array name="sensitive_entries">
-        	<item>低感度(預設)</item>
+        	<item>低感度(建議)</item>
         	<item>中感度</item>
         	<item>高感度</item>
 

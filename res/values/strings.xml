@@ -49,7 +49,8 @@
 	<string name="data_not_set">未設定</string>
 	<string name="first_dispatcher_time">發訊啟動時間</string>
 	<string name="first_dispatcher_time_instruduction">當警報畫面被開啟時，若未輸入[警報解除密碼]，系統會依時發出定理位置</string>
-	<string name="facebook_instruction">1.帳號密碼設定完後，請勿清除，否則無法自動發佈訊息。\n\n2.發佈過程中若螢幕被關閉，也可能無法發送Facebook！</string>
+	<string name="facebook_instruction">1.該方式需保持3G上網狀態\n\n2.在「警報畫面」中，若Facebook的發文過程中螢幕被關閉，可能會無法發送Facebook！</string>
+	<string name="has_old_cookie">發現有舊的帳密，是否清除並繼續設定？\n\n注意︰若無設定帳密將無法自動發文！</string>
 	<string name="post_success">Facebook發文成功！</string>
 	<string name="post_success2">請至Facebook塗鴨牆查看！</string>
 	<string name="unlock">解鎖</string>
