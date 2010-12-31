@@ -259,7 +259,7 @@ public class MyDialog {
 	 * @param positiveDialogListener 當按[上一個]的反應監聽
 	 * @param negativeDialogListener 當按[下一個]的反應監聽
 	 */
-	public static AlertDialog tuitionTwoBtnDialog(final Context context, int title,int msg_pic,int msg_context,DialogInterface.OnClickListener positiveDialogListener,DialogInterface.OnClickListener negativeDialogListener){
+	public static AlertDialog tuitionTwoBtnDialog(final Context context, int title,int msg_pic,int msg_context,int positiveBtnText,int negativeBtnText,DialogInterface.OnClickListener positiveDialogListener,DialogInterface.OnClickListener negativeDialogListener){
 		
 		LayoutInflater factory = LayoutInflater.from(context);
         final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
@@ -272,8 +272,8 @@ public class MyDialog {
             .setTitle(title)
             .setView(EntryView)
             
-            .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.previous), positiveDialogListener)
-            .setNegativeButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.next), negativeDialogListener)
+            .setPositiveButton(/*context.getResources().getString(com.funtrigger.ahmydroid.R.string.previous)*/positiveBtnText, positiveDialogListener)
+            .setNegativeButton(/*context.getResources().getString(com.funtrigger.ahmydroid.R.string.next)*/negativeBtnText, negativeDialogListener)
             .create();
 	}
 	

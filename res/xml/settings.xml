@@ -45,7 +45,7 @@
        		android:dependency="location"
        		android:entryValues="@array/entryValues"
        		android:entries="@array/entries"
-       		android:defaultValue="15000"/>     
+       		android:defaultValue="15"/>     
                         
        <CheckBoxPreference
              android:key="message"

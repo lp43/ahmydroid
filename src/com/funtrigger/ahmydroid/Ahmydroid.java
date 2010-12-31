@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.facebook.android.LoginPage;
 import com.facebook.android.Facebook;
+import com.facebook.android.R;
 import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.SwitchService;
@@ -32,6 +33,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -43,6 +45,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -54,7 +57,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.25";
+	private String softVersion="v1.0.0.26";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -115,12 +118,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
         imgfall=(ImageView) findViewById(R.id.fall);
         img_btn.setBackgroundResource(R.drawable.nostart);
         
+        //主畫面不用將離開按鈕隱藏
+        button_exit.setVisibility(View.VISIBLE);
+        
         //開啟使用教學
         button_how.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				button_how.setVisibility(View.INVISIBLE);
+//				button_how.setVisibility(View.INVISIBLE);
 				showDialog(HOW_TO_USE_1);
 				
 			}
@@ -133,8 +139,10 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			public void onClick(View v) {
 //				finish();
 			
-				
-//				Log.i(tag, "dispatcher time is : "+MySharedPreferences.getPreference(Ahmydroid.this, "dispatcher_first_time", "0"));
+				Intent intent =new Intent();
+				intent.setClass(Ahmydroid.this, TryFallen.class);
+				startActivity(intent);
+
 			
 			}
         	
@@ -202,7 +210,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			return dialog1;
 			
 		case HOW_TO_USE_2:
-			AlertDialog dialog2=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.warning_ui, R.drawable.warning_ui, R.string.how_to_use_2, 
+			AlertDialog dialog2=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.warning_ui, R.drawable.warning_ui, R.string.how_to_use_2, R.string.previous,R.string.next,
 					new DialogInterface.OnClickListener(){
 
 						@Override
@@ -223,7 +231,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			return dialog2;
 			
 		case HOW_TO_USE_3:
-			AlertDialog dialog3=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.unlock_ui, R.drawable.unlock_ui, R.string.how_to_use_3, 
+			AlertDialog dialog3=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.unlock_ui, R.drawable.unlock_ui, R.string.how_to_use_3, R.string.previous,R.string.next,
 					new DialogInterface.OnClickListener(){
 
 						@Override
@@ -244,7 +252,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			return dialog3;
 			
 		case HOW_TO_USE_4:
-			AlertDialog dialog4=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.send_txt, R.drawable.notify_all, R.string.how_to_use_4, 
+			AlertDialog dialog4=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.send_txt, R.drawable.notify_all, R.string.how_to_use_4, R.string.previous,R.string.next,
 					new DialogInterface.OnClickListener(){
 
 						@Override
@@ -265,14 +273,70 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			return dialog4;
 		
 		case HOW_TO_USE_5:
-			AlertDialog dialog5=MyDialog.tuitionOneBtnDialog(Ahmydroid.this, R.string.thank, R.drawable.icon, R.string.how_to_use_5, R.string.exit, new DialogInterface.OnClickListener(){
+			AlertDialog dialog5=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.thank, R.drawable.icon, R.string.how_to_use_5, R.string.previous, R.string.try_warning_ui,new DialogInterface.OnClickListener(){
 
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
+					showDialog(HOW_TO_USE_4);
+				}
+				
+			}, new DialogInterface.OnClickListener(){
+				
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					Intent intent =new Intent();
+					intent.setClass(Ahmydroid.this, TryFallen.class);
+					startActivity(intent);
+					
 				}
 				
 			});
+			
+			//下面這段本來要幫使用者多寫一個離開，後來還是算了。
+			//強迫使用者進來學如何關程式
+//			LayoutInflater factory = LayoutInflater.from(Ahmydroid.this);
+//	        final View EntryView = factory.inflate(Ahmydroid.this.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
+//	        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
+//	        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
+//	        tu_pic.setImageResource(R.drawable.icon);
+//	        tu_cnx.setText(R.string.how_to_use_5);
+//			AlertDialog dialog5=new AlertDialog.Builder(Ahmydroid.this)
+//            .setTitle(getString(R.string.thank))
+//            .setView(EntryView)
+//		    .setPositiveButton(R.string.previous, new DialogInterface.OnClickListener(){
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					showDialog(HOW_TO_USE_4);
+//					
+//				}
+//		    	
+//		    })
+//		    .setNeutralButton(R.string.exit, new DialogInterface.OnClickListener(){
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//				}
+//		    	
+//		    })
+//		    .setNegativeButton(R.string.try_warning_ui, new DialogInterface.OnClickListener(){
+//
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					Intent intent =new Intent();
+//					intent.setClass(Ahmydroid.this, TryFallen.class);
+//					startActivity(intent);
+//				}
+//		    	
+//		    })
+//		  
+//		    .create();
+			
+			
+			
+			
 			return dialog5;
+
 		}
 		return null;
 		

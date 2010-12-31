@@ -7,7 +7,19 @@
     android:background="@drawable/background"
     android:id="@+id/ahmyphone_layout">
 
+<!-- 離開按鈕 -->
+<Button
+	android:id="@+id/button_exit"
+	android:layout_width="120dip"
+	android:layout_height="50dip"
+	android:text="@string/exit" 
+	android:visibility="invisible"
+	android:textColor="@color/white" 
+	android:layout_marginLeft="5dip"
+	android:layout_marginTop="10dip"
+	android:background="@drawable/exit_button"/>
 
+<!-- 新手教學按鈕 -->
 <Button
 	android:id="@+id/button_how"
 	android:layout_width="120dip"
@@ -15,21 +27,25 @@
 	android:text="@string/how_to_use"
 	android:textColor="@color/black"
 	android:visibility="invisible"
-	android:layout_marginLeft="5dip"
-	android:layout_marginTop="10dip"
+ 	android:layout_marginLeft="50dip"
+	android:layout_alignTop="@id/button_exit"
+	android:layout_toRightOf="@id/button_exit"
 	android:background="@drawable/how_button"/>
 	
-<Button
-	android:id="@+id/button_exit"
-	android:layout_width="120dip"
-	android:layout_height="50dip"
-	android:text="@string/exit" 
-	android:textColor="@color/white" 
-	android:layout_alignTop="@id/button_how"
-	android:layout_toRightOf="@id/button_how"
-	android:layout_marginLeft="50dip"
-	android:background="@drawable/exit_button"/>
+	<!-- 綠箭頭按鈕 -->
 	
+<ImageButton
+	android:id="@+id/green_arrow"
+	android:layout_width="60dip"
+	android:layout_height="40dip"
+	android:background="@drawable/green_arrow"
+	android:layout_marginLeft="60dip"
+	android:layout_marginTop="4dip"
+	android:visibility="invisible"
+	/>	
+
+
+<!-- 底下是小綠人開關 -->
 <ImageButton
 	android:id="@+id/img_btn"
 	android:layout_below="@id/button_exit"
@@ -37,7 +53,9 @@
 	android:layout_height="280dip"
 	android:layout_marginLeft="10dip"
 	android:layout_marginTop="20dip"
-	/>
+	/>	
+
+<!-- 底下是小綠人動畫圖檔 -->
 <ImageView
 	android:id="@+id/fall"
 	android:layout_below="@id/button_exit"

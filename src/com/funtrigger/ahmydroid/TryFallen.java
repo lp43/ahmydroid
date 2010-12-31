@@ -10,6 +10,7 @@ import com.facebook.android.BaseDialogListener;
 import com.facebook.android.BaseRequestListener;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
+import com.facebook.android.R;
 import com.facebook.android.Util;
 import com.funtrigger.tools.MyDispatcher;
 import com.funtrigger.tools.MyLocation;
@@ -24,6 +25,7 @@ import android.app.KeyguardManager;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -57,6 +59,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -68,27 +72,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 /**
- * 在後臺運行中偵測手機是否掉落的Gsensor的Service，
- * 會啟動這個類別。
- * 這個類別用來處理動畫、音效、和震動…，
- * 以提示使用者手機掉了。
- * 這個類別被設在KEYGUARD保護層以外，
- * 所以螢幕在休眠時，
- * 也能亮起來，並啟動該類別
- * 註︰這個類別只會在手勢啟動後才被執行
+ * 這個類別會在新手教學的最後面被呼叫起來，
+ * 主要用來讓使用者測試看看什麼叫「輸入解鎖密碼」和「不正常離開的方式」。
  * @author simon
  */
-public class Fallen extends Activity{
+public class TryFallen extends Activity{
 
 	/**
 	 * 測試期間，讓我可以快速更改音量的變數
 	 * 不用每次都跑到程式碼裡去找設定
 	 */
-	public static int setVolumn = 2;
+	public static int setVolumn = 4;
 	/**
 	 * 機器人圖案的ImageView
 	 */
 	private ImageView imgfall;
+	/**
+	 * 綠箭頭的ImageView
+	 */
+	private ImageView green_arrow;
 	/**
 	 * 控制音樂播放的變數
 	 */
@@ -125,10 +127,10 @@ public class Fallen extends Activity{
 	 * 該變數是控制小綠人的圖形按鈕元件
 	 */
 	private ImageButton img_btn;
-	/**
-	 * 電源管理變數，該變數被拿來偵測螢幕是否有亮
-	 */
-	PowerManager pm;
+//	/**
+//	 * 電源管理變數，該變數被拿來偵測螢幕是否有亮
+//	 */
+//	PowerManager pm;
 	/**
 	 * 該變數是重力感應的X,Y,Z值
 	 * 程式將它們存在List裡
@@ -144,18 +146,18 @@ public class Fallen extends Activity{
 	Vibrator myVibrator;
 	Handler handler;
 	Runnable reg_Gsensor;
-	private int setolumn;
-    /**
-     * 該變數被用在告知系統，該類別啟動時，手機不能休眠，
-     * 但是因為和我後來的使用方向不符，就沒用到了
-     */
-    WakeLock wakeLock;
+
+//    /**
+//     * 該變數被用在告知系統，該類別啟動時，手機不能休眠，
+//     * 但是因為和我後來的使用方向不符，就沒用到了
+//     */
+//    WakeLock wakeLock;
     MySensor mysensor;
 	private BroadcastReceiver receiver_sensorchanged;
-	/**
-	 * Facebook的專屬dispatcher
-	 */
-	private BroadcastReceiver receiver_facebookdispatcher;
+//	/**
+//	 * Facebook的專屬dispatcher
+//	 */
+//	private BroadcastReceiver receiver_facebookdispatcher;
 	/**
 	 * 整個Fallen的layout變數
 	 */
@@ -164,49 +166,54 @@ public class Fallen extends Activity{
 	 * 將Fallen.java丟給facebookDispatcherReceiver專用
 	 */
 	static Activity activity;
-	/**
-	 * 關閉螢幕的控制變數
-	 */
-	WindowManager.LayoutParams lp;
+//	/**
+//	 * 關閉螢幕的控制變數
+//	 */
+//	WindowManager.LayoutParams lp;
+
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		Log.i(tag, "into Fallen.onCreate()");
+		Log.i(tag, "into TryFallen.onCreate()");
 		super.onCreate(savedInstanceState);
 		
-		this.activity=Fallen.this;
-		SwitchService.stopService(Fallen.this,FallDetector.class);//進來時把Service關掉，避免重覆進入本畫面
-		SwitchService.startService(Fallen.this, TimeService.class);//啟動TimeService,時間到時發訊息
+		this.activity=TryFallen.this;
+		SwitchService.stopService(TryFallen.this,FallDetector.class);//進來時把Service關掉，避免重覆進入本畫面
+		
+//		SwitchService.startService(TryFallen.this, TimeService.class);//啟動TimeService,時間到時發訊息
 
-		lp=this.getWindow().getAttributes();
+//		lp=this.getWindow().getAttributes();
 		
-		//檢驗是否為螢幕鎖
-		KeyguardManager km = (KeyguardManager) this.getSystemService(
-                Context.KEYGUARD_SERVICE);
-		Log.i(tag, "keylock? "+km.inKeyguardRestrictedInputMode());
-		
-		 
-		if(km.inKeyguardRestrictedInputMode()==true){
-			//如果有螢幕鎖時要做的事
-			Log.i(tag, "into inKeyguardRestrictedInputMode()==true");
-		}else{
-			//沒有進入螢幕鎖時，正常啟動程式
-			Log.i(tag, "into inKeyguardRestrictedInputMode()==false");
-		}
-		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		Log.i(tag, "power screen on? "+pm.isScreenOn());
-	
-				//讓該Activity能在鍵盤鎖以外，讓螢幕亮起的法寶
-				final Window win = getWindow();
-				 win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
-			                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
-			                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-		                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
-		                 /* | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON*/);
+//		//檢驗是否為螢幕鎖
+//		KeyguardManager km = (KeyguardManager) this.getSystemService(
+//                Context.KEYGUARD_SERVICE);
+//		Log.i(tag, "keylock? "+km.inKeyguardRestrictedInputMode());
+//		
+//		 
+//		if(km.inKeyguardRestrictedInputMode()==true){
+//			//如果有螢幕鎖時要做的事
+//			Log.i(tag, "into inKeyguardRestrictedInputMode()==true");
+//		}else{
+//			//沒有進入螢幕鎖時，正常啟動程式
+//			Log.i(tag, "into inKeyguardRestrictedInputMode()==false");
+//		}
+//		pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+//		Log.i(tag, "power screen on? "+pm.isScreenOn());
+//	
+//				//讓該Activity能在鍵盤鎖以外，讓螢幕亮起的法寶
+//				final Window win = getWindow();
+//				 win.addFlags(WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+//			                | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD
+//			                | WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
+//		                    | WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON
+//		                 /* | WindowManager.LayoutParams.FLAG_ALLOW_LOCK_WHILE_SCREEN_ON*/);
 
 		setContentView(R.layout.ahmyphone);
 		Log.i(tag, "setContentView finish");
 		
+
+		green_arrow=(ImageView) findViewById(R.id.green_arrow);
 		button_how=(Button) findViewById(R.id.button_how);
 		img_btn=(ImageButton) findViewById(R.id.img_btn);
 		imgfall=(ImageView) findViewById(R.id.fall);
@@ -215,6 +222,7 @@ public class Fallen extends Activity{
 		img_btn.setVisibility(View.INVISIBLE);
 		imgfall.setVisibility(View.VISIBLE);
 		button_how.setVisibility(View.INVISIBLE);
+	
 		
 		//本來有寫正常的顯示按鈕，但後來為了程式的簡單性，取消了
 //		button_exit.setOnClickListener(new OnClickListener(){
@@ -244,7 +252,10 @@ public class Fallen extends Activity{
 			RelativeLayout.LayoutParams params_pick_context=new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT);
 			params_pick_context.setMargins(0, 50, 0, 0);//距離主螢幕的位置
 			pick_context.setLayoutParams(params_pick_context);
+			
+			
 			relativelayout.addView(pick_context);
+			
 		}
 		
 		
@@ -254,7 +265,7 @@ public class Fallen extends Activity{
 			@Override
 			public void onClick(View v) {
 				Log.i(tag, "annimation pressed");
-				finish();
+				sayNoDialog();
 			}
 			
 		});
@@ -264,23 +275,23 @@ public class Fallen extends Activity{
 		
 		
 		this.registerReceiver(receiver_sensorchanged=new SensorChangedReceiver(), new IntentFilter("FALLENSENSORCHANGED"));
-		this.registerReceiver(receiver_facebookdispatcher=new facebookDispatchReceiver(), new IntentFilter("FACEBOOKDISPATCHER"));
+//		this.registerReceiver(receiver_facebookdispatcher=new facebookDispatchReceiver(), new IntentFilter("FACEBOOKDISPATCHER"));
 		
 		
 		
-		//啟動一個執行緒，負責偵測Screen是否有On。
-		//這個檢查迴圈不能寫在主程式裡，否則會干擾主程序喚醒螢幕
-		new Thread(){
-			public void run(){
-				while(pm.isScreenOn()==false){
-//					Log.i(tag, "into isScreenOn==false");
-					if(pm.isScreenOn()==true){
-						Log.i(tag, "into isScreenOn==true");
-						break;
-					}
-				}
-			}
-		}.start();
+//		//啟動一個執行緒，負責偵測Screen是否有On。
+//		//這個檢查迴圈不能寫在主程式裡，否則會干擾主程序喚醒螢幕
+//		new Thread(){
+//			public void run(){
+//				while(pm.isScreenOn()==false){
+////					Log.i(tag, "into isScreenOn==false");
+//					if(pm.isScreenOn()==true){
+//						Log.i(tag, "into isScreenOn==true");
+//						break;
+//					}
+//				}
+//			}
+//		}.start();
 		
 		//使用Handler的方式，註冊Fallen.Sensor。
 		//目的也是為了預防該段程式干擾主程式喚醒螢幕
@@ -290,7 +301,7 @@ public class Fallen extends Activity{
 			@Override
 			public void run() {
 				mysensor=new MySensor();
-				mysensor.startSensor(Fallen.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
+				mysensor.startSensor(TryFallen.this, Sensor.TYPE_ACCELEROMETER, SensorManager.SENSOR_DELAY_NORMAL);
 //				boolean sensormanager_register =sensormanager.registerListener(Fallen.this,list.get(0), SensorManager.SENSOR_DELAY_NORMAL);	
 //				Log.i(tag, "sensormanager_register "+sensormanager_register);		
 			}};
@@ -312,56 +323,83 @@ public class Fallen extends Activity{
 			@Override
 			public void onClick(View v) {
 				Log.i(tag, "invisible exit");
-				if(MySharedPreferences.getPreference(Fallen.this, "unlock_password", "").equals("")){
-					SwitchService.stopService(Fallen.this, TimeService.class);
-					finish();
-				}else{
-					MyDialog.passwordToExit(Fallen.this);
-					TimeService.setTimeCounter();
-				}
+				
+				MyDialog.newOneBtnDialog(TryFallen.this, R.drawable.warning, getString(R.string.exit), getString(R.string.right_way), getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+						
+					}					
+				});
+				
+				
+//				if(MySharedPreferences.getPreference(TryFallen.this, "unlock_password", "").equals("")){
+//					SwitchService.stopService(TryFallen.this, TimeService.class);
+//					finish();
+//				}else{
+//					MyDialog.passwordToExit(TryFallen.this);
+//					TimeService.setTimeCounter();
+//				}
 				
 			}
 			
 		});
+		
+		MyView mm=new MyView(this);
+		mm.setTag(12345);
 		relativelayout.addView(button_insvisible);
-		relativelayout.addView(new MyView(this),60,50);
+		relativelayout.addView(/*new MyView(this)*/mm,60,50);
+		
 	}
 
 	@Override//程式在按[Back鍵]或[電源鍵]，都會執行到該Method
 	protected void onPause() {
-		Log.i(tag, "into Fallen.onPause()");
+		Log.i(tag, "into TryFallen.onPause()");
 		
-		//程式在按[Back鍵]或[電源鍵]，都會執行到該Method,
-		//所以要偵測，如果螢幕是亮著，才能真的做以下變數的釋放。
-		//否則會產生下次啟動該程式時的干擾
-		if(pm.isScreenOn()==true){
-			if(mp!=null){
-				mp.release();//釋放掉音樂資源
-			}
-			if(aniimg!=null){
-				aniimg.stop();//動畫關掉
-			}
-			if(myVibrator!=null){
-				myVibrator.cancel();//震動關掉
-			}
+		
+//		Log.i(tag, "ChildCount: "+relativelayout.getChildCount());
+//		if(relativelayout.findViewWithTag(12345)!=null){
+//			
+//			Log.i(tag, "relativelayout.findViewWithTag(12345)!=null");
+//			sayNoDialog();
+//		}else{
+			Log.i(tag, "relativelayout.findViewWithTag(12345)==null");
 			
-			if(receiver_sensorchanged!=null){
-				this.unregisterReceiver(receiver_sensorchanged);
-			}
-			if(receiver_facebookdispatcher!=null){
-				this.unregisterReceiver(receiver_facebookdispatcher);
-			}
-			if(mysensor!=null){
-				mysensor.stopSensor();
-			}
-			
-			if(handler!=null){
-				handler.removeCallbacks(reg_Gsensor);
-			}
-			finish();//結束掉，下次再感測時，才能從onCreate()再執行
-			SwitchService.startService(Fallen.this,FallDetector.class);//離開時再把Service開回去
-			Log.i(tag, "finish Fallen.onPause()");
-		}
+			//程式在按[Back鍵]或[電源鍵]，都會執行到該Method,
+			//所以要偵測，如果螢幕是亮著，才能真的做以下變數的釋放。
+			//否則會產生下次啟動該程式時的干擾
+//			if(pm.isScreenOn()==true){
+				if(mp!=null){
+					mp.release();//釋放掉音樂資源
+				}
+				if(aniimg!=null){
+					aniimg.stop();//動畫關掉
+				}
+				if(myVibrator!=null){
+					myVibrator.cancel();//震動關掉
+				}
+				
+				if(receiver_sensorchanged!=null){
+					this.unregisterReceiver(receiver_sensorchanged);
+				}
+//				if(receiver_facebookdispatcher!=null){
+//					this.unregisterReceiver(receiver_facebookdispatcher);
+//				}
+				if(mysensor!=null){
+					mysensor.stopSensor();
+				}
+				
+				if(handler!=null){
+					handler.removeCallbacks(reg_Gsensor);
+				}
+				finish();//結束掉，下次再感測時，才能從onCreate()再執行
+//				SwitchService.startService(TryFallen.this,FallDetector.class);//離開時再把Service開回去
+				Log.i(tag, "finish TryFallen.onPause()");
+//			}
+//		}
+		
+		
 		
 		super.onPause();
 	}
@@ -377,10 +415,55 @@ public class Fallen extends Activity{
 
 	@Override
 	protected void onDestroy() {
-		Log.i(tag, "Fallen.onDestroy");
-//		SwitchService.stopService(Fallen.this, TimeService.class);
+		Log.i(tag, "TryFallenn.onDestroy");
+
 		super.onDestroy();
 	}
+
+	/**
+	 * 該函式會啟動一個視窗，告訴使用者關閉程式的方式錯了！
+	 */
+	private void sayNoDialog(){
+		MyDialog.newOneBtnDialog(TryFallen.this, R.drawable.warning, getString(R.string.attention), getString(R.string.wrong_way), getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+				green_arrow.setVisibility(View.VISIBLE);
+				
+				Animation ani_green_arrow=AnimationUtils.loadAnimation(TryFallen.this, R.anim.scale_animation);
+				green_arrow.startAnimation(ani_green_arrow);
+			}					
+		});
+	}
+	
+	@Override//在教學畫面裡，防止使用者按[房屋]、[倒退]、[目錄]、[搜尋]4個原始Android按鈕
+	public boolean dispatchKeyEvent(KeyEvent event) {
+		
+		if(event.getKeyCode()==KeyEvent.KEYCODE_BACK|/*event.getKeyCode()==KeyEvent.KEYCODE_HOME|*/event.getKeyCode()==KeyEvent.KEYCODE_MENU|event.getKeyCode()==KeyEvent.KEYCODE_SEARCH/*|event.getKeyCode()==KeyEvent.KEYCODE_POWER*/){
+			Log.i(tag, "getKeyCode: "+event.getKeyCode());
+			
+			sayNoDialog();
+		}
+		return false;
+	}
+	
+	
+	
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		if(event.getKeyCode()==KeyEvent.KEYCODE_BACK|event.getKeyCode()==KeyEvent.KEYCODE_HOME|event.getKeyCode()==KeyEvent.KEYCODE_MENU|event.getKeyCode()==KeyEvent.KEYCODE_SEARCH|event.getKeyCode()==KeyEvent.KEYCODE_POWER){
+//			Log.i(tag, "getKeyCode: "+event.getKeyCode());
+//			
+//			sayNoDialog();
+//			return true;
+//		}else{
+//			return super.onKeyDown(keyCode, event);
+//		}
+//
+//		
+//	}
+
 
 
 	/**
@@ -392,6 +475,8 @@ public class Fallen extends Activity{
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
+			
+			//TODO 不知道和Fallen同用一個Action會不會有問題？
 			if(intent.getAction().equals("FALLENSENSORCHANGED")){
 				
 				Log.i(tag, intent.getExtras().getString("filter"));
@@ -401,7 +486,7 @@ public class Fallen extends Activity{
 				
 				if(mpplaying==false){
 					Log.i(tag, "into mp player");
-					mp=MediaPlayer.create(Fallen.this, Fallen.this.getResources().getIdentifier("dizzy", "raw", Fallen.this.getPackageName()));
+					mp=MediaPlayer.create(TryFallen.this, TryFallen.this.getResources().getIdentifier("dizzy", "raw", TryFallen.this.getPackageName()));
 					mp.start();
 					mpplaying=true;
 
@@ -442,25 +527,28 @@ public class Fallen extends Activity{
 		
 	}
 	
-	/**
-	 * 當系統廣播出要寄出facebook的訊息時，該類別會接收，並將訊息發出
-	 * @author simon
-	 * 註︰唉，只因為Service並非Activity，而Facebook類別又用到Activity的函式
-	 * 只好開這個Receiver，在Fallen.java的這裡發送facebook訊息
-	 */
-	private class facebookDispatchReceiver extends BroadcastReceiver{
-
-		@Override
-		public void onReceive(Context context, Intent intent) {
-			if(intent.getAction().equals("FACEBOOKDISPATCHER")){
-				MyDispatcher mydispatcher=new MyDispatcher();
-
-				mydispatcher.facebookDispatcher(context,Fallen.activity);
-			}
-		}
-		
-	}
 	
+	
+//	/**
+//	 * 當系統廣播出要寄出facebook的訊息時，該類別會接收，並將訊息發出
+//	 * @author simon
+//	 * 註︰唉，只因為Service並非Activity，而Facebook類別又用到Activity的函式
+//	 * 只好開這個Receiver，在Fallen.java的這裡發送facebook訊息
+//	 */
+//	private class facebookDispatchReceiver extends BroadcastReceiver{
+//
+//		@Override
+//		public void onReceive(Context context, Intent intent) {
+//			if(intent.getAction().equals("FACEBOOKDISPATCHER")){
+//				MyDispatcher mydispatcher=new MyDispatcher();
+//
+//				mydispatcher.facebookDispatcher(context,TryFallen.activity);
+//			}
+//		}
+//		
+//	}
+	
+
 	/**
 	 * 密道磚塊的Canvas視圖
 	 * @author simon

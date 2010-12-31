@@ -81,25 +81,26 @@
 	<string name="password_can_be_null">密碼可不設</string>
 	<string name="sensitivity_set">靈敏度設定</string>
 	<string name="sensitivity_instruction">設定摔落感測器的靈敏度，越低越不容易啟動警報畫面</string>
-	
+
 	<!-- 以下是使用教學檔裡的字串 -->
 	<string name="previous">上一個</string>
 	<string name="next">下一個</string>
+	<string name="try_warning_ui">試試看</string>
+	<string name="wrong_way">你剛才離開程式的方式不對哦！\n\n請您撥開左上角的磚塊離開。</string>
+	<string name="right_way">恭喜你，你成功了！\n程式即將正常關閉。</string>
 	<string name="welcome">歡迎使用 1/5</string>
-	<string name="how_to_use_1">「別摔小安」是一套摔落告知軟體，啟動後會在背景長駐。\n
-								當你的手機掉落並摔到，會開啟「警報畫面」來通知您手機掉了。</string>
+	<string name="how_to_use_1">「別摔小安」是一套摔落告知軟體，啟動後會在背景長駐。</string>
  	<string name="warning_ui">警報畫面 2/5</string>
- 	<string name="how_to_use_2">「警報畫面」是當您的手機摔落時，Android機器人跌倒並通知您的畫面。\n
- 								您必須撥開左上方的隱藏磚塊，並輸入[警報解除密碼]解鎖。</string>
+ 	<string name="how_to_use_2">當你的手機掉落並摔到，會開啟Android機器人跌倒的「警報畫面」來通知您手機掉了。</string>
  	<string name="unlock_ui">警報解除密碼 3/5</string>							
- 	<string name="how_to_use_3">「警報解除密碼」是在警報畫面左上方的隱藏密碼。\n
- 								你必須撥開該磚塊並輸入密碼，否則程式會[發送訊息告知]。</string>							
+ 	<string name="how_to_use_3">在這個跌倒的[警報畫面]裡，您必須撥開左上方的隱藏磚塊，並輸入[警報解除密碼]來離開程式。</string>							
 	<string name="send_txt">發送訊息告知 4/5</string>
-	<string name="how_to_use_4">若您開啟「發訊告知」，程式會依您所設定的時間，將目前手機經緯度資訊傳至別人的簡訊或自己的Facebook塗鴨牆中。</string>
+	<string name="how_to_use_4">如果您沒有依剛才的方式離開程式，程式會發送「訊息告知」到設定的簡訊收件者或您的Facebook塗鴨牆中，顯示手機的地理位置。</string>
 	<string name="thank">感謝您的使用 5/5</string>
 	<string name="how_to_use_5">如果有更好的建議，歡迎來信︰\n
 								lp43simon@gmail.com \n
 							    謝謝您使用「別摔小安」。</string>
+							    
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>
