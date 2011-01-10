@@ -11,7 +11,7 @@
         android:pivotX="50%"
         android:pivotY="50%"
         android:fillAfter="false"
-        android:repeatCount="10"
+        android:repeatCount="-1"
 		android:repeatMode="reverse"
-        android:duration="2400"/>
+        android:duration="1200"/>
 </set>

@@ -3,6 +3,7 @@ package com.funtrigger.ahmydroid;
 import com.facebook.android.AsyncFacebookRunner;
 import com.facebook.android.Facebook;
 import com.funtrigger.tools.MyDispatcher;
+import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySharedPreferences;
 
 import android.app.Service;
@@ -24,6 +25,7 @@ public class InfoDispatcher extends Service {
 	public void onCreate() {
 		Log.i(tag, "InfoDispatcher.onCreate");
 		super.onCreate();
+		MyLocation.getLocation(this);
 		checkSettingStatus();
 		dispatcher();
 		stopSelf();

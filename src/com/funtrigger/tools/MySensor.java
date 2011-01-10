@@ -53,15 +53,22 @@ public class MySensor implements SensorEventListener{
 	private String tag="tag";
 
 	private Context context;
-	
+	/**
+	 * ====本來要拿來記錄摔落前數據，==
+	 * 但因為還沒有找到摔落前的規則，
+	 * ====所以這個變數還沒有拿來用====
+	 * 當[0,0,0]啟動後，會檢查前面的數據，
+	 * 是不是有掉落的跡象，
+	 * 以協助判是否為摔。
+	 */
+	ArrayList<String> listbefore000;	
 	/**
 	 * 經測試發現如果是正常摔落的數據，
-	 * 前面5組的x值不會有值超過9
-	 * 這個集合用來存放反作用力[0,0,0]之前的前5組x數據
-	 * 好讓程式能判斷︰是程式要的摔落狀態，
-	 * 還是其它行為的摔落狀態
+	 * 後面的x值不會亂七八槽
+	 * 這個集合用來存放反作用力[0,0,0]之後的數據
+	 * 好讓程式能判斷︰手機持續在動、還是摔後的靜止狀態
 	 */
-	ArrayList<String> arraylist;
+	ArrayList<String> listAfter000;
 /*	int x1,x2,x3,x4,x5;*/
 	boolean startRecord=false;
 	/**
@@ -105,11 +112,7 @@ public class MySensor implements SensorEventListener{
 		List<Sensor> list=sensormanager.getSensorList(sensorType);
 		
 		sensormanager.registerListener(MySensor.this,list.get(0), sensorRate);
-		arraylist=new ArrayList();
-/*		*//**
-		 * 存放啟動Fallen.java[0,0,0]的前5組數據
-		 *//*
-		int x1,x2,x3,x4,x5;*/
+		listAfter000=new ArrayList();
 		
 	}
 	
@@ -131,7 +134,7 @@ public class MySensor implements SensorEventListener{
 	@Override
 	public void onSensorChanged(SensorEvent event) {
 		gettime=new MyTime();
-		Log.i(tag, gettime.getHHMMSS()+" MySensor.onSensorChanged listening");
+//		Log.i(tag, gettime.getHHMMSS()+" MySensor.onSensorChanged listening");
 		
 		sensitivity=MySharedPreferences.getPreference(context, "sensitivity", 0);
 		
@@ -144,115 +147,6 @@ public class MySensor implements SensorEventListener{
 		int b=(int) Math.abs(y);
 		int c=(int) Math.abs(z);
 		
-	    
-		if(startRecord==true){
-			WriteToTXT.writeLogToTXT("a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c));
-			arraylist.add(String.valueOf(a)+String.valueOf(b)+String.valueOf(c));
-			
-			//如果使用者設成高感度，針測2組數據相同就啟動警報畫面
-			//這組數據很容易啟動Fallen畫面
-			if(sensitivity==HIGH_SENSITIVITY){
-				Log.i(tag, "into sensitivity==HIGH_SENSITIVITY");
-				if(arraylist.size()==2&i<6){
-					Log.i(tag, "now array0= "+arraylist.get(0));
-					Log.i(tag, "now array1= "+arraylist.get(1));
-					Log.i(tag, "i="+i);
-					
-					if(arraylist.get(0).equals(arraylist.get(1))){
-						Log.i(tag, "into arraylist0 == arraylist1");
-						//如果達成力道則廣播以開啟Fallen.java
-						sendBroadToFallen(context);
-						
-						startRecord=false;
-						i=0;
-					}else{
-						Log.i(tag, "into ! arraylist.size()==2&i<6");
-						arraylist.remove(0);
-						i++;				
-					}
-			
-				}else if(i>5){
-					Log.i(tag, "set startRecord=false");
-					startRecord=false;
-					i=0;
-					arraylist.clear();
-					Log.i(tag, "now i is: "+i);
-				}
-			}else if(sensitivity==MODERATE_SENSITIVITY){
-				Log.i(tag, "into sensitivity==MODERATE_SENSITIVITY");
-				//如果感度被設為中感度
-				if(arraylist.size()==3&i<8){
-					Log.i(tag, "now array0= "+arraylist.get(0));
-					Log.i(tag, "now array1= "+arraylist.get(1));
-					Log.i(tag, "now array2= "+arraylist.get(2));
-					Log.i(tag, "i="+i);
-					
-					if(arraylist.get(0).equals(arraylist.get(1))&&arraylist.get(1).equals(arraylist.get(2))){
-						Log.i(tag, "into arraylist0 == arraylist1 == arraylist2");
-						//如果達成力道則廣播以開啟Fallen.java
-						sendBroadToFallen(context);
-						
-						startRecord=false;
-						i=0;
-					}else{
-						Log.i(tag, "into ! arraylist.size()==3&i<8");
-						arraylist.remove(0);
-						i++;				
-					}
-			
-				}else if(i>7){
-					Log.i(tag, "set startRecord=false");
-					startRecord=false;
-					i=0;
-					arraylist.clear();
-					Log.i(tag, "now i is: "+i);
-				}
-			}else if(sensitivity==LOW_SENSITIVITY){
-				Log.i(tag, "into sensitivity==LOW_SENSITIVITY");
-				//如果感度被設為低感度，將會很難啟動畫面
-				if(arraylist.size()==4&i<10){
-					Log.i(tag, "now array0= "+arraylist.get(0));
-					Log.i(tag, "now array1= "+arraylist.get(1));
-					Log.i(tag, "now array2= "+arraylist.get(2));
-					Log.i(tag, "now array3= "+arraylist.get(3));
-					Log.i(tag, "i="+i);
-					
-					if(arraylist.get(0).equals(arraylist.get(1))&&arraylist.get(1).equals(arraylist.get(2))&&arraylist.get(2).equals(arraylist.get(3))){
-						Log.i(tag, "into arraylist0 == arraylist1 == arraylist2 == arraylist3");
-						//如果達成力道則廣播以開啟Fallen.java
-						sendBroadToFallen(context);
-						
-						startRecord=false;
-						i=0;
-					}else{
-						Log.i(tag, "into ! arraylist.size()==3&i<8");
-						arraylist.remove(0);
-						i++;				
-					}
-			
-				}else if(i>9){
-					Log.i(tag, "set startRecord=false");
-					startRecord=false;
-					i=0;
-					arraylist.clear();
-					Log.i(tag, "now i is: "+i);
-				}
-			}
-			
-		}
-		
-		
-		
-		
-		//如果是3面向都大於15，發送廣播標籤︰STARTFALLEN，目的是開啟Fallen事件
-//		if(a>15||b>15||c>15){
-	/*	if(Ahmydroid.times==0){
-			MyLog.writeLogToTXT(a,b,c);
-	
-		}else if(Ahmydroid.times==1){
-			MyLog.writeLogToTXT2(a,b,c);
-			
-		}*/
 		
 		//撞到地板才產生摔落數據
 		if(a<2&&b<2&&c<2){
@@ -284,7 +178,130 @@ public class MySensor implements SensorEventListener{
 			intent2.putExtra("filter", "sendBroadcastFrom: FALLENSENSORCHANGED");
 			context.sendBroadcast(intent2);
 //			Log.i(tag, "sensor move");
+			
+			//沒有摔到0,0,0時記錄成:a?,b?,c?
+//			if(startRecord!=true){
+//				WriteToTXT.writeLogToTXT("a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c));
+//			}
+			
 		}
+
+	    
+		if(startRecord==true){
+			WriteToTXT.writeLogToTXT("---a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c)+"---");
+			listAfter000.add(String.valueOf(a)+String.valueOf(b)+String.valueOf(c));
+			
+			//如果使用者設成高感度，針測2組數據相同就啟動警報畫面
+			//這組數據很容易啟動Fallen畫面
+			switch(sensitivity){
+			case HIGH_SENSITIVITY:
+				Log.i(tag, "into sensitivity==HIGH_SENSITIVITY");
+				if(listAfter000.size()==2&i<6){
+					Log.i(tag, "now array0= "+listAfter000.get(0));
+					Log.i(tag, "now array1= "+listAfter000.get(1));
+					Log.i(tag, "i="+i);
+					
+					if(listAfter000.get(0).equals(listAfter000.get(1))){
+						Log.i(tag, "into arraylist0 == arraylist1");
+						//如果達成力道則廣播以開啟Fallen.java
+						sendBroadToFallen(context);
+						
+						startRecord=false;
+						i=0;
+					}else{
+						Log.i(tag, "into ! arraylist.size()==2&i<6");
+						listAfter000.remove(0);
+						i++;				
+					}
+			
+				}else if(i>5){
+					Log.i(tag, "set startRecord=false");
+					startRecord=false;
+					i=0;
+					listAfter000.clear();
+					Log.i(tag, "now i is: "+i);
+				}
+				break;
+			case MODERATE_SENSITIVITY:
+				Log.i(tag, "into sensitivity==MODERATE_SENSITIVITY");
+				//如果感度被設為中感度
+				if(listAfter000.size()==3&i<8){
+					Log.i(tag, "now array0= "+listAfter000.get(0));
+					Log.i(tag, "now array1= "+listAfter000.get(1));
+					Log.i(tag, "now array2= "+listAfter000.get(2));
+					Log.i(tag, "i="+i);
+					
+					if(listAfter000.get(0).equals(listAfter000.get(1))&&listAfter000.get(1).equals(listAfter000.get(2))){
+						Log.i(tag, "into arraylist0 == arraylist1 == arraylist2");
+						//如果達成力道則廣播以開啟Fallen.java
+						sendBroadToFallen(context);
+						
+						startRecord=false;
+						i=0;
+					}else{
+						Log.i(tag, "into ! arraylist.size()==3&i<8");
+						listAfter000.remove(0);
+						i++;				
+					}
+			
+				}else if(i>7){
+					Log.i(tag, "set startRecord=false");
+					startRecord=false;
+					i=0;
+					listAfter000.clear();
+					Log.i(tag, "now i is: "+i);
+				}
+				break;
+			case LOW_SENSITIVITY:
+				Log.i(tag, "into sensitivity==LOW_SENSITIVITY");
+				//如果感度被設為低感度，將會很難啟動畫面
+				if(listAfter000.size()==4&i<10){
+					Log.i(tag, "now array0= "+listAfter000.get(0));
+					Log.i(tag, "now array1= "+listAfter000.get(1));
+					Log.i(tag, "now array2= "+listAfter000.get(2));
+					Log.i(tag, "now array3= "+listAfter000.get(3));
+					Log.i(tag, "i="+i);
+					
+					if(listAfter000.get(0).equals(listAfter000.get(1))&&listAfter000.get(1).equals(listAfter000.get(2))&&listAfter000.get(2).equals(listAfter000.get(3))){
+						Log.i(tag, "into arraylist0 == arraylist1 == arraylist2 == arraylist3");
+						//如果達成力道則廣播以開啟Fallen.java
+						sendBroadToFallen(context);
+						
+						startRecord=false;
+						i=0;
+					}else{
+						Log.i(tag, "into ! arraylist.size()==3&i<8");
+						listAfter000.remove(0);
+						i++;				
+					}
+			
+				}else if(i>9){
+					Log.i(tag, "set startRecord=false");
+					startRecord=false;
+					i=0;
+					listAfter000.clear();
+					Log.i(tag, "now i is: "+i);
+				}
+				break;
+			}
+
+			
+		}
+		
+		
+		
+		
+		//如果是3面向都大於15，發送廣播標籤︰STARTFALLEN，目的是開啟Fallen事件
+//		if(a>15||b>15||c>15){
+	/*	if(Ahmydroid.times==0){
+			MyLog.writeLogToTXT(a,b,c);
+	
+		}else if(Ahmydroid.times==1){
+			MyLog.writeLogToTXT2(a,b,c);
+			
+		}*/
+		
+		
 		
 	}
 	

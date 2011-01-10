@@ -90,6 +90,8 @@ public class MyDialog {
 	 */
 	public static void newToast(Context context,String message,int icon){
 
+			cancelToast();
+			
 			toast = Toast.makeText(context, message, Toast.LENGTH_SHORT);
 		    View originView=toast.getView();
 		    LinearLayout layout= new LinearLayout(context);
@@ -121,9 +123,18 @@ public class MyDialog {
                  public void onClick(DialogInterface dialog, int whichButton) {
                 	 EditText password=(EditText) EntryView.findViewById(R.id.password_to_exit);
                 	 if(password.getText().toString().equals(MySharedPreferences.getPreference(context, "unlock_password", ""))){
-                		  Activity fallen=(Activity)context;
+                		  final Activity fallen=(Activity)context;
                 		  SwitchService.stopService(context, TimeService.class);
-                          fallen.finish();
+                		  
+                		  MyDialog.newOneBtnDialog(context, R.drawable.verify, context.getString(R.string.exit),context.getString(R.string.unlock_success),context.getString(R.string.ok),new DialogInterface.OnClickListener(){
+
+      						@Override
+      						public void onClick(DialogInterface dialog, int which) {
+      							fallen.finish();
+      							
+      						}
+      					});
+                        
                      
                           
                 	 }else{
@@ -279,7 +290,7 @@ public class MyDialog {
 	
 	
     /**
-     * 這個函式專用來清除已顯示中的橘子Toast
+     * 這個函式專用來清除已顯示中的Toast
      */
     public static void cancelToast(){
     	

@@ -186,8 +186,34 @@ v1.0.0.26
 [懷疑]facebook帳密會不會跳掉?
 [懷疑]不知道TryFallen和Fallen同用一個Action會不會有問題？
 
-1/3
+1/10
 v1.0.0.27
-1.
-[懷疑]facebook帳密會不會跳掉?
-[懷疑]不知道TryFallen和Fallen同用一個Action會不會有問題？
+1.等待Sunny上傳正確原文翻譯
+[懷疑]時間久了，facebook帳密會不會跳掉?-目前還沒遇到
+[懷疑]不知道TryFallen和Fallen同用一個Action會不會有問題？-目前還沒遇到
+[懷疑]換地理位置後，經緯度是否有抓取？-好像有
+[已修正]主畫面因為沒有強制離開，
+容易造成使用者在測試中，容易摔落並回主畫面時，
+產生它項問題的問題-改成當使用者一啟動後，問要不要離開畫面。
+[已修正]定位功能的註解說明很怪，開啟Toast
+[已修正]離開程式的新手文改成離開警報畫面
+[已修正]按隱藏按鈕時，告知使用者︰發送告知解除了
+[已修正]當timeservice沒關閉，再次摔落時，
+告訴我們不能重覆呼叫timeservice的問題-
+已在Fallen裡宣告當TimeService存在時，
+改TimeCount而不是啟動全新的TimeService避免重覆執行Thread的問題
+[已修正]Recently裡出現Fallen.java的問題(在Manifest裡的Activity Fallen加上android:excludeFromRecents="true"標籤)
+    //為將功能簡化，已將設定密碼的部份字串移除放置這裡，以供以後使用
+	<string name="unlock_password_set">解除位置通報密碼</string>
+	<string name="unlock_password_instroduction">您還可以設定一組密碼，讓您解除[位置通報]功能時，更多一層防護。</string>
+	<string name="need_old_password">需要舊密碼</string>
+	<string name="reset_new_password">設定新密碼</string>
+	<string name="type_password">請輸入密碼</string>
+	<string name="and">和</string>
+	<string name="test">測試</string>
+	<string name="clear_username">清除帳密</string>
+	<string name="help">說明 (必看)</string>
+	
+1/11
+v1.0.0.28
+1.	

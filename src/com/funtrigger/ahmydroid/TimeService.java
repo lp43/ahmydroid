@@ -91,12 +91,13 @@ public class TimeService extends Service {
 		return timeCounter;
 	}
 	
+
 	/**
 	 * 當使用者點選了解鎖密碼時，讓使用者多10秒的密碼緩衝時間
-	 * @return
+	 * @param addTime 要讓時間計數器增加的秒數
 	 */
-	public static void setTimeCounter() {
-		timeCounter+=10;
+	public static void setTimeCounter(int addTime) {
+		timeCounter=addTime;
 	}
 
 	public class MyTimer extends TimerTask{

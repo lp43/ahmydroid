@@ -34,7 +34,7 @@ import android.widget.TextView;
 
 public class Settings extends PreferenceActivity {
 	private PreferenceScreen preferenceScreen;
-	private EditTextPreference unlock_password;
+//	private EditTextPreference unlock_password;
 	private CheckBoxPreference location,message_checkbox;
 	private static CheckBoxPreference facebook_checkbox;
 	private static Preference facebook_set;
@@ -52,7 +52,7 @@ public class Settings extends PreferenceActivity {
         
         preferenceScreen=this.getPreferenceScreen();  
         
-        unlock_password=(EditTextPreference)preferenceScreen.findPreference("password");
+//        unlock_password=(EditTextPreference)preferenceScreen.findPreference("password");
         
         location=(CheckBoxPreference) preferenceScreen.findPreference("location");
         message_checkbox=(CheckBoxPreference) preferenceScreen.findPreference("message");
@@ -68,9 +68,15 @@ public class Settings extends PreferenceActivity {
         
         //顯示Message和Facebook為未設定或已設定
         message_context_setting.setSummary(MySharedPreferences.getPreference(this, "message_number", "").equals("")?R.string.data_not_set:R.string.data_set);
-        facebook_set.setSummary(cookie.getCookie("http://www.facebook.com")==null?R.string.data_not_set:R.string.data_set);
+        if(cookie.getCookie("http://www.facebook.com")==null||
+				cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0)==-1){	
+        	facebook_set.setSummary(R.string.data_not_set);
+        }else{
+        	facebook_set.setSummary(R.string.data_set);
+        }
         
-         //設定單擊unlock_password的視窗顯示狀態
+        
+       /*  //設定單擊unlock_password的視窗顯示狀態
         if(!MySharedPreferences.getPreference(Settings.this, "unlock_password", "").equals("")){
         	Log.i(tag, "into password!=null");
         	//若儲存槽有值
@@ -79,10 +85,10 @@ public class Settings extends PreferenceActivity {
         }else{
         	//儲存槽沒值
         	setUnlock_PasswordClickIsNEW();
-        }
+        }*/
         
    
-        unlock_password.setOnPreferenceChangeListener(new OnPreferenceChangeListener(){
+      /*  unlock_password.setOnPreferenceChangeListener(new OnPreferenceChangeListener(){
 
 			@Override
 			public boolean onPreferenceChange(Preference preference,
@@ -116,7 +122,7 @@ public class Settings extends PreferenceActivity {
 				return true;
 			}
         	
-        });
+        });*/
         
         location.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
@@ -243,7 +249,7 @@ public class Settings extends PreferenceActivity {
 		return equal_value;
     }
     
-    private void setUnlock_PasswordClickIsNEW(){
+   /* private void setUnlock_PasswordClickIsNEW(){
     	 unlock_password.setOnPreferenceClickListener(new OnPreferenceClickListener(){
 
    			@Override
@@ -260,9 +266,9 @@ public class Settings extends PreferenceActivity {
    			};
     	 });
 
-    	}
+    	}*/
    
-    private void setUnlock_PasswordClickIsOLD(){
+   /* private void setUnlock_PasswordClickIsOLD(){
 		unlock_password.setDialogIcon(R.drawable.about);
     	unlock_password.setDialogLayoutResource(R.layout.password_to_exit);
     	unlock_password.setDialogTitle(R.string.need_old_password);
@@ -287,7 +293,7 @@ public class Settings extends PreferenceActivity {
 	   				return true;
   				}
      	 });
-    }
+    }*/
     
     /**
      * 前往Android系統的AGPS/GPS開啟畫面

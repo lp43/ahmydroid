@@ -5,11 +5,14 @@ import java.util.List;
 import com.funtrigger.tools.MySensor;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyTime;
+import com.funtrigger.tools.SwitchService;
 
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -85,6 +88,9 @@ public class FallDetector extends Service{
 	public void onCreate() {
 		Log.i(tag,"into FallDetector.onCreate");
 		
+		
+		
+		
 //		Debug.startMethodTracing("methodtrace");
 		
 		this.registerReceiver(broadcastreceiver=new DropReceiver(), new IntentFilter("STARTFALLEN"));
@@ -134,6 +140,7 @@ public class FallDetector extends Service{
 			this.unregisterReceiver(broadcastreceiver);
 		}
 	
+		
 		super.onDestroy();
 	}
 
@@ -209,6 +216,7 @@ public class FallDetector extends Service{
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
 	}
+
 
 	/**
 	 * 該內部廣播接收用在當力道指定力道時，啟動Fallen.java

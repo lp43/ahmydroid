@@ -20,12 +20,7 @@
             android:dialogMessage="@string/pick_message"
             android:defaultValue="@string/pick_default_context"
             android:dialogIcon="@drawable/pickup_spic"/>  
-      <EditTextPreference
-      		android:key="password"
-            android:title="@string/unlock_password_set"
-            android:dialogLayout="@layout/create_new_password"
-            android:dialogIcon="@drawable/verify"
-            android:summary="@string/unlock_password_instroduction"/> 
+
                             
    <PreferenceCategory
            android:title="@string/location_setting"/>       
@@ -72,7 +67,17 @@
              android:title="@string/facebook_set"
              android:dependency="facebook"
              android:summary="@string/data_not_set"/>
-
+             
+       <!--這段拿來設定磚塊密碼，但為操作簡潔，刪了
+       <EditTextPreference
+      		android:key="password"
+            android:title="@string/unlock_password_set"
+            android:dialogLayout="@layout/create_new_password"
+            android:dialogIcon="@drawable/verify"
+            android:dependency="location"
+            android:summary="@string/unlock_password_instroduction"/>      
+   -->
+   
    <PreferenceCategory
            android:title="@string/other_set"/>  
          <ListPreference

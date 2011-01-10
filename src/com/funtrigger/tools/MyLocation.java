@@ -42,7 +42,7 @@ public class MyLocation {
 			if(bestProvider!=null){
 				location = lm.getLastKnownLocation(bestProvider);
 				
-				Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
+//				Toast.makeText(context, "best provider is: "+bestProvider, Toast.LENGTH_SHORT).show();
 			}else{
 				//TODO 開啟對話框請使用者先啟動系統定位
 			}
@@ -94,7 +94,7 @@ public class MyLocation {
     			
     		});
     	}
-//    	Toast.makeText(context,latitude+","+longitude , Toast.LENGTH_SHORT).show();
+    	Toast.makeText(context,"Location: "+latitude+","+longitude , Toast.LENGTH_SHORT).show();
     	Log.i(tag,latitude+","+longitude);//顯示緯度+經度以配合Google Map格式
     	
     	//將緯經度貼到剪貼簿

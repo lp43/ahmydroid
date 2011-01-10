@@ -1,19 +1,13 @@
 package com.funtrigger.ahmydroid;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.facebook.android.LoginPage;
-import com.facebook.android.Facebook;
+import java.util.List;
 import com.facebook.android.R;
 import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.SwitchService;
-
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -29,6 +23,8 @@ import android.hardware.SensorManager;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnErrorListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
@@ -42,9 +38,11 @@ import android.view.WindowManager;
 import android.view.WindowManager.LayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +55,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.26";
+	private String softVersion="v1.0.0.27";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -104,12 +102,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		Log.i(tag, "Ahmydroid.onCreate");
         super.onCreate(savedInstanceState);
         
-        //可能使用者選擇背景持續發送訊息，因此再次進入主畫面時，
+      /*  //可能使用者選擇背景持續發送訊息，因此再次進入主畫面時，
         //TimeService沒有關閉，導致小綠人開關產生問題
         //故要在畫面未設定前，將TimeService關掉
         if(checkServiceExist(".TimeService")==true){
         	SwitchService.stopService(Ahmydroid.this, TimeService.class);
-        }
+        }*/
         
         setContentView(R.layout.ahmyphone);
         button_how=(Button) findViewById(R.id.button_how);
@@ -137,13 +135,16 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 			@Override
 			public void onClick(View v) {
-//				finish();
-			
-				Intent intent =new Intent();
-				intent.setClass(Ahmydroid.this, TryFallen.class);
-				startActivity(intent);
-
-			
+//				finish();	
+				
+				ConnectivityManager cm=(ConnectivityManager) Ahmydroid.this.getSystemService(Ahmydroid.this.CONNECTIVITY_SERVICE);
+				Log.i(tag, "return value: "+String.valueOf(cm.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE , ConnectivityManager.CONNECTIVITY_ACTION)));
+				cm.setNetworkPreference(ConnectivityManager.TYPE_MOBILE);
+				NetworkInfo c=cm.getActiveNetworkInfo();
+				if(c!=null){
+					Log.i(tag, "Type: "+c.getTypeName());
+				}
+				
 			}
         	
         });
@@ -154,13 +155,29 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 				if(checkServiceExist(".FallDetector")==false){
 					SwitchService.startService(Ahmydroid.this,FallDetector.class);
 					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
-					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
+//					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
+					MyDialog.newToast(Ahmydroid.this, getString(R.string.startfallprotect), R.drawable.icon);
+					MyDialog.newTwoBtnDialog(Ahmydroid.this, R.drawable.icon, getString(R.string.exit)+"?",getString(R.string.exit_or_not) , getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+						}
+						
+					}, getString(R.string.cancel), new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {	
+						}
+						
+					});
 					img_btn.setBackgroundResource(R.drawable.nostart);
 				}else if(checkServiceExist(".FallDetector")==true){
 					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
 					
 					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
-					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
+//					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
+					MyDialog.newToast(Ahmydroid.this, getString(R.string.stopfallprotect), R.drawable.icon);
 					img_btn.setBackgroundResource(R.drawable.start);
 				}
 				
@@ -231,7 +248,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			return dialog2;
 			
 		case HOW_TO_USE_3:
-			AlertDialog dialog3=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.unlock_ui, R.drawable.unlock_ui, R.string.how_to_use_3, R.string.previous,R.string.next,
+			AlertDialog dialog3=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.send_txt, R.drawable.notify_all, R.string.how_to_use_3, R.string.previous,R.string.next,
 					new DialogInterface.OnClickListener(){
 
 						@Override
@@ -252,7 +269,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			return dialog3;
 			
 		case HOW_TO_USE_4:
-			AlertDialog dialog4=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.send_txt, R.drawable.notify_all, R.string.how_to_use_4, R.string.previous,R.string.next,
+			AlertDialog dialog4=MyDialog.tuitionTwoBtnDialog(Ahmydroid.this, R.string.unlock_ui, R.drawable.unlock_ui, R.string.how_to_use_4, R.string.previous,R.string.next,
 					new DialogInterface.OnClickListener(){
 
 						@Override
@@ -482,29 +499,81 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			break;
 			
 		case 1:
+//			String[] tt={getString(R.string.author),getString(R.string.report_problem),getString(R.string.help_translate)};
+//			ListAdapter arrayadapter= new ArrayAdapter(getApplicationContext(), android.R.layout.select_dialog_item, tt);
+			
 			new AlertDialog.Builder(this)
-			.setMessage(getString(R.string.app_name)+" "+ softVersion +"\n"+getString(R.string.author)+" FunTrigger\n\n"+getString(R.string.copyright)+" 2010")
+//			.setMessage(getString(R.string.app_name)+" "+ softVersion +"\n"+getString(R.string.author)+" FunTrigger\n\n"+getString(R.string.copyright)+" 2011")
 			.setIcon(R.drawable.icon)
 			.setTitle(R.string.about)
-			.setPositiveButton(getString(R.string.report_problem), new DialogInterface.OnClickListener() {
-				
+			.setAdapter(new ArrayAdapter(getApplicationContext(), android.R.layout.select_dialog_item, 
+					new String[]{getString(R.string.author),getString(R.string.report_problem),getString(R.string.help_translate)}), 
+					new DialogInterface.OnClickListener(){
+
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
-					Intent sendIntent = new Intent(Intent.ACTION_SEND);
-					sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"lp43simon@gmail.com"}); 
-					sendIntent.putExtra(Intent.EXTRA_TEXT, "請將意見填寫於此");
-					sendIntent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.app_name)+softVersion+" 意見回報");
-					sendIntent.setType("message/rfc822");
-					startActivity(Intent.createChooser(sendIntent, "Title:"));
-				}
-			})
-			.setNeutralButton(R.string.back, new DialogInterface.OnClickListener() {
+					switch(which){
+					case 0:
+						new AlertDialog.Builder(Ahmydroid.this)
+						.setTitle(R.string.author)
+						.setIcon(R.drawable.icon)
+						.setMessage(getString(R.string.app_name)+" "+ softVersion +"\n"+getString(R.string.author)+" FunTrigger\n\n"+getString(R.string.copyright)+" 2011")
+						.setNeutralButton(R.string.back, new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
 				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-	
+							}
+						})
+						.show();
+						break;
+					case 1:
+						Intent sendIntent = new Intent(Intent.ACTION_SEND);
+						sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"lp43simon@gmail.com"}); 
+						sendIntent.putExtra(Intent.EXTRA_TEXT, "請將意見填寫於此");
+						sendIntent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.app_name)+softVersion+" 意見回報");
+						sendIntent.setType("message/rfc822");
+						startActivity(Intent.createChooser(sendIntent, "Title:"));
+						break;
+					case 2:
+						new AlertDialog.Builder(Ahmydroid.this)
+						.setTitle(R.string.help_translate)
+						.setIcon(R.drawable.icon)
+						.setMessage(getString(R.string.help_translate_context))
+						.setNeutralButton(R.string.back, new DialogInterface.OnClickListener() {
+							
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+				
+							}
+						})
+						.show();
+						break;
+					}
+					
 				}
+
+				
 			})
+//			.setPositiveButton(getString(R.string.report_problem), new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					Intent sendIntent = new Intent(Intent.ACTION_SEND);
+//					sendIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{"lp43simon@gmail.com"}); 
+//					sendIntent.putExtra(Intent.EXTRA_TEXT, "請將意見填寫於此");
+//					sendIntent.putExtra(Intent.EXTRA_SUBJECT,getString(R.string.app_name)+softVersion+" 意見回報");
+//					sendIntent.setType("message/rfc822");
+//					startActivity(Intent.createChooser(sendIntent, "Title:"));
+//				}
+//			})
+//			.setNeutralButton(R.string.back, new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//	
+//				}
+//			})
 			.show();
 			break;
 		}

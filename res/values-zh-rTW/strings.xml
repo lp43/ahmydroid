@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+	<string name="app_name">別摔小An(droid)</string>
+    <string name="how_to_use">新手教學</string>
+    <string name="exit">離開</string>
+    <string name="about">關於</string>
+    <string name="author">作者</string>
+    <string name="copyright">版權</string>
+    <string name="report_problem">問題回報</string>
+    <string name="back">返回</string>
+    <string name="startfallprotect">啟動「摔落告知」功能</string>
+    <string name="startingfallprotect">「摔落告知」偵測中</string>
+    <string name="stopfallprotect">關閉「摔落告知」</string>
+    <string name="set_notify">摔落告知設定</string>
+	<string name="location_setting">發送經緯度 設定</string>
+	<string name="location_feature">開啟GPS/AGPS</string>
+	<string name="location_dialog_context">必須先將GPS或WiFi定位開啟，才能獲得地理座標。待設定完，再請您回來設定。</string>
+	<string name="location_dialog_diff_context">您系統的GPS/WiFi定位被關掉了，您是否重新開啟？</string>
+	<string name="go_to">前往開啟</string>
+	<string name="cancel">取消</string>	
+	<string name="location_feature_instroduction">需啟動定位功能，系統才能抓到手機所在經緯度位置</string>
+	<string name="other_set">其它設定</string>
+	<string name="alarm_set">摔落畫面 設定</string>
+	<string name="pick_feature">拾獲者告知</string>
+	<string name="pick_set">拾獲者設定</string>
+	<string name="pick_message">將您設定的資訊告訴撿到的人</string>
+	<string name="pick_default_context">你好。我是蘇豫芬的手機，請幫我把手機交給王小明，他的電話是12345，將重金感謝！</string>
+	<string name="pick_feature_instroduction">手機進入摔落畫面後，如果有人撿到你的手機，你想跟他說些什麼？</string>
+	<string name="message_feature">1.以[簡訊]通報</string>
+	<string name="message_feature_instroduction">需支付簡訊費用。告訴你朋友你的手機位置</string>
+	<string name="message_set">簡訊設定</string>
+	<string name="facebook_feature">2.以[Facebook]通報</string>
+	<string name="facebook_feature_instroduction">需保持3G上網狀態。將手機位置發佈到你的Facebook塗鴨牆中</string>
+	<string name="facebook_set">Facebook設定</string>
+	<string name="context_to_message">收件者手機號碼︰</string>	
+	<string name="default_number_context">手機掉時，你希望系統自動通知誰的手機？</string>
+	<string name="context_title">通知的內文︰</string>
+	<string name="system_message_context">我是手機掉落告知系統，現在時間是#time，地點在#location，</string>
+	<string name="type_message_context">請你告訴我主人手機掉了，好嗎？</string>
+	<string name="wrong_phone_number">手機號碼格式錯誤！</string>
+	<string name="reset">重新設定</string>
+	<string name="msg_addtion">還希望跟收件者說些什麼？點我設定</string>
+	<string name="data_set">設定完成</string>
+	<string name="data_not_set">未設定</string>
+	<string name="first_dispatcher_time">緩衝時間</string>
+	<string name="first_dispatcher_time_instruduction">當進入摔落畫面後，希望程式多久後發出手機經緯度資訊？</string>
+	<string name="facebook_instruction">1.該方式需保持3G上網狀態\n\n2.在摔落畫面中，若Facebook的發文過程中螢幕被關閉，可能會無法發送Facebook！</string>
+	<string name="has_old_cookie">發現有舊的帳密，是否清除並繼續設定？\n\n注意︰若無設定帳密將無法自動發文！</string>
+	<string name="post_success">Facebook發文成功！</string>
+	<string name="post_success2">請至Facebook塗鴨牆查看！</string>
+	<string name="unlock">阻止</string>
+	<string name="message_last_sentence_ifusernotype">請告訴我的主人，幫我找到回家的路！</string>
+	<string name="set">設定</string>
+	<string name="context_to_pick">撿到的人會看到的內容︰</string>	
+	<string name="attention">注意</string>
+	<string name="please_choice">請選擇</string>
+	<string name="facebook_ps">該方式需保持3G上網狀態</string>	
+	<string name="username_cleared">帳密清除完成！</string>
+	<string name="ok">確認</string>
+	<string name="please_type">請輸入</string>
+	<string name="message_response">簡訊已寄出！</string>	
+	<string name="facebook_message_head">嘿！我是你的手機程式-「別摔小安」，我掉了！</string>
+	<string name="facebook_message_time">剛剛我看了系統時間是 #time</string>
+	<string name="facebook_message_location">我的位置在 #location</string>
+	<string name="facebook_message_last">快用Google Map貼上這個經緯度把我找回家！</string>
+	<string name="sensitivity_set">靈敏度設定</string>
+	<string name="sensitivity_instruction">設定摔落感測器的靈敏度，越低越不容易進入摔落畫面</string>
+	<string name="unlock_success">您已成功阻止手機的經緯度發送！\n摔落畫面即將被關閉...</string>
+	<string name="exit_or_not">是否離開畫面並讓小安在背景長駐？</string>
+	<string name="help_translate">協助翻譯</string>
+	<string name="help_translate_context">請來信\nlp43simon@gmail.com\n我將與您聯繫！</string>
+	
+	<!-- 以下是使用教學檔裡的字串 -->
+	<string name="previous">上一個</string>
+	<string name="next">下一個</string>
+	<string name="try_warning_ui">進入阻止練習</string>
+	<string name="wrong_way">你剛才的動作沒有阻止經緯度的發送哦！\n\n請您試著撥開左上角的磚塊來試看看。</string>
+	<string name="right_way">恭喜你，你學會如何阻止經緯度發送了！</string>
+	<string name="welcome">歡迎使用 1/5</string>
+	<string name="how_to_use_1">「別摔小安」是一款摔落告知軟體，當您啟用後，它會在背景長駐偵測。</string>
+ 	<string name="warning_ui">摔落畫面 2/5</string>
+ 	<string name="how_to_use_2">當你的手機掉落並摔到，程式會開啟Android機器人跌倒的「摔落畫面」來通知您手機摔落了。</string>
+ 		<string name="send_txt">發送經緯度 3/5</string>
+	<string name="how_to_use_3">過沒多久，程式會寄簡訊或發Facebook告訴你手機目前位置。</string>
+ 	<string name="unlock_ui">阻止經緯度的發送！ 4/5</string>							
+ 	<string name="how_to_use_4">從手機摔落到發送經緯度，會有一段緩衝時間，您甚至可以撥開左上方的隱藏磚塊，阻止經緯度的發送！</string>							
+
+	<string name="thank">感謝您的使用 5/5</string>
+	<string name="how_to_use_5">如果有更好的建議，歡迎來信︰\n
+								lp43simon@gmail.com \n
+							    謝謝您使用「別摔小安」。</string>
+							    
+	
+<!--以下是Facebook用到的字串集 -->
+    <string name="request">Request!</string>
+    <string name="hello">您好，您已登入FaceBook社群網站</string>
+    <string name="upload">Upload Photo</string>
+    <string name="post">Wall Post!</string>
+    <string name="delete">Delete Post</string>
+    
+<!-- 以下是沒用到的字集 -->
+	<string name="type_password">請輸入密碼</string>
+	<string name="password_can_be_null">密碼可不設</string>
+	<string name="type_password_again">請再次輸入密碼</string>
+	<string name="type_wrong_password">密碼輸入錯誤！</string>
+	<string name="password_modify">修改密碼</string>
+	<string name="password_saved">密碼儲存成功！</string>
+	<string name="type_dismatch">2次輸入不符，存入失敗！</string>
+</resources>

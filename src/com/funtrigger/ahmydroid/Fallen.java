@@ -20,10 +20,13 @@ import com.funtrigger.tools.MyTime;
 import com.funtrigger.tools.SwitchService;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.KeyguardManager;
 import android.app.Service;
+import android.app.ActivityManager.RunningServiceInfo;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -84,7 +87,7 @@ public class Fallen extends Activity{
 	 * 測試期間，讓我可以快速更改音量的變數
 	 * 不用每次都跑到程式碼裡去找設定
 	 */
-	public static int setVolumn = 2;
+	public static int setVolumn = 3;
 	/**
 	 * 機器人圖案的ImageView
 	 */
@@ -176,7 +179,13 @@ public class Fallen extends Activity{
 		
 		this.activity=Fallen.this;
 		SwitchService.stopService(Fallen.this,FallDetector.class);//進來時把Service關掉，避免重覆進入本畫面
-		SwitchService.startService(Fallen.this, TimeService.class);//啟動TimeService,時間到時發訊息
+		//避免使用者重覆丟手機造成TimeService重覆被啟動的錯誤
+		if(checkServiceExist(".TimeService")==false){
+			SwitchService.startService(Fallen.this, TimeService.class);//啟動TimeService,時間到時發訊息
+		}else{
+			TimeService.setTimeCounter(Integer.valueOf(MySharedPreferences.getPreference(Fallen.this, "dispatcher_first_time", "15")));
+		}
+		
 
 		lp=this.getWindow().getAttributes();
 		
@@ -314,10 +323,18 @@ public class Fallen extends Activity{
 				Log.i(tag, "invisible exit");
 				if(MySharedPreferences.getPreference(Fallen.this, "unlock_password", "").equals("")){
 					SwitchService.stopService(Fallen.this, TimeService.class);
-					finish();
+					MyDialog.newOneBtnDialog(Fallen.this, R.drawable.verify, getString(R.string.exit),getString(R.string.unlock_success),getString(R.string.ok),new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							finish();
+							
+						}
+					});
+					
 				}else{
 					MyDialog.passwordToExit(Fallen.this);
-					TimeService.setTimeCounter();
+					TimeService.setTimeCounter(15);
 				}
 				
 			}
@@ -382,7 +399,32 @@ public class Fallen extends Activity{
 		super.onDestroy();
 	}
 
-
+	/**
+	 * 專門檢查摔落告知的Service是否有開啟,
+	 * 預設為false;
+	 * @return 若有開啟回傳為true,否則為false
+	 */
+	private boolean checkServiceExist(String checkServiceName){
+		boolean return_field=false;
+		ActivityManager activityManager = (ActivityManager)this.getSystemService(ACTIVITY_SERVICE); 
+		List<ActivityManager.RunningServiceInfo> service=activityManager.getRunningServices(100);
+//		Log.i(tag, "packagename: "+this.getPackageName());
+		
+		for(RunningServiceInfo service_name:service){
+//			Log.i(tag, "exist service: "+service_name.service.getShortClassName());
+			if(service_name.service.getShortClassName().equals(checkServiceName)){
+				return_field=true;
+				break;
+			}
+		}
+		
+		Log.i(tag, "service exist: "+String.valueOf(return_field));
+		return return_field;
+		
+	}
+	
+	
+	
 	/**
 	 * 該內部廣播接收在Fallen.java裡不斷的播動畫和音效
 	 * @author simon
