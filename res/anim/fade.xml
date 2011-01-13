@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shareInterpolator="false">
+<!-- 這個特效讓View由淺至深 -->
+    <alpha
+	android:fromAlpha="0.1"
+	android:toAlpha="1.0"
+	android:duration="2000"/>
+ 
+</set>

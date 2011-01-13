@@ -33,12 +33,12 @@
 	<string name="facebook_feature">2.以[Facebook]通報</string>
 	<string name="facebook_feature_instroduction">需保持3G上網狀態。將手機位置發佈到你的Facebook塗鴨牆中</string>
 	<string name="facebook_set">Facebook設定</string>
-	<string name="context_to_message">收件者手機號碼︰</string>	
+	<string name="context_to_message">收件者手機號碼(1組)︰</string>	
 	<string name="default_number_context">手機掉時，你希望系統自動通知誰的手機？</string>
 	<string name="context_title">通知的內文︰</string>
 	<string name="system_message_context">我是手機掉落告知系統，現在時間是#time，地點在#location，</string>
 	<string name="type_message_context">請你告訴我主人手機掉了，好嗎？</string>
-	<string name="wrong_phone_number">手機號碼格式錯誤！</string>
+	<string name="wrong_phone_number">手機號碼格式錯誤！請勿加上+-*/()等符號</string>
 	<string name="reset">重新設定</string>
 	<string name="msg_addtion">還希望跟收件者說些什麼？點我設定</string>
 	<string name="data_set">設定完成</string>
@@ -55,7 +55,8 @@
 	<string name="context_to_pick">撿到的人會看到的內容︰</string>	
 	<string name="attention">注意</string>
 	<string name="please_choice">請選擇</string>
-	<string name="facebook_ps">該方式需保持3G上網狀態</string>	
+	<string name="skip">跳過</string>
+	
 	<string name="username_cleared">帳密清除完成！</string>
 	<string name="ok">確認</string>
 	<string name="please_type">請輸入</string>
@@ -67,30 +68,35 @@
 	<string name="sensitivity_set">靈敏度設定</string>
 	<string name="sensitivity_instruction">設定摔落感測器的靈敏度，越低越不容易進入摔落畫面</string>
 	<string name="unlock_success">您已成功阻止手機的經緯度發送！\n摔落畫面即將被關閉...</string>
-	<string name="exit_or_not">是否離開畫面並讓小安在背景長駐？</string>
+	<string name="exit_or_not">直接離開？</string>
 	<string name="help_translate">協助翻譯</string>
 	<string name="help_translate_context">請來信\nlp43simon@gmail.com\n我將與您聯繫！</string>
 	
-	<!-- 以下是使用教學檔裡的字串 -->
+	
+	<!-- 以下用在精靈 -->	
 	<string name="previous">上一個</string>
-	<string name="next">下一個</string>
-	<string name="try_warning_ui">進入阻止練習</string>
+	<string name="next">下一個</string>					    
+	<string name="pick_up_wizard">如果手機被陌生人撿走，你可以請他發揮愛心，幫你把手機送回來。</string>
+	<string name="sendlocation_wizard">如果手機一直沒人發現，會馬上發出經緯度給其它朋友或你的Facebook塗鴨牆，告訴你手機的位置。</string>
+	<string name="sendlocation_wizard_int0">啟動這項功能，需要︰</string>
+	<string name="sendlocation_wizard_int1">●保持3G連線</string>
+	<string name="sendlocation_wizard_int2">●開啟手機定位</string>
+	<string name="sendlocation_wizard_int3">●設定發送資料</string>
+	<string name="please_3g">請您開啟︰\n\n[設定]→[無線與網路]→[行動網路]→[已啟用資料]</string>
+	<string name="please_location">請您開啟︰\n\n[設定]→[位置與安全性]→[使用無線網路]/[使用GPS衛星定位]</string>
+	<string name="set_finish_cnx">最後，你只要啟動，然後離開程式。\n即使是手機待命狀態，「摔落告知」都會在背後保護。\n\n
+								  感謝您的使用。</string>
+	<string name="interrup_cnx">從手機摔落到發送經緯度，會有一段緩衝時間，您可以阻止經緯度的發送！</string>
+	<string name="interrup_practice">練習</string>
+	<string name="interrup_title">阻止發送! 4/4</string>
+	<string name="next_time_into_main">下次直接進主畫面</string>
 	<string name="wrong_way">你剛才的動作沒有阻止經緯度的發送哦！\n\n請您試著撥開左上角的磚塊來試看看。</string>
 	<string name="right_way">恭喜你，你學會如何阻止經緯度發送了！</string>
-	<string name="welcome">歡迎使用 1/5</string>
-	<string name="how_to_use_1">「別摔小安」是一款摔落告知軟體，當您啟用後，它會在背景長駐偵測。</string>
- 	<string name="warning_ui">摔落畫面 2/5</string>
- 	<string name="how_to_use_2">當你的手機掉落並摔到，程式會開啟Android機器人跌倒的「摔落畫面」來通知您手機摔落了。</string>
- 		<string name="send_txt">發送經緯度 3/5</string>
-	<string name="how_to_use_3">過沒多久，程式會寄簡訊或發Facebook告訴你手機目前位置。</string>
- 	<string name="unlock_ui">阻止經緯度的發送！ 4/5</string>							
- 	<string name="how_to_use_4">從手機摔落到發送經緯度，會有一段緩衝時間，您甚至可以撥開左上方的隱藏磚塊，阻止經緯度的發送！</string>							
-
-	<string name="thank">感謝您的使用 5/5</string>
-	<string name="how_to_use_5">如果有更好的建議，歡迎來信︰\n
-								lp43simon@gmail.com \n
-							    謝謝您使用「別摔小安」。</string>
-							    
+	<string name="welcome">歡迎使用 1/4</string>
+	<string name="warning_ui">摔落畫面 2/4</string>
+	<string name="how_to_use_1">「別摔小安」是一款摔落告知偵測軟體，啟動後，你的手機在任何時間都會受到保護。</string>
+	<string name="how_to_use_2">當你的手機掉落並摔到，程式會開啟Android機器人跌倒的「摔落畫面」來通知您手機摔落了。</string>
+ 		<string name="send_txt">發送經緯度 3/4</string>
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

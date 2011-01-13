@@ -213,7 +213,20 @@ v1.0.0.27
 	<string name="test">測試</string>
 	<string name="clear_username">清除帳密</string>
 	<string name="help">說明 (必看)</string>
+	<string name="facebook_ps">This feature need 3G network.</string>	
+	<string name="facebook_ps">該方式需保持3G上網狀態</string>	
 	
-1/11
+1/13
 v1.0.0.28
-1.	
+1.新增Where r u功能
+2.製作新手設定,刪除舊教學
+
+3G
+[Settings]→[Wireless & networks]→[Mobile networks]→[Data enabled]
+[设置]→[无线和网路]→[移动网路]→[已启用数据]
+[設定]→[無線與網路]→[行動網路]→[已啟用資料]
+
+Location
+[Settings]→[Location & security]→[Use wireless networks]/[Use GPS satellites]
+[设置]→[位置和安全]→[使用无线网路]/[使用GPS卫星]
+[設定]→[位置與安全性]→[使用無線網路]/[使用GPS衛星定位]

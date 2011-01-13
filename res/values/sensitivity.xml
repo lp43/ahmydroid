@@ -2,7 +2,7 @@
     <resources>
         <string-array name="sensitive_entries">
         	<item>Low(recommend)</item>
-        	<item>Moderate</item>
+        	<item>Medium</item>
         	<item>High</item>
 
         </string-array>

@@ -13,7 +13,7 @@
     <string name="startingfallprotect">drop protecting...</string>
     <string name="stopfallprotect">Stop drop protecting</string>
     <string name="set_notify">Alert Settings</string>
-	<string name="location_setting">Send Phone Location Settings</string>
+	<string name="location_setting">Send Location Settings</string>
 	<string name="location_feature">GPS/AGPS</string>
 	<string name="location_dialog_context">You must start GPS satellites or wireless networks, then you can come back to set it.</string>
 	<string name="location_dialog_diff_context">System Location has been closed, Do you want to turn on again?</string>
@@ -55,7 +55,8 @@
 	<string name="context_to_pick">Context who pick your phone up will read it:</string>	
 	<string name="attention">Attention</string>
 	<string name="please_choice">Please Choice</string>
-	<string name="facebook_ps">This feature need 3G network.</string>	
+	<string name="skip">Skip</string>
+	
 	<string name="username_cleared">Username and password has been cleaned.</string>
 	<string name="ok">Ok</string>
 	<string name="please_type">Please type</string>
@@ -78,8 +79,8 @@
 	<string name="wrong_way">Action you did has not interrup sending location!\n\nPlease try to move the brick from the top of the Left.</string>
 	<string name="right_way">Congratulations!\n\nYou have studied how to interrup sending location!</string>
 	<string name="welcome">Welcome 1/5</string>
-	<string name="how_to_use_1">[You drop Droid] is an application that when you drop your phone will alert you. If you start protecting, it will run in the background.</string>
- 	<string name="warning_ui">Throw UI 2/5</string>
+	<string name="how_to_use_1">[Do not drop Droid] is an application that when you drop your phone will alert you. If you start protecting, it will run in the background.</string>
+ 	<string name="warning_ui">Drop UI 2/5</string>
  	<string name="how_to_use_2">When you drop your phone, you will see this picture and alert you.</string>
  	<string name="send_txt">Send location 3/5</string>
 	<string name="how_to_use_3">Later, It will send the phone location by SMS or Facebook.(your choice)</string>
@@ -89,7 +90,9 @@
 	<string name="how_to_use_5">If you have any suggestion for me, please mail to:\n
 								lp43simon@gmail.com \n
 								Thank you for using this program.</string>
-							    
+
+	<!-- 以下用在精靈 -->						    
+	<string name="pick_up_wizard">如果你沒有把手機撿回來，被陌生人撿到時，他看的到這些資訊。</string>							    
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

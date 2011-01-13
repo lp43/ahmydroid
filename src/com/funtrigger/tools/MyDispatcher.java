@@ -56,6 +56,31 @@ public class MyDispatcher {
 		Log.i(tag, "message_send success!");
 	
 	}
+	
+/**
+ * SMS簡訊發射器，Where r u專用
+ * @param context 呼叫的主體
+ * @param phoneNum 欲傳送的電話號碼
+ */
+	public static void messageDispatcher(Context context,String phoneNum){
+		Log.i(tag, "cellphone num is: "+MySharedPreferences.getPreference(context,"message_number",""));
+		
+		String msg_sys_cnx=context.getResources().getString(R.string.system_message_context);
+		MyTime mytime=new MyTime();
+		msg_sys_cnx=msg_sys_cnx.replace("#time", mytime.getHHMM());
+		msg_sys_cnx=msg_sys_cnx.replace("#location", MyLocation.getLocation(context));	
+		
+		MySMS.sendSMS(context, phoneNum, 
+		msg_sys_cnx
+		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)));
+
+		Toast.makeText(context, msg_sys_cnx
+		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)), Toast.LENGTH_LONG).show();
+		MyDialog.newToast(context, context.getString(R.string.message_response), R.drawable.message_pic);
+	
+		Log.i(tag, "message_send success!");
+	
+	}
 
 
 	/**
@@ -127,7 +152,11 @@ public class MyDispatcher {
                     public void run() {
                     	Toast.makeText(context, context.getString(R.string.post_success), Toast.LENGTH_SHORT).show();
                     	MyDialog.newToast(context, context.getString(R.string.post_success2), R.drawable.facebook_pic);
-                    	Settings.setFacebookStatus(true);
+                    	
+                    	/*if(MySystemManager.checkAppExist(context, ".Settings"))*/
+                    
+                    	if(MySystemManager.checkTaskExist(context, ".Settings"))Settings.setFacebookStatus(true);
+                    	
                     	//一顯示使用者資料設定後，馬上將post_id清除
                     	post_id="";
                     }

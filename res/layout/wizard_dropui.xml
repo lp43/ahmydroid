@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<ScrollView
+xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:fillViewport="true">
+     <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:orientation="vertical" >
+        
+        
+         <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="54dip"
+            android:background="@android:drawable/bottom_bar" >
+            
+            <ImageView
+            android:id="@+id/title_icon"
+            android:layout_width="48dip"
+            android:layout_height="48dip"
+            android:layout_margin="4dip"
+            android:src="@drawable/icon"/>
+            <TextView          
+            android:id="@+id/tuition_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="30sp"
+            android:layout_centerVertical="true"
+            android:textColor="@color/white"
+            android:layout_toRightOf="@id/title_icon"/>
+         </RelativeLayout>
+            
+            
+         <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+	       <TextView
+	      	android:id="@+id/tuition_cnx2"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:layout_marginLeft="20dip"
+	        android:layout_marginRight="20dip"
+	        android:textAppearance="?android:attr/textAppearanceMedium" />
+	       <RelativeLayout
+	        android:layout_width="200dip"
+            android:layout_height="280dip"
+            android:layout_gravity="center_vertical|center_horizontal">
+	       <ImageView
+			android:id="@+id/tuition_bk2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_below="@id/tuition_cnx2"
+			android:layout_centerHorizontal="true"/>
+           <ImageView
+			android:id="@+id/tuition_fall2"
+			android:layout_width="150dip"
+			android:layout_height="120dip"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="110dip"/>
+            
+            </RelativeLayout>
+        </LinearLayout>
+	
+		<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="54dip"
+		android:background="@android:drawable/bottom_bar">
+	     	<Button
+             android:id="@+id/tuition_previous2"
+             android:text="@string/previous"
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:minWidth="@dimen/button_minWidth"
+             android:drawableLeft="@drawable/button_indicator_previous"
+             android:layout_alignParentLeft="true"
+             android:layout_centerVertical="true" />
+			<Button
+             android:id="@+id/tuition_next2"
+             android:text="@string/next"
+             android:layout_height="wrap_content"
+             android:layout_width="wrap_content"
+             android:minWidth="@dimen/button_minWidth"
+             android:drawableRight="@drawable/button_indicator_next"
+             android:layout_alignParentRight="true"
+             android:layout_centerVertical="true" />
+	
+        </RelativeLayout>
+        </LinearLayout>
+   </ScrollView>     

@@ -12,7 +12,7 @@ import android.util.Log;
  */
 public class MyTime {
 	
-	Calendar calendar;
+	static Calendar calendar;
 	private String tag="tag";
 	
 	/**
@@ -55,6 +55,7 @@ public class MyTime {
 	 * @return HH:MM字串
 	 */
 	public String getHHMM(){
+		calendar= Calendar.getInstance();
 		return getHour()+":"+getMin();
 	}
 	
@@ -63,6 +64,46 @@ public class MyTime {
 	 * @return HH:MM:SS字串
 	 */
 	public String getHHMMSS(){
+		calendar= Calendar.getInstance();
 		return getHour()+":"+getMin()+":"+getSec();
+	}
+	
+	/**
+	 * 取得系統時間︰「HH:MM:SS」
+	 * @return HH:MM:SS字串
+	 */
+	public static String getHHMMSS1(){
+		calendar= Calendar.getInstance();
+		return getHour1()+":"+getMin1()+":"+getSec1();
+	}
+	
+	
+	
+	/**
+	 * 該Method除了取得「小時」外，還會將個位數字前面補上0
+	 * @return 「小時」字串
+	 */
+	public static String getHour1(){
+		return String.valueOf(calendar.get(Calendar.HOUR_OF_DAY));
+	}
+	
+	/**
+	 * 該Method除了取得「分鐘」外，還會將個位數字前面補上0
+	 * @return 轉換完的「分鐘」字串
+	 */
+	public static String getMin1(){
+		String minBuffer=String.valueOf(calendar.get(Calendar.MINUTE));
+		String minChanged=minBuffer.length()==1?"0"+minBuffer:minBuffer;
+		return minChanged;
+	}
+	
+	/**
+	 * 該Method除了取得「秒」外，還會將個位數字前面補上0
+	 * @return 轉換完的「秒」字串
+	 */
+	public static String getSec1(){
+		String secBuffer=String.valueOf(calendar.get(Calendar.SECOND));
+		String secChanged=secBuffer.length()==1?"0"+secBuffer:secBuffer;
+		return secChanged;
 	}
 }

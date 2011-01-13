@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android" android:oneshot="false"><!--oneshot=false代表動畫要Loop-->
+	<item android:drawable="@drawable/touch_android_1" android:duration="100" />
+    <item android:drawable="@drawable/touch_android_2" android:duration="100" />
+    <item android:drawable="@drawable/touch_android_3" android:duration="100" />
+    <item android:drawable="@drawable/touch_android_4" android:duration="100" />
+    <item android:drawable="@drawable/touch_android_5" android:duration="300" />
+    <item android:drawable="@drawable/touch_android_6" android:duration="500" />
+    <item android:drawable="@drawable/touch_android_6" android:duration="500" />
+    <item android:drawable="@drawable/touch_android_6" android:duration="500" />
+
+ </animation-list>

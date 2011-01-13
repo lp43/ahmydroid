@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.funtrigger.ahmydroid"
-      android:versionName="1.0.0.27" android:versionCode="28">
+      android:versionName="1.0.0.28" android:versionCode="29">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:label="@string/app_name" android:name=".Ahmydroid" android:screenOrientation="nosensor" android:launchMode="singleInstance">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            
         </activity>
 
     <service android:name="FallDetector"></service>
@@ -25,6 +22,29 @@
 <service android:name="TimeService"></service>
 <activity android:name="TryFallen" android:screenOrientation="nosensor" 
 		  android:launchMode="singleInstance"></activity>
+<receiver android:name="SMSReceiver">
+    <intent-filter>
+	<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+	</intent-filter>
+</receiver>
+
+<!-- How用來分辨程式一開啟是要進入教學還是進入Ahmydoird主畫面 -->
+<activity android:name="How">
+<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+</activity>
+
+<activity android:name="com.funtrigger.tuition.Welcome" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.DropUI" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.PickUp" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.SendLocation"></activity>
+<activity android:name="com.funtrigger.tuition.Keep3G"></activity>
+<activity android:name="com.funtrigger.tuition.TurnOnLocation"></activity>
+<activity android:name="com.funtrigger.tuition.SetSendData"></activity>
+<activity android:name="com.funtrigger.tuition.End"></activity>
+<activity android:name="com.funtrigger.tuition.InterrupSending"></activity>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 
@@ -37,8 +57,10 @@
 <uses-permission android:name="android.permission.SEND_SMS"></uses-permission>
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"></uses-permission>
-<uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"></uses-permission>
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
-<uses-permission android:name="android.permission.WRITE_SETTINGS"></uses-permission>
-<uses-permission android:name="android.permission.WRITE_SECURE_SETTINGS"></uses-permission>
+
+
+
+
+<uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
+<uses-permission android:name="android.permission.GET_TASKS"></uses-permission>
 </manifest> 

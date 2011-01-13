@@ -1,8 +1,12 @@
 package com.funtrigger.tools;
 
+import java.util.regex.Pattern;
+
 import com.facebook.android.R;
 import com.funtrigger.ahmydroid.Fallen;
+import com.funtrigger.ahmydroid.Settings;
 import com.funtrigger.ahmydroid.TimeService;
+import com.funtrigger.tuition.PickUp;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -12,6 +16,8 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -217,6 +223,183 @@ public class MyDialog {
 	}
 	
 	/**
+	 * 修改拾獲者告知的訊息視窗
+	 * @param context 呼叫的主體
+	 */
+	public static void modifyPickUP(final Context context){
+		LayoutInflater factory = LayoutInflater.from(context);
+        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.context_to_pick), null);
+        final EditText text=(EditText) EntryView.findViewById(com.funtrigger.ahmydroid.R.id.type_pick_context);
+        text.setText(MySharedPreferences.getPreference(context, "pick_context", context.getString(com.funtrigger.ahmydroid.R.string.pick_default_context)));
+		new AlertDialog.Builder(context)
+        .setTitle(com.funtrigger.ahmydroid.R.string.pick_set)
+	    .setIcon(com.funtrigger.ahmydroid.R.drawable.pickup_spic)
+	    .setView(EntryView)
+	    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+	    		   
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+				MySharedPreferences.addPreference(context, "pick_context", text.getText().toString());
+				MySharedPreferences.addPreference(context, "pick", true);
+				PickUp.modify_pick_up(text.getText().toString());
+				
+			}
+		})
+	    .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+			}
+	    	
+	    })
+	    	.show();
+
+	}
+	
+	/**
+	 * 將Message的設定畫面叫出來
+	 */
+	public static void startMsgDialog(final Context context){
+		LayoutInflater factory= LayoutInflater.from(context);
+		final View EntryView = factory.inflate(R.layout.context_to_message, null);
+		
+		MyTime mytime=new MyTime();
+		//將時間和地點換成當下的值
+		
+		//將簡訊內文的第1行裡的經緯度抓一抓
+//		TextView sys_cnx=(TextView) message_checkbox.getView(EntryView,null).findViewById(R.id.msg_sys_ctx);
+		TextView sys_cnx=(TextView) EntryView.findViewById(R.id.msg_sys_ctx);
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#time", mytime.getHHMM()));
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", MyLocation.getLocation(context)));
+		
+//		final EditText num=(EditText) message_checkbox.getView(EntryView,null).findViewById(R.id.type_message_number);
+//		final EditText msg_cnx=(EditText) message_checkbox.getView(EntryView,null).findViewById(R.id.type_message_context);
+		final EditText num=(EditText) EntryView.findViewById(R.id.type_message_number);
+		final EditText msg_cnx=(EditText) EntryView.findViewById(R.id.type_message_context);
+		
+		
+		//如果手機號碼和內文之前有存，也顯示出來
+		num.setText(MySharedPreferences.getPreference(context, "message_number", ""));
+		msg_cnx.setText(MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.type_message_context)));
+		
+		 new AlertDialog.Builder(context)
+            .setTitle(context.getString(R.string.message_set))
+		    .setIcon(R.drawable.message_spic)
+		    .setView(EntryView)
+		    .setPositiveButton(context.getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog,
+						int which) {				
+					
+					//不管電話號碼對不對，簡訊的內文都先存進去再說
+					MySharedPreferences.addPreference(context, "message_context", msg_cnx.getText().toString());
+					
+//					Log.i(tag, "edittext= "+num.getText().toString());
+					if(num.getText().toString().equals("")){
+						MySharedPreferences.addPreference(context, "message_number", "");
+//						message_checkbox.setChecked(false);
+//						message_context_setting.setSummary(R.string.data_not_set);
+					}else if(!num.getText().toString().equals("")){
+						
+						if(isNumeric(num.getText().toString())){
+							MySharedPreferences.addPreference(context, "message_number", num.getText().toString());
+//							message_context_setting.setSummary(R.string.data_set);
+//							message_checkbox.setChecked(true);
+						}else{
+							/*MyDialog.*/newDialog(context, context.getString(R.string.attention), context.getString(R.string.wrong_phone_number), "warning");
+//							message_checkbox.setChecked(false);
+						}
+						
+					}
+					
+				}
+		    	
+		    })
+		    .setNegativeButton(context.getString(R.string.cancel), new DialogInterface.OnClickListener(){
+
+				@Override
+				public void onClick(DialogInterface dialog,
+						int which) {
+					
+						if(MySharedPreferences.getPreference(context, "message_number", "").equals("")){
+							//如果沒資料了，則將勾勾取消
+//							message_checkbox.setChecked(false);
+						}			
+					
+				}
+		    }
+		    )
+   .show();
+	}
+	
+	
+	/**
+	 * 將Facebook設定畫面叫出來
+	 */
+	public static void startFacebookDialog(final Context context,final Activity activity){
+		
+		 //將Cookie先叫出來，好讓等等的Facebook能用
+        CookieSyncManager.createInstance(context);
+        final CookieManager cookie=CookieManager.getInstance();
+        
+		/*MyDialog.*/newOneBtnDialog(context, R.drawable.facebook_spic, context.getString(R.string.facebook_set), context.getString(R.string.facebook_instruction), context.getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				//如果檢查Cookie沒有資料,設定帳密
+				if(cookie.getCookie("http://www.facebook.com")==null||
+						cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0)==-1){	
+//					setFacebookStatus(false);
+					
+					//連到Facebook去設定帳密
+					MyDispatcher mydispatcher = new MyDispatcher();
+					mydispatcher.facebookDispatcher(context, activity);
+					
+				}else{
+					//出現視窗問是否要清除的詢問畫面
+					Log.i(tag, "cookie: "+cookie.getCookie("http://www.facebook.com"));
+					Log.i(tag, "cookie INDEX: "+cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0));
+					
+					
+					MyDialog.newTwoBtnDialog(context, R.drawable.warning, context.getString(R.string.attention), context.getString(R.string.has_old_cookie), 
+							context.getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									//先清除Cookie，並將顯示畫面的值設一設
+									cookie.removeAllCookie();
+
+//									facebook_set.setSummary(R.string.data_not_set);
+//									facebook_checkbox.setChecked(false);
+									
+									//再連到Facebook去設定帳密
+									MyDispatcher mydispatcher = new MyDispatcher();
+									mydispatcher.facebookDispatcher(context, activity);
+								}
+						
+					}, context.getString(R.string.cancel), new DialogInterface.OnClickListener(){
+
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							//按取消時，什麼事也不做
+						}
+						
+					});
+				}
+					
+				
+				
+			}
+			
+		});
+	}
+		
+		
+	/**
 	 * 該訊息視窗用來顯示每種告知功能的說明介紹
 	 * @param context
 	 */
@@ -301,4 +484,15 @@ public class MyDialog {
 		}
     
     }
+    
+	/**
+	 * 檢查輸入是否為數字
+	 * @param 傳入欲檢查的字串
+	 * @return 若符合，回傳true
+	 */
+	public static boolean isNumeric(String str){
+	    Pattern pattern = Pattern.compile("[0-9]*");
+//	    Log.i(tag, "isNumeric:"+String.valueOf(pattern.matcher(str).matches()));
+	    return pattern.matcher(str).matches();   
+	 } 
 }

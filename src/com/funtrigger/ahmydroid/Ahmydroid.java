@@ -6,11 +6,14 @@ import com.facebook.android.R;
 import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.SwitchService;
+import com.funtrigger.tuition.DropUI;
+import com.funtrigger.tuition.Welcome;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.DialogInterface.OnKeyListener;
@@ -55,7 +58,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.27";
+	private String softVersion="v1.0.0.28";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -97,6 +100,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	private static final int HOW_TO_USE_5 = 5;
 
 
+    public static void actionShowMain(Context context) {
+        Intent i = new Intent(context, Ahmydroid.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(i);
+    }
+		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
 		Log.i(tag, "Ahmydroid.onCreate");
@@ -125,8 +134,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			@Override
 			public void onClick(View v) {
 //				button_how.setVisibility(View.INVISIBLE);
-				showDialog(HOW_TO_USE_1);
-				
+//				showDialog(HOW_TO_USE_1);
+				Ahmydroid.this.finish();
+				startActivity(new Intent(Ahmydroid.this, Welcome.class));
 			}
         	
         });
@@ -135,15 +145,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 
 			@Override
 			public void onClick(View v) {
-//				finish();	
+				finish();	
 				
-				ConnectivityManager cm=(ConnectivityManager) Ahmydroid.this.getSystemService(Ahmydroid.this.CONNECTIVITY_SERVICE);
+				/*ConnectivityManager cm=(ConnectivityManager) Ahmydroid.this.getSystemService(Ahmydroid.this.CONNECTIVITY_SERVICE);
 				Log.i(tag, "return value: "+String.valueOf(cm.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE , ConnectivityManager.CONNECTIVITY_ACTION)));
 				cm.setNetworkPreference(ConnectivityManager.TYPE_MOBILE);
 				NetworkInfo c=cm.getActiveNetworkInfo();
 				if(c!=null){
 					Log.i(tag, "Type: "+c.getTypeName());
-				}
+				}*/
 				
 			}
         	
@@ -211,7 +221,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		super.onDestroy();
 	}
 	
-	@Override
+	/*@Override
 	protected Dialog onCreateDialog(int id) {
 		switch(id){
 		case HOW_TO_USE_1:
@@ -358,7 +368,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		return null;
 		
 		
-	}
+	}*/
 	
 	@Override
 	protected void onPause() {
