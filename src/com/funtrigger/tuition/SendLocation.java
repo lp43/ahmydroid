@@ -1,11 +1,16 @@
 package com.funtrigger.tuition;
 
 import com.funtrigger.ahmydroid.Ahmydroid;
+import com.funtrigger.ahmydroid.LocationUpdateService;
+import com.funtrigger.ahmydroid.Settings;
+import com.funtrigger.tools.InternetInspector;
+import com.funtrigger.tools.MyDialog;
+import com.funtrigger.tools.SwitchService;
 
 import android.R;
-
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -14,9 +19,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 public class SendLocation extends Activity{
-	Button tuition_previous,tuition_next,set3G;
+	Button tuition_previous,tuition_next,start_set;
 	
     
 	@Override
@@ -30,19 +34,22 @@ public class SendLocation extends Activity{
 		TextView tuition_title=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_title);
 		tuition_previous=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_previous);
 		tuition_next=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_next);
-		set3G=(Button)findViewById(com.funtrigger.ahmydroid.R.id.set3G);
+		start_set=(Button)findViewById(com.funtrigger.ahmydroid.R.id.start_set);
 		
 		tuition_title.setText(com.funtrigger.ahmydroid.R.string.send_txt);
 		iv.setImageResource(com.funtrigger.ahmydroid.R.drawable.notify_all);
 		tv.setText(com.funtrigger.ahmydroid.R.string.sendlocation_wizard);
 
 		
-		set3G.setOnClickListener(new OnClickListener(){
+		start_set.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
-				SendLocation.this.finish();
-				SendLocation.this.startActivity(new Intent(SendLocation.this, Keep3G.class));
+				
+					SendLocation.this.finish();
+
+					SendLocation.this.startActivity(new Intent(SendLocation.this, LocationUpdateService.getMyBestProvider(SendLocation.this)==null?TurnOnLocation.class:SetSendData.class));
+
 			}
 			
 		});

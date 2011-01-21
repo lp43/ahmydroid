@@ -94,7 +94,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 
                 <Button
                 android:id="@+id/set_pick_up_now"
-	            android:text="@string/set"
+	            android:text="@string/set_and_start"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_marginTop="140dip"

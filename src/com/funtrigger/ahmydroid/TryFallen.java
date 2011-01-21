@@ -13,7 +13,6 @@ import com.facebook.android.FacebookError;
 import com.facebook.android.R;
 import com.facebook.android.Util;
 import com.funtrigger.tools.MyDispatcher;
-import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySensor;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyDialog;

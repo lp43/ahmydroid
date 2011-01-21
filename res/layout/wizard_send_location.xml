@@ -63,16 +63,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 	        android:text="@string/sendlocation_wizard_int0"
 	        android:layout_marginLeft="24dip"
 	        android:textAppearance="?android:attr/textAppearanceMedium" /> 
-	        
-	       <TextView
-	        android:layout_height="wrap_content"
-	        android:layout_width="wrap_content"
-	        android:layout_marginTop="6dip"
-	        android:text="@string/sendlocation_wizard_int1"
-	        android:layout_marginLeft="24dip"
-	        android:textAppearance="?android:attr/textAppearanceMedium" />
-	        
-	           
+	                   
 	        
 	       <TextView
 	        android:layout_height="wrap_content"
@@ -91,8 +82,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 	        android:textAppearance="?android:attr/textAppearanceMedium" />
 	        
 	       	  <Button
-                android:id="@+id/set3G"
-	            android:text="@string/set"
+                android:id="@+id/start_set"
+	            android:text="@string/set_and_start"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 	            android:layout_marginLeft="26dip"

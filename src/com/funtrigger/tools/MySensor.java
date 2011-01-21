@@ -37,6 +37,7 @@ import android.util.Log;
 
 /**
  * 該類別管理各種類別的Sensor感測器
+ * 摔落演算法也寫在這裡面
  * @author simon
  */
 public class MySensor implements SensorEventListener{
@@ -54,14 +55,14 @@ public class MySensor implements SensorEventListener{
 
 	private Context context;
 	/**
-	 * ====本來要拿來記錄摔落前數據，==
-	 * 但因為還沒有找到摔落前的規則，
-	 * ====所以這個變數還沒有拿來用====
-	 * 當[0,0,0]啟動後，會檢查前面的數據，
+	 * 當震痛數據[0,0,0]啟動後，會檢查前面的數據，
 	 * 是不是有掉落的跡象，
 	 * 以協助判是否為摔。
+	 * 檢查的依據是取震痛數據的前10筆資料，
+	 * 如果符合乖巧數據(每組的x,y,z值皆互相差正負3以內)
+	 * 才會啟發掉落畫面
 	 */
-	ArrayList<String> listbefore000;	
+	ArrayList listbefore000;	
 	/**
 	 * 經測試發現如果是正常摔落的數據，
 	 * 後面的x值不會亂七八槽
@@ -69,7 +70,9 @@ public class MySensor implements SensorEventListener{
 	 * 好讓程式能判斷︰手機持續在動、還是摔後的靜止狀態
 	 */
 	ArrayList<String> listAfter000;
-/*	int x1,x2,x3,x4,x5;*/
+	/**
+	 * 一旦為true時，記錄檔便開始儲存[0,0,0]之後的重力數據
+	 */
 	boolean startRecord=false;
 	/**
 	 * [0,0,0]後的檢查次數記錄，
@@ -78,7 +81,7 @@ public class MySensor implements SensorEventListener{
 	 */
 	int i=0;
 	/**
-	 * 目前所設定的感測值靈敏度
+	 * 使用者在SharedPreferences裡所設定的感測值靈敏度
 	 */
 	int sensitivity;
 	/**
@@ -112,8 +115,8 @@ public class MySensor implements SensorEventListener{
 		List<Sensor> list=sensormanager.getSensorList(sensorType);
 		
 		sensormanager.registerListener(MySensor.this,list.get(0), sensorRate);
-		listAfter000=new ArrayList();
-		
+		listAfter000 = new ArrayList();
+		listbefore000 = new ArrayList();
 	}
 	
 	
@@ -133,44 +136,37 @@ public class MySensor implements SensorEventListener{
 	
 	@Override
 	public void onSensorChanged(SensorEvent event) {
-		gettime=new MyTime();
-//		Log.i(tag, gettime.getHHMMSS()+" MySensor.onSensorChanged listening");
 		
+		
+		//從系統設定值先抓取要用哪種感度
 		sensitivity=MySharedPreferences.getPreference(context, "sensitivity", 0);
 		
 		float[] buf=event.values;
 		
-		float x=buf[0];
-		float y=buf[1];
-		float z=buf[2];
-		int a=(int) Math.abs(x);
-		int b=(int) Math.abs(y);
-		int c=(int) Math.abs(z);
+		float a=buf[0];
+		float b=buf[1];
+		float c=buf[2];
+		int x=(int) Math.abs(a);
+		int y=(int) Math.abs(b);
+		int z=(int) Math.abs(c);
 		
-		
-		//撞到地板才產生摔落數據
-		if(a<2&&b<2&&c<2){
-			Log.i(tag, "into a,b,c<2");
-			startRecord=true;
-				WriteToTXT.writeLogToTXT("====== a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c)+"======");
-				
-//				if(x1<11&&x2<11&&x3<11&&x4<11&&x5<11){
-//					Log.i(tag, "into x1,x2,x3,x4,x5 <11");
-//					//如果達成力道則廣播以開啟Fallen.java
-//					Intent intent=new Intent();
-//					intent.setAction("STARTFALLEN");
-//					intent.putExtra("filter", "sendBroadcastFrom: STARTFALLEN");
-//					context.sendBroadcast(intent);
-//
-//				}
+		//這段是要取乖巧數據專用的判斷式
+		if(!(x<2 && y<2 && z<2) && startRecord==false ){
+			WriteToTXT.writeLogToTXT("x"+String.valueOf(x)+", y"+String.valueOf(y)+", z"+String.valueOf(z));
+			listbefore000.add(new int[]{x,y,z});
 
-				
-//			//如果達成力道則廣播以開啟Fallen.java
-//			Intent intent=new Intent();
-//			intent.setAction("STARTFALLEN");
-//			intent.putExtra("filter", "sendBroadcastFrom: STARTFALLEN");
-//			context.sendBroadcast(intent);
-//			Log.i(tag, "a,b,c<2");
+			//乖巧數據為震痛數據前6組，讓之後的Method能檢查
+			if(listbefore000.size()==7){
+				listbefore000.remove(0);
+			}
+		}
+		
+		
+		//撞到地板得到[0,0,0]才產生摔落數據
+		if(x<2 && y<2 && z<2){
+			Log.i(tag, "into x,y,z<2");
+			startRecord=true;			
+			
 		}else{
 			//否則就是發送廣播標籤︰FALLENSENSORCHANGED，目的是Fallen裡不斷播動畫和音效
 			Intent intent2=new Intent();
@@ -179,17 +175,51 @@ public class MySensor implements SensorEventListener{
 			context.sendBroadcast(intent2);
 //			Log.i(tag, "sensor move");
 			
-			//沒有摔到0,0,0時記錄成:a?,b?,c?
-//			if(startRecord!=true){
-//				WriteToTXT.writeLogToTXT("a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c));
-//			}
-			
 		}
 
-	    
+		waitForSameNums(x,y,z);
+
+		
+		//如果是3面向都大於15，發送廣播標籤︰STARTFALLEN，目的是開啟Fallen事件
+//		if(a>15||b>15||c>15){
+	/*	if(Ahmydroid.times==0){
+			MyLog.writeLogToTXT(a,b,c);
+	
+		}else if(Ahmydroid.times==1){
+			MyLog.writeLogToTXT2(a,b,c);
+			
+		}*/
+		
+		
+		
+	}
+	
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	/**
+	 * [0,0,0]震痛數據被啟動後，
+	 * 進來該函式等待靜止數據。
+	 * 註︰從該函式中，正式劃分3種感測度等級，
+	 * 取決於要程式等待幾組靜止數據才會啟發掉落畫面
+	 * @param x 目前x的重力值
+	 * @param y 目前y的重力值
+	 * @param z 目前z的重力值
+	 */
+	private void waitForSameNums(int x,int y, int z){
+
 		if(startRecord==true){
-			WriteToTXT.writeLogToTXT("---a"+String.valueOf(a)+", b"+String.valueOf(b)+", c"+String.valueOf(c)+"---");
-			listAfter000.add(String.valueOf(a)+String.valueOf(b)+String.valueOf(c));
+			
+			if((x<2 && y<2 && z<2)){
+				WriteToTXT.writeLogToTXT("====== x"+String.valueOf(x)+", y"+String.valueOf(y)+", z"+String.valueOf(z)+"======");
+			}else{
+				WriteToTXT.writeLogToTXT("---x"+String.valueOf(x)+", y"+String.valueOf(y)+", z"+String.valueOf(z)+"---");
+			}
+			
+			listAfter000.add(String.valueOf(x)+String.valueOf(y)+String.valueOf(z));
 			
 			//如果使用者設成高感度，針測2組數據相同就啟動警報畫面
 			//這組數據很容易啟動Fallen畫面
@@ -204,12 +234,12 @@ public class MySensor implements SensorEventListener{
 					if(listAfter000.get(0).equals(listAfter000.get(1))){
 						Log.i(tag, "into arraylist0 == arraylist1");
 						//如果達成力道則廣播以開啟Fallen.java
-						sendBroadToFallen(context);
+						sendBroadToFallen(context);	
 						
 						startRecord=false;
 						i=0;
 					}else{
-						Log.i(tag, "into ! arraylist.size()==2&i<6");
+						Log.i(tag, "into ! arraylist.size()==2 & i<6");
 						listAfter000.remove(0);
 						i++;				
 					}
@@ -239,7 +269,7 @@ public class MySensor implements SensorEventListener{
 						startRecord=false;
 						i=0;
 					}else{
-						Log.i(tag, "into ! arraylist.size()==3&i<8");
+						Log.i(tag, "into ! arraylist.size()==3 & i<8");
 						listAfter000.remove(0);
 						i++;				
 					}
@@ -264,51 +294,101 @@ public class MySensor implements SensorEventListener{
 					
 					if(listAfter000.get(0).equals(listAfter000.get(1))&&listAfter000.get(1).equals(listAfter000.get(2))&&listAfter000.get(2).equals(listAfter000.get(3))){
 						Log.i(tag, "into arraylist0 == arraylist1 == arraylist2 == arraylist3");
-						//如果達成力道則廣播以開啟Fallen.java
-						sendBroadToFallen(context);
+						
+						/*此為舊寫法。新寫法加入了乖巧數據的判斷模式
+						 * //如果達成力道則廣播以開啟Fallen.java
+						sendBroadToFallen(context);*/
+						
+						//啟動乖巧運算
+						checkGoodChildNums();
+						listAfter000.clear();//要記得把listAfter000清空，否則乖巧公式若沒啟動Fallen，下一次listAfter000這裡會失效
+						
 						
 						startRecord=false;
 						i=0;
 					}else{
-						Log.i(tag, "into ! arraylist.size()==3&i<8");
+						Log.i(tag, "into ! arraylist.size()==4 & i<10");
 						listAfter000.remove(0);
 						i++;				
 					}
 			
 				}else if(i>9){
-					Log.i(tag, "set startRecord=false");
+//					Log.i(tag, "set startRecord=false");
 					startRecord=false;
 					i=0;
 					listAfter000.clear();
-					Log.i(tag, "now i is: "+i);
+//					Log.i(tag, "now i is: "+i);
 				}
 				break;
 			}
+		}
+	
+	}
+	
+	/**
+	 * 檢查震動數據前的乖巧數據，
+	 * 乖巧數據是x,y,z彼此間的引數，皆不超過正負3
+	 */
+	private void checkGoodChildNums(){
+		Log.i(tag, "into checkGoodChildNums");
+		ArrayList checklistbefore000=new ArrayList();
+		int[] bufferBefore=null;
+		int[] bufferNow=null;
+		int badResult=0;
+		//將儲存乖巧數據的ArrayList複製一份出來檢查
+		//讓原本的ArrayList能夠繼續存放數據庫
+		checklistbefore000=(ArrayList) listbefore000.clone();
+		listbefore000.clear();//將程式一直在記錄的乖巧數據庫清空，讓新數據能一直記進來，
+							  //而不會被這個函式裡的運算影響
+		
+		try{
 
+			Log.i(tag, "checklistbefore000 size: "+checklistbefore000.size());
+		
+				for(int i=0;i<checklistbefore000.size();i++){
+					//取得之前一組的乖巧數據
+					bufferBefore=(int[]) checklistbefore000.get(i);
+					//取得現在的乖巧數據
+					bufferNow=(int[]) checklistbefore000.get(i+1);
+					
+					
+					Log.i(tag, "bufferBefore: "+bufferBefore[0]+","+bufferBefore[1]+","+bufferBefore[2]);
+					if(bufferNow!=null)Log.i(tag, "bufferNow: "+bufferNow[0]+","+bufferNow[1]+","+bufferNow[2]);
+					
+					
+						//乖巧數據公式，若前組數據跟後組數據相差3以上，為不乖數據
+						if((Math.abs((bufferNow[0]-bufferBefore[0]))>3)
+								   |  (Math.abs((bufferNow[1]-bufferBefore[1]))>3)
+								   |  (Math.abs((bufferNow[2]-bufferBefore[2]))>3)){
+									
+									badResult++;
+									Log.i(tag, " --> BAD Result count:"+badResult);
+								}				
+					
+				}
+			}catch(IndexOutOfBoundsException e){
+				Log.i(tag, "370:IndexOutOfBoundsException"+e.getMessage());
+				Log.i(tag, "Bad Result is: "+badResult);
+			}
+		  
+		
+		try{
+			//如果壞孩子數據小於2，判斷別正常摔落。
+			//啟動摔落畫面
+			int[] buffer=(int[]) checklistbefore000.get(checklistbefore000.size()-1);	
+		
+			//預防值為0,0,9或0,0,10，是因為有時候放在桌面啟動小安也會進入震痛數據
+			if((buffer[0]==0&buffer[1]==0&buffer[2]==9)|(buffer[0]==0&buffer[1]==0&buffer[2]==10)){
+				Log.i(tag, "num is: "+buffer[0]+","+buffer[1]+","+buffer[2]+", doint nothing...");
 			
+			}else if(badResult<=2){
+				Log.i(tag, "Bad Result is: "+badResult+", into badResult<=2");
+				sendBroadToFallen(context);
+			}
+		}catch(ArrayIndexOutOfBoundsException e){
+			Log.i(tag, "388:ArrayIndexOutOfBoundsException"+e.getMessage());
 		}
 		
 		
-		
-		
-		//如果是3面向都大於15，發送廣播標籤︰STARTFALLEN，目的是開啟Fallen事件
-//		if(a>15||b>15||c>15){
-	/*	if(Ahmydroid.times==0){
-			MyLog.writeLogToTXT(a,b,c);
-	
-		}else if(Ahmydroid.times==1){
-			MyLog.writeLogToTXT2(a,b,c);
-			
-		}*/
-		
-		
-		
 	}
-	
-	@Override
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {
-		// TODO Auto-generated method stub
-		
-	}
-	
 }

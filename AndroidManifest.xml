@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.funtrigger.ahmydroid"
-      android:versionName="1.0.0.28" android:versionCode="29">
+      android:versionName="1.0.0.29" android:versionCode="30">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:label="@string/app_name" android:name=".Ahmydroid" android:screenOrientation="nosensor" android:launchMode="singleInstance">
             
@@ -21,7 +21,8 @@
 <activity android:name="Settings" android:configChanges="orientation"></activity>
 <service android:name="TimeService"></service>
 <activity android:name="TryFallen" android:screenOrientation="nosensor" 
-		  android:launchMode="singleInstance"></activity>
+		  android:launchMode="singleInstance"
+		  android:excludeFromRecents="true"></activity>
 <receiver android:name="SMSReceiver">
     <intent-filter>
 	<action android:name="android.provider.Telephony.SMS_RECEIVED"/>
@@ -39,12 +40,13 @@
 <activity android:name="com.funtrigger.tuition.Welcome" android:launchMode="singleInstance"></activity>
 <activity android:name="com.funtrigger.tuition.DropUI" android:launchMode="singleInstance"></activity>
 <activity android:name="com.funtrigger.tuition.PickUp" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.SendLocation"></activity>
-<activity android:name="com.funtrigger.tuition.Keep3G"></activity>
-<activity android:name="com.funtrigger.tuition.TurnOnLocation"></activity>
-<activity android:name="com.funtrigger.tuition.SetSendData"></activity>
-<activity android:name="com.funtrigger.tuition.End"></activity>
-<activity android:name="com.funtrigger.tuition.InterrupSending"></activity>
+<activity android:name="com.funtrigger.tuition.SendLocation" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.Keep3G" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.TurnOnLocation" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.SetSendData" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.End" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.InterrupSending" android:launchMode="singleInstance"></activity>
+<service android:name="LocationUpdateService"></service>
 </application>
     <uses-sdk android:minSdkVersion="3" />
 
@@ -63,4 +65,5 @@
 
 <uses-permission android:name="android.permission.RECEIVE_SMS"></uses-permission>
 <uses-permission android:name="android.permission.GET_TASKS"></uses-permission>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
 </manifest> 

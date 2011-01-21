@@ -2,6 +2,7 @@ package com.funtrigger.tuition;
 
 import com.funtrigger.ahmydroid.Ahmydroid;
 import com.funtrigger.tools.MyDialog;
+import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MySystemManager;
 
 import android.R;
@@ -11,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -19,9 +21,9 @@ import android.widget.TextView;
 
 
 public class SetSendData extends Activity{
-	Button tuition_previous,tuition_next,setSMS,setFacebook;
+	static Button tuition_previous/*,tuition_next*/;
+	Button setSMS, setFacebook;
 	protected String tag="tag";
-	
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class SetSendData extends Activity{
 		TextView tuition_cnx1=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_cnx1);
 		TextView tuition_cnx2=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_cnx2);
 		tuition_previous=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_previous);
-		tuition_next=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_next);
+//		tuition_next=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_next);
 		setSMS=(Button)findViewById(com.funtrigger.ahmydroid.R.id.set_sms);
 		setFacebook=(Button)findViewById(com.funtrigger.ahmydroid.R.id.set_facebook);
 		
@@ -45,12 +47,21 @@ public class SetSendData extends Activity{
 		int2.setImageResource(com.funtrigger.ahmydroid.R.drawable.facebook_pic);
 		tv.setText(com.funtrigger.ahmydroid.R.string.sendlocation_wizard_int3);
 		
+		//會點設定，直到進來這頁，
+		//代表使用者已經前開完系統的定位，也想開GPS定位
+		//所以直接幫它把GPS/AGPS選項打開
+		MySharedPreferences.addPreference(SetSendData.this, "location", true);
+		
 		
 		setSMS.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				Log.i(tag, "setSMS.onClick");
+				//當使用者將3G開啟的初始，這頁的[上一頁]按鈕會被取消，
+				//以防使用者忘記繼續設定[Facebook]或[簡訊]
+				setPreviousToDisable(SetSendData.this,true);
+				
 				MyDialog.startMsgDialog(SetSendData.this);
 				
 			}
@@ -61,6 +72,10 @@ public class SetSendData extends Activity{
 
 			@Override
 			public void onClick(View v) {
+				//當使用者將3G開啟的初始，這頁的[上一頁]按鈕會被取消，
+				//以防使用者忘記繼續設定[Facebook]或[簡訊]
+				setPreviousToDisable(SetSendData.this,true);
+				
 				MyDialog.startFacebookDialog(SetSendData.this, SetSendData.this);
 				
 			}
@@ -69,7 +84,7 @@ public class SetSendData extends Activity{
 		
 		
 		
-		tuition_next.setOnClickListener(new OnClickListener(){
+		/*tuition_next.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
@@ -78,7 +93,7 @@ public class SetSendData extends Activity{
 				
 			}
 			
-		});
+		});*/
 		
 		tuition_previous.setOnClickListener(new OnClickListener(){
 
@@ -86,10 +101,35 @@ public class SetSendData extends Activity{
 			public void onClick(View v) {
 				
 				SetSendData.this.finish();
-				SetSendData.this.startActivity(new Intent(SetSendData.this, TurnOnLocation.class));
+				SetSendData.this.startActivity(new Intent(SetSendData.this, SendLocation.class));
 			}
 			
 		});
+	}
+	
+	/**
+	 * 如果使用者進入了3G設定的頁面，也按了3G設定，馬上將SetSendData的上一頁鎖住
+	 * 以提示使用者要繼續將[簡訊]和[Facebook]設定完成。
+	 * 如果使用者設定了[簡訊]和[Facebook]，才打開
+	 * @param status 要將SetSendData的上一頁按鈕設成什麼狀態
+	 */
+	public static void setPreviousToDisable(Context context,Boolean status){
+		if(MySystemManager.checkTaskExist(context, ".SetSendData")==true)tuition_previous.setEnabled(status);
+	}
+	
+	
+
+	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		if(keyCode==KeyEvent.KEYCODE_BACK|keyCode==KeyEvent.KEYCODE_SEARCH){
+			if(tuition_previous.isEnabled()==false){
+				MyDialog.newDialog(SetSendData.this, getString(com.funtrigger.ahmydroid.R.string.attention), getString(com.funtrigger.ahmydroid.R.string.did_u_set), "warning");
+			}
+			
+		}
+		return false;
 	}
 
 	@Override

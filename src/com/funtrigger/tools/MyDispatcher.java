@@ -1,6 +1,9 @@
 package com.funtrigger.tools;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -20,6 +23,7 @@ import com.facebook.android.FacebookError;
 import com.facebook.android.R;
 import com.facebook.android.Util;
 import com.funtrigger.ahmydroid.Fallen;
+import com.funtrigger.ahmydroid.LocationUpdateService;
 import com.funtrigger.ahmydroid.Settings;
 
 /**
@@ -30,6 +34,7 @@ import com.funtrigger.ahmydroid.Settings;
 public class MyDispatcher {
 	Activity activity;
 	Context context;
+	public static Facebook facebook;
 	AsyncFacebookRunner mAsyncRunner;
 	private static String tag="tag";
 	public static String post_id="";
@@ -38,12 +43,15 @@ public class MyDispatcher {
 	 * SMS簡訊發射器
 	 */
 	public static void messageDispatcher(Context context){
+		
+		
 		Log.i(tag, "cellphone num is: "+MySharedPreferences.getPreference(context,"message_number",""));
 		
 		String msg_sys_cnx=context.getResources().getString(R.string.system_message_context);
 		MyTime mytime=new MyTime();
 		msg_sys_cnx=msg_sys_cnx.replace("#time", mytime.getHHMM());
-		msg_sys_cnx=msg_sys_cnx.replace("#location", MyLocation.getLocation(context));	
+	
+		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation());	
 		
 //		MySMS.sendSMS(context, MySharedPreferences.getPreference(context,"message_number",""), 
 //		msg_sys_cnx
@@ -68,11 +76,13 @@ public class MyDispatcher {
 		String msg_sys_cnx=context.getResources().getString(R.string.system_message_context);
 		MyTime mytime=new MyTime();
 		msg_sys_cnx=msg_sys_cnx.replace("#time", mytime.getHHMM());
-		msg_sys_cnx=msg_sys_cnx.replace("#location", MyLocation.getLocation(context));	
 		
-		MySMS.sendSMS(context, phoneNum, 
-		msg_sys_cnx
-		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)));
+		LocationUpdateService lus= new LocationUpdateService();
+		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation());	
+		
+//		MySMS.sendSMS(context, phoneNum, 
+//		msg_sys_cnx
+//		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)));
 
 		Toast.makeText(context, msg_sys_cnx
 		+MySharedPreferences.getPreference(context, "message_context", context.getString(R.string.message_last_sentence_ifusernotype)), Toast.LENGTH_LONG).show();
@@ -89,13 +99,14 @@ public class MyDispatcher {
 	public void facebookDispatcher(Context context,Activity activity){
 		this.activity=activity;
 		this.context=context;
-		Facebook facebook=new Facebook("171403682887181");//Facebook網站上別摔小安的應用程式ID
+		facebook=new Facebook("171403682887181");//Facebook網站上別摔小安的應用程式ID
+	
 		 mAsyncRunner = new AsyncFacebookRunner(facebook);
-//		if(facebook!=null){
+		if(facebook!=null){
 //			Log.i(tag, "into facebook!=null");
 		
 			if(facebook.isSessionValid()==true){
-				Log.i(tag, "session valid: "+facebook.isSessionValid());
+//				Log.i(tag, "session valid: "+facebook.isSessionValid());
 				//當Session存在時，就不用登入了，直接發文
 				sendFacebookMessageContext();
             	
@@ -107,7 +118,7 @@ public class MyDispatcher {
         	
 //		}else{
 //			Log.i(tag, "facebook entity is null");
-//		}
+		}
 	}
 	
 	/**
@@ -117,13 +128,13 @@ public class MyDispatcher {
 		Bundle params = new Bundle();	
 
         MyTime mytime = new MyTime();
-
+		
     	params.putString("message", context.getString(R.string.facebook_message_head)+"\n"+
     			context.getString(R.string.facebook_message_time).replace("#time", mytime.getHHMMSS())+"\n"+
-    			context.getString(R.string.facebook_message_location).replace("#location", MyLocation.getLocation(context))+"\n"+
+    			context.getString(R.string.facebook_message_location).replace("#location",  LocationUpdateService.getRecordLocation())+"\n"+
     			context.getString(R.string.facebook_message_last));
 
-    	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener());
+    	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener(),null);
 		
     	MySharedPreferences.addPreference(context, "facebook_data_status", "true");
     	Log.i(tag, "facebook_send success!");
@@ -137,37 +148,66 @@ public class MyDispatcher {
 	 */
     public class PostRequestListener extends BaseRequestListener {
 
-        public void onComplete(final String response) {
-            try {
-                // process the response here: executed in background thread
 
-                JSONObject json = Util.parseJson(response);
-                post_id = json.getString("id");
-                Log.i(tag, "post id: "+post_id);
-                // then post the processed result back to the UI thread
-                // if we do not do this, an runtime exception will be generated
-                // e.g. "CalledFromWrongThreadException: Only the original
-                // thread that created a view hierarchy can touch its views."
-                activity.runOnUiThread(new Runnable() {
-                    public void run() {
-                    	Toast.makeText(context, context.getString(R.string.post_success), Toast.LENGTH_SHORT).show();
-                    	MyDialog.newToast(context, context.getString(R.string.post_success2), R.drawable.facebook_pic);
-                    	
-                    	/*if(MySystemManager.checkAppExist(context, ".Settings"))*/
-                    
-                    	if(MySystemManager.checkTaskExist(context, ".Settings"))Settings.setFacebookStatus(true);
-                    	
-                    	//一顯示使用者資料設定後，馬上將post_id清除
-                    	post_id="";
-                    }
-                });
-                
-            } catch (JSONException e) {
-                Log.i(tag, "JSONException"+e.getMessage());
-            } catch (FacebookError e) {
-            	Log.i(tag, "FacebookError"+e.getMessage());
-            }
-        }
+		@Override
+		public void onComplete(String response, Object state) {
+			  try {
+	                // process the response here: executed in background thread
+
+	                JSONObject json = Util.parseJson(response);
+	                post_id = json.getString("id");
+	                Log.i(tag, "post id: "+post_id);
+	                // then post the processed result back to the UI thread
+	                // if we do not do this, an runtime exception will be generated
+	                // e.g. "CalledFromWrongThreadException: Only the original
+	                // thread that created a view hierarchy can touch its views."
+	                activity.runOnUiThread(new Runnable() {
+	                    public void run() {
+	                    	Toast.makeText(context, context.getString(R.string.post_success), Toast.LENGTH_SHORT).show();
+	                    	MyDialog.newToast(context, context.getString(R.string.post_success2), R.drawable.facebook_pic);
+	                    	
+	                    	/*if(MySystemManager.checkAppExist(context, ".Settings"))*/
+	                    
+	                    	if(MySystemManager.checkTaskExist(context, ".Settings"))Settings.setFacebookStatus(true);
+	                    	if(MySystemManager.checkTaskExist(context, ".SetSendData"))MySharedPreferences.addPreference(context, "facebook", true);
+	                    	//一顯示使用者資料設定後，馬上將post_id清除
+	                    	post_id="";
+	                    }
+	                });
+	                
+	            } catch (JSONException e) {
+	                Log.i(tag, "JSONException"+e.getMessage());
+	            } catch (FacebookError e) {
+	            	Log.i(tag, "FacebookError"+e.getMessage());
+	            }
+			
+		}
+
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     
     /**

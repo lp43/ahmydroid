@@ -4,14 +4,20 @@ import java.util.regex.Pattern;
 
 import com.facebook.android.R;
 import com.funtrigger.ahmydroid.Fallen;
+import com.funtrigger.ahmydroid.LocationUpdateService;
 import com.funtrigger.ahmydroid.Settings;
 import com.funtrigger.ahmydroid.TimeService;
+import com.funtrigger.tuition.InterrupSending;
+import com.funtrigger.tuition.Keep3G;
 import com.funtrigger.tuition.PickUp;
+import com.funtrigger.tuition.SetSendData;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.location.LocationManager;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -243,7 +249,7 @@ public class MyDialog {
 				
 				MySharedPreferences.addPreference(context, "pick_context", text.getText().toString());
 				MySharedPreferences.addPreference(context, "pick", true);
-				PickUp.modify_pick_up(text.getText().toString());
+				if(MySystemManager.checkTaskExist(context, ".PickUp"))PickUp.modify_pick_up(text.getText().toString());
 				
 			}
 		})
@@ -262,6 +268,15 @@ public class MyDialog {
 	 * 將Message的設定畫面叫出來
 	 */
 	public static void startMsgDialog(final Context context){
+		
+		//如果定位是開AGPS的話，要檢查有沒有開3G
+		if(LocationUpdateService.getMyBestProvider(context).equals("network") 
+				&& !InternetInspector.checkInternet(context).equals("mobile")){
+			need3G(context);
+			
+		}else{
+
+		
 		LayoutInflater factory= LayoutInflater.from(context);
 		final View EntryView = factory.inflate(R.layout.context_to_message, null);
 		
@@ -269,16 +284,15 @@ public class MyDialog {
 		//將時間和地點換成當下的值
 		
 		//將簡訊內文的第1行裡的經緯度抓一抓
-//		TextView sys_cnx=(TextView) message_checkbox.getView(EntryView,null).findViewById(R.id.msg_sys_ctx);
+
 		TextView sys_cnx=(TextView) EntryView.findViewById(R.id.msg_sys_ctx);
 		sys_cnx.setText(sys_cnx.getText().toString().replace("#time", mytime.getHHMM()));
-		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", MyLocation.getLocation(context)));
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", LocationUpdateService.getRecordLocation()));
 		
-//		final EditText num=(EditText) message_checkbox.getView(EntryView,null).findViewById(R.id.type_message_number);
-//		final EditText msg_cnx=(EditText) message_checkbox.getView(EntryView,null).findViewById(R.id.type_message_context);
+
 		final EditText num=(EditText) EntryView.findViewById(R.id.type_message_number);
 		final EditText msg_cnx=(EditText) EntryView.findViewById(R.id.type_message_context);
-		
+
 		
 		//如果手機號碼和內文之前有存，也顯示出來
 		num.setText(MySharedPreferences.getPreference(context, "message_number", ""));
@@ -300,17 +314,24 @@ public class MyDialog {
 //					Log.i(tag, "edittext= "+num.getText().toString());
 					if(num.getText().toString().equals("")){
 						MySharedPreferences.addPreference(context, "message_number", "");
-//						message_checkbox.setChecked(false);
-//						message_context_setting.setSummary(R.string.data_not_set);
+						if(MySystemManager.checkTaskExist(context, ".Settings")==true){
+							Settings.setMsgStatus(false);
+						}
+						
+
 					}else if(!num.getText().toString().equals("")){
 						
 						if(isNumeric(num.getText().toString())){
 							MySharedPreferences.addPreference(context, "message_number", num.getText().toString());
-//							message_context_setting.setSummary(R.string.data_set);
-//							message_checkbox.setChecked(true);
+							SwitchService.startService(context, LocationUpdateService.class);
+							if(MySystemManager.checkTaskExist(context, ".SetSendData"))MySharedPreferences.addPreference(context, "message", true);
+							if(MySystemManager.checkTaskExist(context, ".Settings"))Settings.setMsgStatus(true);
 						}else{
 							/*MyDialog.*/newDialog(context, context.getString(R.string.attention), context.getString(R.string.wrong_phone_number), "warning");
-//							message_checkbox.setChecked(false);
+							if(MySystemManager.checkTaskExist(context, ".Settings")==true){
+								Settings.setMsgStatus(false);
+							}
+							
 						}
 						
 					}
@@ -326,13 +347,17 @@ public class MyDialog {
 					
 						if(MySharedPreferences.getPreference(context, "message_number", "").equals("")){
 							//如果沒資料了，則將勾勾取消
-//							message_checkbox.setChecked(false);
+							if(MySystemManager.checkTaskExist(context, ".Settings")==true){
+								Settings.setMsgStatus(false);
+							}
+							
 						}			
 					
 				}
 		    }
 		    )
    .show();
+		}
 	}
 	
 	
@@ -341,18 +366,29 @@ public class MyDialog {
 	 */
 	public static void startFacebookDialog(final Context context,final Activity activity){
 		
+		if(!InternetInspector.checkInternet(context).equals("mobile")){
+			need3G(context);
+		
+	}else{
+		SwitchService.startService(context, LocationUpdateService.class);
+		
 		 //將Cookie先叫出來，好讓等等的Facebook能用
         CookieSyncManager.createInstance(context);
         final CookieManager cookie=CookieManager.getInstance();
+
         
 		/*MyDialog.*/newOneBtnDialog(context, R.drawable.facebook_spic, context.getString(R.string.facebook_set), context.getString(R.string.facebook_instruction), context.getString(R.string.ok), new DialogInterface.OnClickListener(){
 
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				
+				
 				//如果檢查Cookie沒有資料,設定帳密
 				if(cookie.getCookie("http://www.facebook.com")==null||
 						cookie.getCookie("http://www.facebook.com").indexOf("m_user", 0)==-1){	
-//					setFacebookStatus(false);
+					if(MySystemManager.checkTaskExist(context, ".Settings")==true){
+						Settings.setFacebookStatus(false);
+					}
 					
 					//連到Facebook去設定帳密
 					MyDispatcher mydispatcher = new MyDispatcher();
@@ -372,9 +408,10 @@ public class MyDialog {
 										int which) {
 									//先清除Cookie，並將顯示畫面的值設一設
 									cookie.removeAllCookie();
-
-//									facebook_set.setSummary(R.string.data_not_set);
-//									facebook_checkbox.setChecked(false);
+									if(MySystemManager.checkTaskExist(context, ".Settings")==true){
+										Settings.setFacebookStatus(false);
+									}
+									
 									
 									//再連到Facebook去設定帳密
 									MyDispatcher mydispatcher = new MyDispatcher();
@@ -389,88 +426,118 @@ public class MyDialog {
 						}
 						
 					});
-				}
-					
+				}		
 				
 				
 			}
 			
 		});
 	}
-		
+	}
 		
 	/**
-	 * 該訊息視窗用來顯示每種告知功能的說明介紹
-	 * @param context
+	 * 出現視窗告知使用者必須先開啟3G連線
+	 * @param context 呼叫的主體
 	 */
-	public static void helpDialog(final Context context,int icon,String title,String content){
-		LayoutInflater factory = LayoutInflater.from(context);
-        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.help), null);
-        TextView helpContent=(TextView) EntryView.findViewById(R.id.help_context);
-        helpContent.setText(content);
-        new AlertDialog.Builder(context)
-            .setIcon(icon)
-            .setTitle(title)
-            .setView(EntryView)
-            .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.ok), new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                }
-            })
+	public static void need3G(final Context context){
+		new AlertDialog.Builder(context)
+        .setTitle(com.funtrigger.ahmydroid.R.string.attention)
+	    .setIcon(com.funtrigger.ahmydroid.R.drawable.warning)
+	    .setMessage(com.funtrigger.ahmydroid.R.string.no_3g)
+	    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+	    		   
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+//				context.startActivity(new Intent(context, Keep3G.class));
+				
+			}
+		})
+//		.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(){
+//		    		   
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//				}
+//			})
+	    
+	    	.show();
+	}
+		
+//	/**
+//	 * 該訊息視窗用來顯示每種告知功能的說明介紹
+//	 * @param context
+//	 */
+//	public static void helpDialog(final Context context,int icon,String title,String content){
+//		LayoutInflater factory = LayoutInflater.from(context);
+//        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.help), null);
+//        TextView helpContent=(TextView) EntryView.findViewById(R.id.help_context);
+//        helpContent.setText(content);
+//        new AlertDialog.Builder(context)
+//            .setIcon(icon)
+//            .setTitle(title)
+//            .setView(EntryView)
+//            .setPositiveButton(context.getResources().getString(com.funtrigger.ahmydroid.R.string.ok), new DialogInterface.OnClickListener() {
+//                public void onClick(DialogInterface dialog, int whichButton) {
+//                }
+//            })
+//
+//            .show();
+//	}
 
-            .show();
-	}
+//	/**
+//	 * 單按鈕使用教學的視窗
+//	 * @param context 呼叫該視窗的主體
+//     * @param msg_pic 欲顯示的內文圖示
+//	 * @param msg_context 欲顯示的內文文字
+//	 * @param PositiveBtnName 單擊按鈕的文字顯示
+//	 * @param positiveDialogListener 當按[下一個]/[結束]的反應監聽
+//	 */
+//	public static AlertDialog tuitionOneBtnDialog(final Context context, int title,int msg_pic,int msg_context,int PositiveBtnName,DialogInterface.OnClickListener positiveDialogListener){
+//		
+//		LayoutInflater factory = LayoutInflater.from(context);
+//        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
+//        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
+//        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
+//        tu_pic.setImageResource(msg_pic);
+//        tu_cnx.setText(msg_context);
+//        
+//        return new AlertDialog.Builder(context)
+//            .setTitle(title)
+//            .setView(EntryView)
+//            .setPositiveButton(PositiveBtnName, positiveDialogListener)
+//           
+//            .create();
+//	}
+//	
+//	/**
+//	 * 雙按鈕使用教學的視窗
+//	 * @param context 呼叫該視窗的主體
+//     * @param msg_pic 欲顯示的內文圖示
+//	 * @param msg_context 欲顯示的內文文字
+//	 * @param positiveDialogListener 當按[上一個]的反應監聽
+//	 * @param negativeDialogListener 當按[下一個]的反應監聽
+//	 */
+//	public static AlertDialog tuitionTwoBtnDialog(final Context context, int title,int msg_pic,int msg_context,int positiveBtnText,int negativeBtnText,DialogInterface.OnClickListener positiveDialogListener,DialogInterface.OnClickListener negativeDialogListener){
+//		
+//		LayoutInflater factory = LayoutInflater.from(context);
+//        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
+//        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
+//        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
+//        tu_pic.setImageResource(msg_pic);
+//        tu_cnx.setText(msg_context);
+//        
+//        return new AlertDialog.Builder(context)
+//            .setTitle(title)
+//            .setView(EntryView)
+//            
+//            .setPositiveButton(/*context.getResources().getString(com.funtrigger.ahmydroid.R.string.previous)*/positiveBtnText, positiveDialogListener)
+//            .setNegativeButton(/*context.getResources().getString(com.funtrigger.ahmydroid.R.string.next)*/negativeBtnText, negativeDialogListener)
+//            .create();
+//	}
+	
 
-	/**
-	 * 單按鈕使用教學的視窗
-	 * @param context 呼叫該視窗的主體
-     * @param msg_pic 欲顯示的內文圖示
-	 * @param msg_context 欲顯示的內文文字
-	 * @param PositiveBtnName 單擊按鈕的文字顯示
-	 * @param positiveDialogListener 當按[下一個]/[結束]的反應監聽
-	 */
-	public static AlertDialog tuitionOneBtnDialog(final Context context, int title,int msg_pic,int msg_context,int PositiveBtnName,DialogInterface.OnClickListener positiveDialogListener){
-		
-		LayoutInflater factory = LayoutInflater.from(context);
-        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
-        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
-        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
-        tu_pic.setImageResource(msg_pic);
-        tu_cnx.setText(msg_context);
-        
-        return new AlertDialog.Builder(context)
-            .setTitle(title)
-            .setView(EntryView)
-            .setPositiveButton(PositiveBtnName, positiveDialogListener)
-           
-            .create();
-	}
-	
-	/**
-	 * 雙按鈕使用教學的視窗
-	 * @param context 呼叫該視窗的主體
-     * @param msg_pic 欲顯示的內文圖示
-	 * @param msg_context 欲顯示的內文文字
-	 * @param positiveDialogListener 當按[上一個]的反應監聽
-	 * @param negativeDialogListener 當按[下一個]的反應監聽
-	 */
-	public static AlertDialog tuitionTwoBtnDialog(final Context context, int title,int msg_pic,int msg_context,int positiveBtnText,int negativeBtnText,DialogInterface.OnClickListener positiveDialogListener,DialogInterface.OnClickListener negativeDialogListener){
-		
-		LayoutInflater factory = LayoutInflater.from(context);
-        final View EntryView = factory.inflate(context.getResources().getLayout(com.funtrigger.ahmydroid.R.layout.tuition), null);
-        ImageView tu_pic=(ImageView) EntryView.findViewById(R.id.tuition_pic);
-        TextView tu_cnx=(TextView) EntryView.findViewById(R.id.tuition_cnx);
-        tu_pic.setImageResource(msg_pic);
-        tu_cnx.setText(msg_context);
-        
-        return new AlertDialog.Builder(context)
-            .setTitle(title)
-            .setView(EntryView)
-            
-            .setPositiveButton(/*context.getResources().getString(com.funtrigger.ahmydroid.R.string.previous)*/positiveBtnText, positiveDialogListener)
-            .setNegativeButton(/*context.getResources().getString(com.funtrigger.ahmydroid.R.string.next)*/negativeBtnText, negativeDialogListener)
-            .create();
-	}
-	
 	
     /**
      * 這個函式專用來清除已顯示中的Toast

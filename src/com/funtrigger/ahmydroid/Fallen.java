@@ -12,7 +12,6 @@ import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Util;
 import com.funtrigger.tools.MyDispatcher;
-import com.funtrigger.tools.MyLocation;
 import com.funtrigger.tools.MySensor;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyDialog;
@@ -186,7 +185,8 @@ public class Fallen extends Activity{
 			TimeService.setTimeCounter(Integer.valueOf(MySharedPreferences.getPreference(Fallen.this, "dispatcher_first_time", "15")));
 		}
 		
-
+		SwitchService.startService(Fallen.this, LocationUpdateService.class);
+		
 		lp=this.getWindow().getAttributes();
 		
 		//檢驗是否為螢幕鎖

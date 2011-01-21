@@ -57,7 +57,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 	          <Button
                 android:id="@+id/set_sms"
-	            android:text="@string/set"
+	            android:text="@string/set_and_start"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 		        android:layout_marginTop="6dip"
@@ -87,7 +87,7 @@ xmlns:android="http://schemas.android.com/apk/res/android"
 		        android:textAppearance="?android:attr/textAppearanceMedium" />
 	          <Button
                 android:id="@+id/set_facebook"
-	            android:text="@string/set"
+	            android:text="@string/set_and_start"
 	            android:layout_width="wrap_content"
 	            android:layout_height="wrap_content"
 		        android:layout_marginTop="6dip"
@@ -123,7 +123,8 @@ xmlns:android="http://schemas.android.com/apk/res/android"
              android:minWidth="@dimen/button_minWidth"
              android:drawableRight="@drawable/button_indicator_next"
              android:layout_alignParentRight="true"
-             android:layout_centerVertical="true" />
+             android:layout_centerVertical="true"
+             android:visibility="invisible" />
 	
         </RelativeLayout>
         </LinearLayout>

@@ -16,6 +16,7 @@
 
 package com.facebook.android;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -104,7 +105,7 @@ public class LoginPage extends Activity {
             	params.putString("message", "嗨！我是你的手機，我掉了！\n剛剛我看了系統時間是︰"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+
             			"\n你還記得這個時候我在哪嗎？");
             	Log.i(tag, "count: "+count);
-            	mAsyncRunner.request("me/feed", params, "POST", new SampleRequestListener());
+            	mAsyncRunner.request("me/feed", params, "POST", new SampleRequestListener(),null);
             }
         });
         mRequestButton.setVisibility(mFacebook.isSessionValid() ?
@@ -139,7 +140,7 @@ public class LoginPage extends Activity {
                 }
 
                 mAsyncRunner.request(null, params, "POST",
-            			new SampleUploadListener());
+            			new SampleUploadListener(),null);
             }
         });
         mUploadButton.setVisibility(mFacebook.isSessionValid() ?
@@ -192,59 +193,120 @@ public class LoginPage extends Activity {
 
     public class SampleRequestListener extends BaseRequestListener {
 
-        public void onComplete(final String response) {
-            try {
-                // process the response here: executed in background thread
-                Log.d("Facebook-Example", "Response: " + response.toString());
-                JSONObject json = Util.parseJson(response);
-                final String name = json.getString("name");
 
-                // then post the processed result back to the UI thread
-                // if we do not do this, an runtime exception will be generated
-                // e.g. "CalledFromWrongThreadException: Only the original
-                // thread that created a view hierarchy can touch its views."
-                LoginPage.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        mText.setText("Hello there, " + name + "!");
-                    }
-                });
-            } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
-            } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
-            }
-        }
+		@Override
+		public void onComplete(String response, Object state) {
+			 try {
+	                // process the response here: executed in background thread
+	                Log.d("Facebook-Example", "Response: " + response.toString());
+	                JSONObject json = Util.parseJson(response);
+	                final String name = json.getString("name");
+
+	                // then post the processed result back to the UI thread
+	                // if we do not do this, an runtime exception will be generated
+	                // e.g. "CalledFromWrongThreadException: Only the original
+	                // thread that created a view hierarchy can touch its views."
+	                LoginPage.this.runOnUiThread(new Runnable() {
+	                    public void run() {
+	                        mText.setText("Hello there, " + name + "!");
+	                    }
+	                });
+	            } catch (JSONException e) {
+	                Log.w("Facebook-Example", "JSON Error in response");
+	            } catch (FacebookError e) {
+	                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
+	            }
+		}
+
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class SampleUploadListener extends BaseRequestListener {
 
-        public void onComplete(final String response) {
-            try {
-                // process the response here: (executed in background thread)
-                Log.d("Facebook-Example", "Response: " + response.toString());
-                JSONObject json = Util.parseJson(response);
-                final String src = json.getString("src");
+       
 
-                // then post the processed result back to the UI thread
-                // if we do not do this, an runtime exception will be generated
-                // e.g. "CalledFromWrongThreadException: Only the original
-                // thread that created a view hierarchy can touch its views."
-                LoginPage.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        mText.setText("Hello there, photo has been uploaded at \n" + src);
-                    }
-                });
-            } catch (JSONException e) {
-                Log.w("Facebook-Example", "JSON Error in response");
-            } catch (FacebookError e) {
-                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
-            }
-        }
+		@Override
+		public void onComplete(String response, Object state) {
+			  try {
+	                // process the response here: (executed in background thread)
+	                Log.d("Facebook-Example", "Response: " + response.toString());
+	                JSONObject json = Util.parseJson(response);
+	                final String src = json.getString("src");
+
+	                // then post the processed result back to the UI thread
+	                // if we do not do this, an runtime exception will be generated
+	                // e.g. "CalledFromWrongThreadException: Only the original
+	                // thread that created a view hierarchy can touch its views."
+	                LoginPage.this.runOnUiThread(new Runnable() {
+	                    public void run() {
+	                        mText.setText("Hello there, photo has been uploaded at \n" + src);
+	                    }
+	                });
+	            } catch (JSONException e) {
+	                Log.w("Facebook-Example", "JSON Error in response");
+	            } catch (FacebookError e) {
+	                Log.w("Facebook-Example", "Facebook Error: " + e.getMessage());
+	            }
+			
+		}
+
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
     }
     public class WallPostRequestListener extends BaseRequestListener {
 
-        public void onComplete(final String response) {
-            Log.d("Facebook-Example", "Got response: " + response);
+       
+
+		@Override
+		public void onComplete(String response, Object state) {
+			Log.d("Facebook-Example", "Got response: " + response);
             String message = "<empty>";
             try {
                 JSONObject json = Util.parseJson(response);
@@ -260,24 +322,80 @@ public class LoginPage extends Activity {
                     mText.setText(text);
                 }
             });
-        }
+			
+		}
+
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class WallPostDeleteListener extends BaseRequestListener {
 
-        public void onComplete(final String response) {
-            if (response.equals("true")) {
-                Log.d("Facebook-Example", "Successfully deleted wall post");
-                LoginPage.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        mDeleteButton.setVisibility(View.INVISIBLE);
-                        mText.setText("Deleted Wall Post");
-                    }
-                });
-            } else {
-                Log.d("Facebook-Example", "Could not delete wall post");
-            }
-        }
+       
+		@Override
+		public void onComplete(String response, Object state) {
+			  if (response.equals("true")) {
+	                Log.d("Facebook-Example", "Successfully deleted wall post");
+	                LoginPage.this.runOnUiThread(new Runnable() {
+	                    public void run() {
+	                        mDeleteButton.setVisibility(View.INVISIBLE);
+	                        mText.setText("Deleted Wall Post");
+	                    }
+	                });
+	            } else {
+	                Log.d("Facebook-Example", "Could not delete wall post");
+	            }
+			
+		}
+
+		@Override
+		public void onIOException(IOException e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFileNotFoundException(FileNotFoundException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onMalformedURLException(MalformedURLException e,
+				Object state) {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void onFacebookError(FacebookError e, Object state) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     public class SampleDialogListener extends BaseDialogListener {
@@ -290,7 +408,7 @@ public class LoginPage extends Activity {
                 mDeleteButton.setOnClickListener(new OnClickListener() {
                     public void onClick(View v) {
                         mAsyncRunner.request(postId, new Bundle(), "DELETE",
-                                new WallPostDeleteListener());
+                                new WallPostDeleteListener(),null);
                     }
                 });
                 mDeleteButton.setVisibility(View.VISIBLE);

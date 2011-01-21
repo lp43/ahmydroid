@@ -1,6 +1,7 @@
 package com.funtrigger.ahmydroid;
 
 import com.funtrigger.tools.MySharedPreferences;
+import com.funtrigger.tools.SwitchService;
 import com.funtrigger.tuition.Welcome;
 
 import android.app.Activity;
@@ -12,6 +13,7 @@ public class How extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
+		
 		
 		if(MySharedPreferences.getPreference(How.this, "tuition_open_or_not", true)==true){
 			finish();

@@ -1,9 +1,9 @@
 package com.funtrigger.tuition;
 
 import com.funtrigger.ahmydroid.Ahmydroid;
+import com.funtrigger.ahmydroid.LocationUpdateService;
 
 import android.R;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -37,6 +37,8 @@ public class TurnOnLocation extends Activity{
 		iv.setImageResource(com.funtrigger.ahmydroid.R.drawable.mlocation_en);
 		tv.setText(com.funtrigger.ahmydroid.R.string.please_location);
 		
+		
+		
 		gotoset.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -66,10 +68,22 @@ public class TurnOnLocation extends Activity{
 			public void onClick(View v) {
 				
 				finish();
-				TurnOnLocation.this.startActivity(new Intent(TurnOnLocation.this, Keep3G.class));
+				TurnOnLocation.this.startActivity(new Intent(TurnOnLocation.this, SendLocation.class));
 			}
 			
 		});
+	}
+
+	@Override
+	protected void onResume() {
+
+		//如果使用者沒有開啟Location，就讓[下一個]按鈕失效，以防進入簡訊和Facebook設定
+		if(LocationUpdateService.getMyBestProvider(this)==null){
+			tuition_next.setEnabled(false);
+		}else{
+			tuition_next.setEnabled(true);
+		}
+		super.onResume();
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.funtrigger.ahmydroid;
 
 import java.util.List;
-
 import com.funtrigger.tools.MySensor;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyTime;
@@ -77,6 +76,7 @@ public class FallDetector extends Service{
 	 */
 	MySensor mysensor;
 	BroadcastReceiver broadcastreceiver;
+
 	
 	@Override
 	public IBinder onBind(Intent intent) {

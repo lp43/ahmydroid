@@ -220,6 +220,7 @@ v1.0.0.27
 v1.0.0.28
 1.新增Where r u功能
 2.製作新手設定,刪除舊教學
+3.英文未翻
 
 3G
 [Settings]→[Wireless & networks]→[Mobile networks]→[Data enabled]
@@ -230,3 +231,28 @@ Location
 [Settings]→[Location & security]→[Use wireless networks]/[Use GPS satellites]
 [设置]→[位置和安全]→[使用无线网路]/[使用GPS卫星]
 [設定]→[位置與安全性]→[使用無線網路]/[使用GPS衛星定位]
+
+1/14
+v1.0.0.29
+1.[已解決]保持3G連線精靈，開啟後，檢查有沒有開3G
+讓設定精靈更聰明，依環境找出相對應的Activity來設定
+2.重新撰寫Location模組到LocationUpdateService
+3.新增乖巧運算模式，提高判斷小安摔落的準確性
+4.將TryFallen改成不要顯示在Recently
+5.依照LocationUpdateService的存在與否，增加Ahmydroid的電氣小安
+6.電氣小安邏輯重寫
+當使用者設完Message卻沒有按啟動小安時，圖示仍是未啟動狀態
+需啟動小安，才會出現電波小安
+(一般來說若LocationUpdateService啟動，應該就要有電波小安，但是這個地方，
+就算有啟動LocationUpdateService，仍然不會有電波小安)
+7.[待處理]Facebook新版的登入問題
+debug版指令︰keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore |openssl sha1 -binary | openssl base64
+
+debug版Hash_key
+OFknagf6nO8CMYSVzn1ZPpuLk70=
+
+
+發佈版指令︰keytool -exportcert -alias Camangi_Simon -keystore ./Camangi_Simon | openssl sha1 -binary | openssl enc -a -e
+
+發佈版Hash_key
+uDDPuJXJw4CC3T2mfwgDwIqTLW8=
