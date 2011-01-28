@@ -33,4 +33,25 @@ public class InternetInspector {
 		
 		return (net==null?"null":net.getTypeName());
 	}
+	
+	
+	/**
+	 * Inspect any internet ability or not
+	 * @return return a String what is the internet using with.
+	 */
+	public static Boolean InternetOrNot(Context context){
+
+		if(conn==null) conn=(ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		
+		NetworkInfo net=conn.getActiveNetworkInfo();
+		
+		if(net!=null){
+			Log.i(tag, "activitiy internet is: "+net.getTypeName());
+		}else{
+			Log.i(tag, "activitiy internet is null");
+		}
+
+		
+		return (net==null?false:true);
+	}
 }

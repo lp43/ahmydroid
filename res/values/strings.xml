@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
 
-	<string name="app_name">You drop Droid</string>
+	<string name="app_name">Do not drop Droid</string>
     <string name="how_to_use">How to use?</string>
     <string name="exit">Exit</string>
     <string name="about">About</string>
@@ -13,7 +13,7 @@
     <string name="startingfallprotect">drop protecting...</string>
     <string name="stopfallprotect">Stop drop protecting</string>
     <string name="set_notify">Alert Settings</string>
-	<string name="location_setting">Send Location Settings</string>
+	<string name="location_setting">Location Settings</string>
 	<string name="location_feature">GPS/AGPS</string>
 	<string name="location_dialog_context">You must start GPS satellites or wireless networks, then you can come back to set it.</string>
 	<string name="location_dialog_diff_context">System Location has been closed, Do you want to turn on again?</string>
@@ -24,75 +24,89 @@
 	<string name="alarm_set">Drop UI Settings</string>
 	<string name="pick_feature">Somebody Pick up</string>
 	<string name="pick_set">Somebody Setting</string>
-	<string name="pick_message">Tell informations to Somebody pick your phone up</string>
-	<string name="pick_default_context">Hello, this is Michaels phone, can you take it to Mandy? Her cell is 12345, thank you very much!</string>
-	<string name="pick_feature_instroduction">What information you want to tell who pick your phone up?</string>
+	<string name="pick_message">Tell informations to Somebody pick your mobile up</string>
+	<string name="pick_default_context">"Hello, this is Michael's mobile, can you take it to Mandy? Her cell is 12345, thank you very much!"</string>
+	<string name="pick_feature_instroduction">What information you want to tell who pick your mobile up?</string>
 	<string name="message_feature">1.Send by SMS</string>
-	<string name="message_feature_instroduction">Pay for your Telecom Operator. It will tell the phone location to your friend.</string>
+	<string name="message_feature_instroduction">"Pay for your Telecom Operator. It will tell the mobile's location to your friend."</string>
 	<string name="message_set">SMS Setting</string>
 	<string name="facebook_feature">2.Send by Facebook</string>
-	<string name="facebook_feature_instroduction">Need 3G network. The phone location will poll to Facebook Wall.</string>
+	<string name="facebook_feature_instroduction">"Need 3G network. The mobile's location will poll to Facebook Wall."</string>
 	<string name="facebook_set">Facebook setting</string>
-	<string name="context_to_message">Phone number:</string>	
-	<string name="default_number_context">When you drop your phone and lose it, program will auto-send this SMS</string>
+	<string name="context_to_message">mobile number(1 number):</string>	
+	<string name="default_number_context">When you drop your mobile and lose it, program will auto-send this SMS</string>
 	<string name="context_title">SMS context:</string>
-	<string name="system_message_context">I am Phone Lose Notify, It is #time, My Location is #location,</string>
+	<string name="system_message_context">"It's Mobile Lose Notify, It is #time, Location is #location,"</string>
 	<string name="type_message_context">can you contact my phone owner?</string>
-	<string name="wrong_phone_number">It is a wrong phone number!</string>
+	<string name="wrong_phone_number">"It is a wrong phone number!System can't accept +=*/()"</string>
 	<string name="reset">Reset</string>
 	<string name="msg_addtion">Do you want to speak anymore? touch me to set</string>
 	<string name="data_set">Has been set</string>
 	<string name="data_not_set">not set</string>
 	<string name="first_dispatcher_time">Processing Time</string>
 	<string name="first_dispatcher_time_instruduction">The period of sending Location by SMS or Facebook.</string>
-	<string name="facebook_instruction">1.This feature needs to keep 3G network.\n\n2.If you exit or turn off the power when application is sending to Facebook, it WILL NOT send Location!</string>
+	<string name="facebook_instruction">1.This feature needs to keep 3G network.\n\n2.It will not login unless you use previous version of Facebook application.\n\n3.If you exit or turn off the power when application is sending to Facebook, it WILL NOT send Location!</string>
 	<string name="has_old_cookie">You have set username and password before, do you want to delete and continue?\n\nNotes: If you has not type any data in programe, It will not auto-send by Facebook!</string>
 	<string name="post_success">Poll Location success!</string>
 	<string name="post_success2">You can check it on Facebook Wall now!</string>
 	<string name="unlock">Stop</string>
-	<string name="message_last_sentence_ifusernotype">tell my phone owner and help me back, please!</string>
+	<string name="message_last_sentence_ifusernotype">tell phone owner and help the mobile back, please!</string>
 	<string name="set">Setting</string>
-	<string name="context_to_pick">Context who pick your phone up will read it:</string>	
+	<string name="context_to_pick">Context who pick your mobile up will read it:</string>	
 	<string name="attention">Attention</string>
 	<string name="please_choice">Please Choice</string>
 	<string name="skip">Skip</string>
+	<string name="wait_for_3g">checking for did you enable network...</string>
+	<string name="did_u_set">Please check if you set or not！</string>
 	
 	<string name="username_cleared">Username and password has been cleaned.</string>
 	<string name="ok">Ok</string>
 	<string name="please_type">Please type</string>
 	<string name="message_response">SMS has been sent!</string>	
-	<string name="facebook_message_head">Hey! It is your phone, It was lost!</string>
-	<string name="facebook_message_time">Phone time: #time ,</string>
-	<string name="facebook_message_location">and location is #location ,</string>
+	<string name="facebook_message_head">Hey! Your mobile has been lost!</string>
+	<string name="facebook_message_time">It is: #time ,</string>
+	<string name="facebook_message_location">GeoGraphic location is #location ,</string>
 	<string name="facebook_message_last">paste this location and find it out in Google Map!</string>
 	<string name="sensitivity_set">Sensitivity Setting</string>
 	<string name="sensitivity_instruction">"Low sensitivity" will hard to detect dropping.</string>
-	<string name="unlock_success">You have already interrup sending phone location, this UI will be close...</string>
+	<string name="unlock_success">"You have already stop sending mobile's location."</string>
 	<string name="exit_or_not">Do you want to exit?</string>
-	<string name="help_translate">Help translate</string>
+	<string name="help_translate">Help translation</string>
 	<string name="help_translate_context">Please mail to:\n lp43simon@gmail.com\nI will contact with you!</string>
+	<string name="no_3g">Please enable 3G network first!</string>
+	<string name="set_and_start">Set and Turn on</string>
+	<string name="cant_get_location_with_3g">Error.\nPlease enable network or turn off GPS/AGPS in this program then try it!</string>
+	<string name="start_location_update">Start GeoLocation Updating</string>
+	<string name="stop_location_update">Close GeoLocation Updating</string>
+	<string name="location_name">GeoLocation</string>
+	<string name="location_name_ing">Geographic Location Updating...</string>
 	
-	<!-- 以下是使用教學檔裡的字串 -->
+		<!-- 以下用在精靈 -->	
 	<string name="previous">Previous</string>
 	<string name="next">Next</string>
-	<string name="try_warning_ui">Practice interruping</string>
-	<string name="wrong_way">Action you did has not interrup sending location!\n\nPlease try to move the brick from the top of the Left.</string>
-	<string name="right_way">Congratulations!\n\nYou have studied how to interrup sending location!</string>
-	<string name="welcome">Welcome 1/5</string>
-	<string name="how_to_use_1">[Do not drop Droid] is an application that when you drop your phone will alert you. If you start protecting, it will run in the background.</string>
- 	<string name="warning_ui">Drop UI 2/5</string>
- 	<string name="how_to_use_2">When you drop your phone, you will see this picture and alert you.</string>
- 	<string name="send_txt">Send location 3/5</string>
-	<string name="how_to_use_3">Later, It will send the phone location by SMS or Facebook.(your choice)</string>
- 	<string name="unlock_ui">Interrup sending location! 4/5</string>							
- 	<string name="how_to_use_4">If you wish not to send your location, you can move the brick from the top of the Left to interrupt it!</string>							
-	<string name="thank">Thank you 5/5</string>
-	<string name="how_to_use_5">If you have any suggestion for me, please mail to:\n
-								lp43simon@gmail.com \n
-								Thank you for using this program.</string>
-
-	<!-- 以下用在精靈 -->						    
-	<string name="pick_up_wizard">如果你沒有把手機撿回來，被陌生人撿到時，他看的到這些資訊。</string>							    
+	<string name="pick_up_wizard">If your mobile had been taken by a stranger, ask him to do somting right, send you mobile back!</string>
+	<string name="sendlocation_wizard">"If your mobile hasn't been discovered, it will send location to your friends or your Facebook's wall about your mobile's location."</string>
+	<string name="sendlocation_wizard_int0">Sending location requires:</string>
+	<string name="sendlocation_wizard_int1">●3G network</string>
+	<string name="sendlocation_wizard_int2">●Set location</string>
+	<string name="sendlocation_wizard_int3">●Related settings</string>
+	<string name="please_3g">If you want to initial 3G network setting, learning on internet by yourself,please.\n\nThis tutorial teaches you just how to enable 3G network.
+							\n\nTrun on by this setp︰\nPhone[Settings]→[Wireless and networks]→[Mobile networks]→[Data enabled]</string>
+	<string name="please_location">Trun on by this setp︰\n\nPhone[Settings]→[Location and security]→[Use wireless networks] or [Use GPS satellites]</string>
+	<string name="set_finish_cnx">"After you turn on drop protection, you can leave. 
+								\n"Drop protecting" will run in the background even when mobile is in standby mode.
+								\nThank you for using this application."</string>
+	<string name="interrup_cnx">During mobile dropping to sending latitude/longitude, it will require some time, so you can choose to stop sending data by then. </string>
+	<string name="interrup_practice">Practice</string>
+	<string name="interrup_title">Stop sending! 4/4</string>
+	<string name="next_time_into_main">Skip tutorial next time</string>
+	<string name="wrong_way">Action you did has not stop sending location!\n\nPlease try to move the brick at the top of the Left.</string>
+	<string name="right_way">Congratulations!\n\nYou have studied how to stop sending location!</string>
+	<string name="welcome">Welcome 1/4</string>
+	<string name="warning_ui">Drop UI 2/4</string>
+	<string name="how_to_use_1">[Do not drop Droid] is an application when you drop your mobile will alert you and your mobile will be protected in any time.</string>
+	<string name="how_to_use_2">When your mobile dropped, the application will show the picture and alert you.</string>
+ 	<string name="send_txt">Send location 3/4</string>						    
 	
 <!--以下是Facebook用到的字串集 -->
     <string name="request">Request!</string>

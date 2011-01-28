@@ -1,9 +1,11 @@
 package com.funtrigger.tuition;
 
 import com.funtrigger.ahmydroid.Ahmydroid;
+import com.funtrigger.ahmydroid.LocationUpdateService;
 import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MySystemManager;
+import com.funtrigger.tools.SwitchService;
 
 import android.R;
 
@@ -51,7 +53,10 @@ public class SetSendData extends Activity{
 		//代表使用者已經前開完系統的定位，也想開GPS定位
 		//所以直接幫它把GPS/AGPS選項打開
 		MySharedPreferences.addPreference(SetSendData.this, "location", true);
+		SwitchService.startService(this, LocationUpdateService.class);
 		
+		//記錄使用者本來想不想要開啟小安的定位功能
+		 MySharedPreferences.addPreference(this, "previous_location_setting", true);
 		
 		setSMS.setOnClickListener(new OnClickListener(){
 

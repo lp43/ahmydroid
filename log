@@ -246,6 +246,26 @@ v1.0.0.29
 (一般來說若LocationUpdateService啟動，應該就要有電波小安，但是這個地方，
 就算有啟動LocationUpdateService，仍然不會有電波小安)
 7.[待處理]Facebook新版的登入問題
+
+1/28
+v1.0.0.32
+1.依照Dev guide的說明，getService會回傳Object，
+若Object不為空就不取了，以省存取大量Object所耗的電量問題
+[待驗證]電量問題是否有克服？
+2.[待處理]新版的Facebook問題仍然沒有克服
+3.英文重新上字
+4.當Provider被關掉時，程式的GPS/AGPS開關也會關掉，
+但是有另一組MySharedPreferences "previous_location_setting"儲存使用者原先是不是想要開定位功能
+5.[已解決]當GPS關掉，卻馬上打開AGPS時，LocationUpdateService的關閉實體跑掉，關不掉
+6.若原本使用者有打開程式的GPS開關，
+(1)但後來使用者自己把GPS關掉︰
+GPS被關掉→LocationUpdateService也會被關
+若馬上把GPS打開→LocationUpdateService並不會被打開
+(2)但後來使用者自己把3G關掉︰
+3G關掉→LocationUpdateService也會被關
+3G打開→LocationUpdateService也會打開(前提示系統的AGPS沒有被關掉)
+7.讓LocationUpdateService也有notification
+
 debug版指令︰keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore |openssl sha1 -binary | openssl base64
 
 debug版Hash_key
@@ -256,3 +276,4 @@ OFknagf6nO8CMYSVzn1ZPpuLk70=
 
 發佈版Hash_key
 uDDPuJXJw4CC3T2mfwgDwIqTLW8=
+

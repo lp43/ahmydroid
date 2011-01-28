@@ -15,7 +15,7 @@
     <string name="set_notify">摔落告知設定</string>
 	<string name="location_setting">發送經緯度 設定</string>
 	<string name="location_feature">開啟GPS/AGPS</string>
-	<string name="location_dialog_context">必須先將GPS或WiFi定位開啟，才能獲得地理座標。待設定完，再請您回來設定。</string>
+	<string name="location_dialog_context">必須先將手機的GPS或WiFi定位開啟，才能獲得地理座標。</string>
 	<string name="location_dialog_diff_context">您系統的GPS/WiFi定位被關掉了，您是否重新開啟？</string>
 	<string name="go_to">前往開啟</string>
 	<string name="cancel">取消</string>	
@@ -45,7 +45,7 @@
 	<string name="data_not_set">未設定</string>
 	<string name="first_dispatcher_time">緩衝時間</string>
 	<string name="first_dispatcher_time_instruduction">當進入摔落畫面後，希望程式多久後發出手機經緯度資訊？</string>
-	<string name="facebook_instruction">1.該方式需保持3G上網狀態\n\n2.在摔落畫面中，若Facebook的發文過程中螢幕被關閉，可能會無法發送Facebook！</string>
+	<string name="facebook_instruction">1.該方式需保持3G上網狀態\n\n2.請使用舊版Facebook，否則會無法登入。\n\n3.在摔落畫面中，若Facebook的發文過程中螢幕被關閉，可能會無法發送Facebook！</string>
 	<string name="has_old_cookie">發現有舊的帳密，是否清除並繼續設定？\n\n注意︰若無設定帳密將無法自動發文！</string>
 	<string name="post_success">Facebook發文成功！</string>
 	<string name="post_success2">請至Facebook塗鴨牆查看！</string>
@@ -76,6 +76,10 @@
 	<string name="no_3g">請將連線設為3G後再來設定!</string>
 	<string name="set_and_start">設定並啟用</string>
 	<string name="cant_get_location_with_3g">啟動失敗。\n請連上3G或關閉發送經緯度功能，然後再試一次！</string>
+	<string name="start_location_update">啟動 定位小安</string>
+	<string name="stop_location_update">關閉 定位小安</string>
+	<string name="location_name">定位小安</string>
+	<string name="location_name_ing">經緯度獲取中...</string>
 	
 	<!-- 以下用在精靈 -->	
 	<string name="previous">上一個</string>
@@ -88,7 +92,7 @@
 	<string name="sendlocation_wizard_int3">●設定發送資料</string>
 	<string name="please_3g">若您是要做3G的初始設定，請自行上網參考設定方式。\n\n此教學是將3G開關打開。
 							\n\n開啟開關方式︰\n[設定]→[無線與網路]→[行動網路]→[已啟用資料]</string>
-	<string name="please_location">請您開啟︰\n\n[設定]→[位置與安全性]→[使用無線網路]/[使用GPS衛星定位]</string>
+	<string name="please_location">請您開啟︰\n\n[設定]→[位置與安全性]→[使用無線網路] 或 [使用GPS衛星定位]</string>
 	<string name="set_finish_cnx">最後，你只要啟動，然後離開程式。\n即使是手機待命狀態，「摔落告知」都會在背後保護。\n\n
 								  感謝您的使用。</string>
 	<string name="interrup_cnx">從手機摔落到發送經緯度，會有一段緩衝時間，您可以阻止經緯度的發送！</string>

@@ -280,13 +280,13 @@ public class MyDialog {
 		LayoutInflater factory= LayoutInflater.from(context);
 		final View EntryView = factory.inflate(R.layout.context_to_message, null);
 		
-		MyTime mytime=new MyTime();
+//		MyTime mytime=new MyTime();
 		//將時間和地點換成當下的值
 		
 		//將簡訊內文的第1行裡的經緯度抓一抓
 
 		TextView sys_cnx=(TextView) EntryView.findViewById(R.id.msg_sys_ctx);
-		sys_cnx.setText(sys_cnx.getText().toString().replace("#time", mytime.getHHMM()));
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#time",/* mytime.getHHMM()*/MyTime.getHHMM1()));
 		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", LocationUpdateService.getRecordLocation()));
 		
 
@@ -451,7 +451,9 @@ public class MyDialog {
 			public void onClick(DialogInterface dialog, int which) {
 				
 //				context.startActivity(new Intent(context, Keep3G.class));
-				
+				/*if(MySystemManager.checkTaskExist(context, ".Settings")==true){
+					Settings.closeAllLocationSet();
+				}*/
 			}
 		})
 //		.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener(){

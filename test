@@ -1,0 +1,12 @@
+測試記錄
+
+1.開程式GPS開關 開系統AGPS 開3G
+結果︰LocationUpdateService被啟動了
+此時啟動小安︰電氣小安
+
+2.LocationUpdateService啟動中(開了程式GPS開關 開了系統AGPS 開了3G)
+狀況︰關3G 
+結果︰程式的GPS開關被關閉了 LocationUpdateService被關閉了
+此時的小安︰防摔小安
+
+

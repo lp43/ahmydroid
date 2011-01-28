@@ -18,6 +18,7 @@ import com.funtrigger.tools.SwitchService;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -42,7 +43,7 @@ import android.widget.Toast;
 public class Settings extends PreferenceActivity {
 	private PreferenceScreen preferenceScreen;
 //	private EditTextPreference unlock_password;
-	private CheckBoxPreference location;
+	private static CheckBoxPreference location;
 	private static CheckBoxPreference message_checkbox;
 	private static CheckBoxPreference facebook_checkbox;
 	private static Preference facebook_set;
@@ -140,10 +141,8 @@ public class Settings extends PreferenceActivity {
 				
 
 					if(LocationUpdateService.getMyBestProvider(Settings.this)==null){
-					//系統若沒有開啟任何的定位，則將[定位功能]、[簡訊告知]、[Facebook告知]3項checkbox都取消掉
-					location.setChecked(false);
-					message_checkbox.setChecked(false);
-					facebook_checkbox.setChecked(false);
+					//系統若沒有開啟任何的定位，則將[定位功能]、[簡訊告知]、[Facebook告知]3項checkbox和LocationUpdateService都取消掉
+						closeAllLocationSet(Settings.this);
 					
 		
 					MyDialog.newOneBtnDialog(Settings.this, R.drawable.warning,getString(R.string.attention), getString(R.string.location_dialog_context), getString(R.string.go_to),new DialogInterface.OnClickListener(){
@@ -156,14 +155,28 @@ public class Settings extends PreferenceActivity {
 					});				
 						
 					
+					}else if(LocationUpdateService.getMyBestProvider(Settings.this).equals("network")
+							& !InternetInspector.checkInternet(Settings.this).equals("mobile") ){
+						closeAllLocationSet(Settings.this);
+						MyDialog.need3G(Settings.this);
+						
 					}else{
+					
 						if(location.isChecked()==true){
 //							Log.i(tag, "set location checkbox is true");
+							SwitchService.startService(Settings.this, LocationUpdateService.class);
+							
+							//記錄使用者倒底想不想要開啟小安的定位功能
+							 MySharedPreferences.addPreference(Settings.this, "previous_location_setting", MySharedPreferences.getPreference(Settings.this, "location", false));
+							
 						}else{
 							Log.i(tag, "set location checkbox is false");
 							message_checkbox.setChecked(false);
 							facebook_checkbox.setChecked(false);
 							SwitchService.stopService(Settings.this, LocationUpdateService.class);
+							
+							//記錄使用者倒底想不想要開啟小安的定位功能
+							 MySharedPreferences.addPreference(Settings.this, "previous_location_setting", MySharedPreferences.getPreference(Settings.this, "location", false));
 						}
 					}
 				
@@ -281,32 +294,39 @@ public class Settings extends PreferenceActivity {
 
 
 	@Override
+	protected void onPause() {
+		//記錄使用者倒底想不想要開啟小安的定位功能
+		 MySharedPreferences.addPreference(Settings.this, "previous_location_setting", MySharedPreferences.getPreference(Settings.this, "location", false));
+		super.onPause();
+	}
+
+
+
+
+
+	@Override
 	protected void onResume() {
 		Log.i(tag, "Settings.onResume");
 		//如果程式發現系統GPS被關，而程式還是開著的設定時的動作
 	
 			try{
 				
-				if(location.isChecked()==true & LocationUpdateService.getMyBestProvider(Settings.this)==null){
+				if(location.isChecked()==true & MySystemManager.checkServiceExist(this, ".LocationUpdateService")==false
+						|location.isChecked()==true & LocationUpdateService.getMyBestProvider(Settings.this)==null){
 					Log.i(tag,"location & provider different,into setChecked(false)");
 					//如果偵測到統沒開定位，而程式有開，則將[定位功能]、[簡訊告知]、[Facebook告知]都關閉
-					location.setChecked(false);
-					message_checkbox.setChecked(false);
-					facebook_checkbox.setChecked(false);
+					closeAllLocationSet(this);
 				}
 					
 			}catch(NullPointerException e){
 				Log.i(tag, "NullPointerException: "+e.getMessage());
-				location.setChecked(false);
-				message_checkbox.setChecked(false);
-				facebook_checkbox.setChecked(false);
+				closeAllLocationSet(this);
 			}
+			
+			
 		
 		super.onResume();
 	}
-	
-
-
 
 
 	/**
@@ -606,6 +626,16 @@ public class Settings extends PreferenceActivity {
 			facebook_checkbox.setChecked(false);
 		}
 		
+	}
+	
+	/**
+	 * 將Location,SMS,Facebook的Checkbox都關閉
+	 */
+	public static void closeAllLocationSet(Context context){
+		location.setChecked(false);
+		message_checkbox.setChecked(false);
+		facebook_checkbox.setChecked(false);
+		SwitchService.stopService(context, LocationUpdateService.class);
 	}
 
 }

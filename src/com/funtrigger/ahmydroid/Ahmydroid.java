@@ -46,6 +46,7 @@ import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
+import android.text.ClipboardManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -75,7 +76,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.29";
+	private String softVersion="v1.0.0.32";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -101,7 +102,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	/**
 	 * 帶齒輪的小綠人的圖形按鈕元件變數
 	 */
-	private static ImageButton img_btn;
+	public static ImageButton img_btn;
 	/**
 	 * 機器人暈眩的動畫變數，它會被imgfall變數啟動
 	 */
@@ -116,7 +117,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	private static final int HOW_TO_USE_4 = 4;
 	private static final int HOW_TO_USE_5 = 5;
 	static Context context;
-
+	static AnimationDrawable ani_elect;
+	static Handler handler;
+	
     public static void actionShowMain(Context context) {
         Intent i = new Intent(context, Ahmydroid.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -197,8 +200,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 //					}
 //					
 //				});//這行要加，因為有時候Session會過期
-				MyDispatcher md= new MyDispatcher();
-				md.facebookDispatcher(Ahmydroid.this, Ahmydroid.this);
+				
+//				MyDispatcher md= new MyDispatcher();
+//				md.facebookDispatcher(Ahmydroid.this, Ahmydroid.this);
 				
 				
 //				Bundle params =new Bundle();
@@ -221,6 +225,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 //					Log.i(tag, "IOException: "+e.getMessage());
 //				}
 				
+				ClipboardManager cm=(ClipboardManager) Ahmydroid.this.getSystemService(Context.CLIPBOARD_SERVICE);
+				cm.setText(LocationUpdateService.getRecordLocation());
+				Toast.makeText(Ahmydroid.this, LocationUpdateService.getRecordLocation(), Toast.LENGTH_SHORT).show();
 			}
         	
         });
@@ -246,8 +253,12 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 				
 				if(MySystemManager.checkServiceExist(context,".FallDetector")==false){
 					SwitchService.startService(Ahmydroid.this,FallDetector.class);
-					SwitchService.startService(Ahmydroid.this,LocationUpdateService.class);
-					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
+					
+					if(MySharedPreferences.getPreference(Ahmydroid.this, "location", false)==true){
+						SwitchService.startService(Ahmydroid.this,LocationUpdateService.class);
+					}
+
+//					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
 //					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
 					MyDialog.newToast(Ahmydroid.this, getString(R.string.startfallprotect), R.drawable.icon);
 					MyDialog.newTwoBtnDialog(Ahmydroid.this, R.drawable.icon, getString(R.string.exit)+"?",getString(R.string.exit_or_not) , getString(R.string.ok), new DialogInterface.OnClickListener(){
@@ -479,13 +490,13 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 					//當主畫面是Ahmydroid，而且FallDetector有開，才展現電波小安
 					if(MySystemManager.checkTaskExist(context, ".Ahmydroid")==true){
 						
-						Handler handler= new Handler();
+						handler= new Handler();
 						handler.postDelayed(new Runnable(){
 	
 							@Override
 							public void run() {
 								img_btn.setBackgroundResource(R.anim.electric_android);
-								AnimationDrawable ani_elect=(AnimationDrawable) img_btn.getBackground();
+								ani_elect=(AnimationDrawable) img_btn.getBackground();
 								ani_elect.start();
 							}
 							
@@ -507,6 +518,26 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 //			}
 //		}
 	}
+	
+	/**
+	 * 關閉電器小安，變成啟動中小安
+	 */
+	public static void stopElectricToStart(){
+		handler.postDelayed(new Runnable(){
+
+			@Override
+			public void run() {
+				if(ani_elect!=null){
+					ani_elect.stop();
+				}
+				
+				img_btn.setBackgroundResource(R.drawable.nostart);
+			}
+			
+		}, 5000);
+		
+	}
+	
 	
 	
 //	/**
@@ -584,26 +615,29 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 會在呼叫的頁面顯示沒有開啟的畫面
 	 */
 	public static void tellUserCantGetLocation(){
-		if(!InternetInspector.checkInternet(context).equals("mobile")
-				&& LocationUpdateService.getMyBestProvider(context).equals("network")){
-//			if(MySystemManager.checkServiceExist(context, ".LocationUpdateService")==false){
-			new AlertDialog.Builder(context)
-	        .setTitle(com.funtrigger.ahmydroid.R.string.attention)
-		    .setIcon(com.funtrigger.ahmydroid.R.drawable.warning)
-		    .setMessage(com.funtrigger.ahmydroid.R.string.cant_get_location_with_3g)
-		    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
-		    		   
-				
-				@Override
-				public void onClick(DialogInterface dialog, int which) {
-								
-				}
-			})
-
-		    
-		    	.show();
-		}
+		if(LocationUpdateService.getMyBestProvider(context)!=null){
+			
 		
+			if(!InternetInspector.checkInternet(context).equals("mobile")
+					&& LocationUpdateService.getMyBestProvider(context).equals("network")){
+	//			if(MySystemManager.checkServiceExist(context, ".LocationUpdateService")==false){
+				new AlertDialog.Builder(context)
+		        .setTitle(com.funtrigger.ahmydroid.R.string.attention)
+			    .setIcon(com.funtrigger.ahmydroid.R.drawable.warning)
+			    .setMessage(com.funtrigger.ahmydroid.R.string.cant_get_location_with_3g)
+			    .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener(){
+			    		   
+					
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+									
+					}
+				})
+	
+			    
+			    	.show();
+			}
+	   }
 	}
 	
 	
@@ -742,33 +776,10 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	/**
 	 * 關閉摔落告知
 	 */
-	public static void closeFallen(){
+	public static void closeDropProtection(){
 		SwitchService.stopService(context, FallDetector.class);
 		img_btn.setBackgroundResource(R.drawable.start);
 	}
 	
-//	/**
-//	 * 啟動電波小安
-//	 */
-//	public static void startElectricAndroid(){
-//		//當主畫面是Ahmydroid，而且FallDetector有開，才展現電波小安
-//		if(MySystemManager.checkTaskExist(context, ".Ahmydroid")==true
-//				&MySystemManager.checkServiceExist(context, ".FallDetector")==true){
-//			
-//			Handler handler= new Handler();
-//			handler.postDelayed(new Runnable(){
-//
-//				@Override
-//				public void run() {
-//					img_btn.setBackgroundResource(R.anim.electric_android);
-//					AnimationDrawable ani_elect=(AnimationDrawable) img_btn.getBackground();
-//					ani_elect.start();
-//				}
-//				
-//			},300);
-//			
-//		}
-//		
-//		
-//	}
+
 }

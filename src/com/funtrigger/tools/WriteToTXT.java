@@ -36,7 +36,7 @@ public class WriteToTXT {
 
 						}
 					 
-						ra.writeBytes("(" + MyTime.getDate() + ")" + new MyTime().getHHMMSS()+" - "+text);
+						ra.writeBytes("(" + MyTime.getDate() + ")" + MyTime.getHHMMSS1()+" - "+text);
 						ra.close();
 					} catch (FileNotFoundException e) {
 						Log.i(tag, "FileNotFoundException");

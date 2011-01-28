@@ -1,10 +1,15 @@
 package com.funtrigger.ahmydroid;
 
+import com.facebook.android.R;
 import com.funtrigger.tools.InternetInspector;
+import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MySystemManager;
 import com.funtrigger.tools.SwitchService;
 
 import android.app.IntentService;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
@@ -25,7 +30,7 @@ import android.widget.Toast;
  */
 public class LocationUpdateService extends Service implements LocationListener{
 
-	static LocationManager lm;
+	static LocationManager lm/*_gps,lm_agps*/;
 	static ClipboardManager cbm;
 	private static String tag="tag";
 	/**
@@ -36,7 +41,10 @@ public class LocationUpdateService extends Service implements LocationListener{
 	 * latitude緯度
 	 */
 	static double latitude=0.0;
-
+	static String noGeoGraphic="It can't get Location now.";
+	NotificationManager mNotificationManager;
+	Notification notification;
+	
 	
 	@Override
 	public IBinder onBind(Intent intent) {
@@ -49,66 +57,51 @@ public class LocationUpdateService extends Service implements LocationListener{
 		Log.i(tag, "LocationUpdateService.onCreate");
 		lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
 		
-		if(InfoDispatcher.checkSettingStatus(this)[InfoDispatcher.Messasge]==true
-				|InfoDispatcher.checkSettingStatus(this)[InfoDispatcher.Facebook]==true){
+		
+		//privous_location_setting用來儲存使用者本來倒底有沒有想要開小安定位
+		//因為程式GPS開關的location的勾選與否，會被程式改來改去
+		//需要有另一個空間來存放使用者倒底是不是想開定位
+		if(MySharedPreferences.getPreference(this, "previous_location_setting", false)==true){
+			Log.i(tag, "into 55");
+
 			if(getMyProvider()==null){
 				stopSelf();
-				tellAhmydroidNoLocation();
-			}else if(getMyProvider().equals("GPS")){
-				updateLocation(LocationManager.GPS_PROVIDER);
-				if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
-					Ahmydroid.setAndroid_Machine();
-				}
-				
+				Log.i(tag, "into 59");
 			}else if(getMyProvider().equals("network")){
-				if(!InternetInspector.checkInternet(LocationUpdateService.this).equals("mobile")){
+				
+				if(InternetInspector.InternetOrNot(this)==false){
+					Log.i(tag, "into 63");
 					stopSelf();
 					tellAhmydroidNoLocation();
 					
-					
 				}else{
+					Log.i(tag, "into 68");
 					updateLocation(LocationManager.NETWORK_PROVIDER);
 					if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
 						Ahmydroid.setAndroid_Machine();
+						
 					}
 					
-				}
-			}
+				}	
+				
+			}else if(getMyProvider().equals("gps")){
+				
+				Log.i(tag, "into 78");
+				updateLocation(LocationManager.GPS_PROVIDER);
+				if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
+					Ahmydroid.setAndroid_Machine();
+				}		
+			}	
 			
 		}else{
 			stopSelf();
+			Log.i(tag, "into 87");
+			if(MySystemManager.checkTaskExist(this, ".Ahmydroid")==true){
+				Ahmydroid.stopElectricToStart();
+			}
+				
 		}
 		
-		
-//		if(getMyProvider()==null){
-//			stopSelf();
-//			tellAhmydroidNoLocation();
-//			//如果是開GPS，然後也有開啟發送簡訊或Facebook，才需要開啟updateLocation
-//		}else if(getMyProvider().equals("GPS")){
-//			if(InfoDispatcher.checkSettingStatus(this)[InfoDispatcher.Messasge]==true
-//					|InfoDispatcher.checkSettingStatus(this)[InfoDispatcher.Facebook]==true){
-//				updateLocation(LocationManager.GPS_PROVIDER);
-//			}else{
-//				stopSelf();
-//			}
-//			
-//		}else if(getMyProvider().equals("network")){
-//			if(!InternetInspector.checkInternet(LocationUpdateService.this).equals("mobile")){
-//				stopSelf();
-//				tellAhmydroidNoLocation();
-//			}else{
-//				if(InfoDispatcher.checkSettingStatus(this)[InfoDispatcher.Messasge]==true
-//						|InfoDispatcher.checkSettingStatus(this)[InfoDispatcher.Facebook]==true){
-//					updateLocation(LocationManager.NETWORK_PROVIDER);
-//				}else{
-//					stopSelf();
-//				}
-//				
-//			}
-//	
-//		}else{
-//			stopSelf();
-//		}
 		
 		
 		super.onCreate();
@@ -123,8 +116,25 @@ public class LocationUpdateService extends Service implements LocationListener{
 
 	@Override
 	public void onDestroy() {
-		lm.removeUpdates(this);
+		try{
+			lm.removeUpdates(this);
+			Log.i(tag, "remove locationmanager : success!");
+			//底下這行如果加了，主畫面關掉定位小安時，下次就會開不了了
+//			MySharedPreferences.addPreference(this, "location", false);
+		}catch(NullPointerException e){
+			Log.i(tag, "NullPointerException: "+e.getMessage());
+		}
+		
 		Log.i(tag, "LocationUpdateService.onDestroy");
+		Toast.makeText(this, getString(R.string.stop_location_update), Toast.LENGTH_SHORT).show();
+		
+		
+		//==============關閉Notify欄視窗
+		mNotificationManager.cancelAll();
+		  stopForeground(true);
+		  //============================
+	
+		
 		super.onDestroy();
 	}
 
@@ -132,9 +142,29 @@ public class LocationUpdateService extends Service implements LocationListener{
 	 * 更新地理座標函式
 	 */
 	private void updateLocation(String provider){
+		Toast.makeText(this, getString(R.string.start_location_update), Toast.LENGTH_SHORT).show();
 		
-			lm.requestLocationUpdates(provider, 10000, 5,  this);
+		//====================================================
+		//以下的程式不能寫在onStart(),因為被TaskManager清掉後，會自動onCreate()
+		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
+		notification = new Notification(R.drawable.icon,getString(R.string.location_name_ing), System.currentTimeMillis());
+		
+		PendingIntent pIntent = PendingIntent.getActivity(this,0,new Intent(this, Settings.class),PendingIntent.FLAG_UPDATE_CURRENT);
+		notification.setLatestEventInfo(this,getString(R.string.location_name),getString(R.string.location_name_ing),pIntent);	
+		
+		if(notification!=null){
+			Log.i(tag, "notification!=null");
+			startForeground(R.string.location_name,notification);//將Service強制在前景執行
+		}
+		mNotificationManager.notify(R.string.location_name,notification);
+		//============================================================
+		
+		
+		
+		lm.requestLocationUpdates(provider, 10000, 5,  this);
+
+		Log.i("tag", "into 121");
 
 //    	Toast.makeText(context,"Location: "+latitude+","+longitude , Toast.LENGTH_SHORT).show();
 //    	Log.i(tag,latitude+","+longitude);//顯示緯度+經度以配合Google Map格式
@@ -171,7 +201,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 		String return_value=null;
 		
 		try{
-			lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
+			if(lm==null)lm = (LocationManager)context.getSystemService(Context.LOCATION_SERVICE);
 			Log.i(tag, "Best Provider: "+lm.getBestProvider(getBestCriteria(), true));
 			
 			return_value=lm.getBestProvider(getBestCriteria(), true);
@@ -231,7 +261,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 //    	cbm=(ClipboardManager) LocationUpdateService.this.getSystemService(Context.CLIPBOARD_SERVICE);
 //    	cbm.setText(latitude+","+longitude);
     	
-		return latitude+","+longitude;
+		return latitude==0.0?noGeoGraphic:latitude+","+longitude;
 		
 	}
 
@@ -241,7 +271,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 	private void tellAhmydroidNoLocation(){
 		
 		if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
-			Ahmydroid.closeFallen();
+			Ahmydroid.closeDropProtection();
 			Ahmydroid.tellUserCantGetLocation();
 		}
 	}
@@ -263,13 +293,21 @@ public class LocationUpdateService extends Service implements LocationListener{
 		
 //		Toast.makeText(LocationUpdateService.this,"LocationListener onProviderDisabled" , Toast.LENGTH_SHORT).show();
 		
+			
+			stopSelf();
+		
+			MySharedPreferences.addPreference(LocationUpdateService.this, "location", false);
+		
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		Log.i(tag, "LocationListener onProviderEnabled");
 //		Toast.makeText(LocationUpdateService.this,"LocationListener onProviderEnabled" , Toast.LENGTH_SHORT).show();
-		
+		if(MySharedPreferences.getPreference(LocationUpdateService.this, "previous_location_setting", false)==true){
+			SwitchService.startService(LocationUpdateService.this, LocationUpdateService.class);
+			MySharedPreferences.addPreference(LocationUpdateService.this, "location", true);
+		}
 	}
 
 	@Override
