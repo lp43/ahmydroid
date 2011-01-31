@@ -10,7 +10,7 @@
     <string name="report_problem">Report the Problem</string>
     <string name="back">Back</string>
     <string name="startfallprotect">Start to protect your phone</string>
-    <string name="startingfallprotect">The mobile will alert when you drop...</string>
+    <string name="startingfallprotect">The mobile will alert when you drop</string>
     <string name="stopfallprotect">Stop protecting</string>
 
 	<string name="location_setting">Sending Data Settings</string>
@@ -66,7 +66,7 @@
 	<string name="facebook_message_head">Hey! This is Android APK - Do not drop Droid.\nYour mobile has been dropped!</string>
 	<string name="facebook_message_time">Last GeoLocation update time: #time ,</string>
 	<string name="facebook_message_location">GeoGraphic location: #location ,</string>
-	<string name="facebook_message_last">paste this location and find it out in Google Map!</string>
+	<string name="facebook_message_last">paste this location in Google Map and find the mobile out!</string>
 	<string name="sensitivity_set">Sensitivity Setting</string>
 	<string name="sensitivity_instruction">"Low sensitivity" will hard to detect dropping.</string>
 	<string name="unlock_success">"You have already stop sending mobile's location."</string>
@@ -79,7 +79,7 @@
 	<string name="start_location_update">Start to update GeoLocation</string>
 	<string name="stop_location_update">Close GeoLocation Updating</string>
 	<string name="location_name">GeoLocation</string>
-	<string name="location_name_ing">Geographic Location Updating...</string>
+	<string name="location_name_ing">Geographic Location Updating</string>
 	<string name="no_geolocation_data">"Can't get data"</string>
 	
 		<!-- 以下用在精靈 -->	

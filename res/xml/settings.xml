@@ -86,6 +86,6 @@
        		android:summary="@string/sensitivity_instruction"
        		android:entryValues="@array/sensitive_entryValues"
        		android:entries="@array/sensitive_entries"
-       		android:defaultValue="0"/>     
+       		android:defaultValue="1"/>     
            
 </PreferenceScreen>

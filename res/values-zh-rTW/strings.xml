@@ -79,7 +79,7 @@
 	<string name="start_location_update">啟動 定位小安</string>
 	<string name="stop_location_update">關閉 定位小安</string>
 	<string name="location_name">定位小安</string>
-	<string name="location_name_ing">經緯度持續更新中...</string>
+	<string name="location_name_ing">經緯度持續更新中</string>
 	<string name="no_geolocation_data">目前尚無資料</string>
 	
 	

@@ -160,7 +160,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 		//以下的程式不能寫在onStart(),因為被TaskManager清掉後，會自動onCreate()
 		mNotificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 		
-		notification = new Notification(R.drawable.icon,getString(R.string.location_name_ing), System.currentTimeMillis());
+		notification = new Notification(R.drawable.location_icon,getString(R.string.location_name_ing), System.currentTimeMillis());
 		
 		PendingIntent pIntent = PendingIntent.getActivity(this,0,new Intent(this, Settings.class),PendingIntent.FLAG_UPDATE_CURRENT);
 		notification.setLatestEventInfo(this,getString(R.string.location_name),getString(R.string.location_name_ing),pIntent);	

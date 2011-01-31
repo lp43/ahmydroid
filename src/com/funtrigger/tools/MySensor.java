@@ -93,7 +93,7 @@ public class MySensor implements SensorEventListener{
 	 * 感測器靈敏度<br/>
 	 * 1:中等 →需要3組相同重感數據以啟動警報畫面
 	 */	
-	final int MODERATE_SENSITIVITY=1;
+	final int MEDIUM_SENSITIVITY=1;
 	/**
 	 * 感測器靈敏度<br/>
 	 * 2:最高 →只要2組相同重感數據就能啟動警報畫面
@@ -139,7 +139,7 @@ public class MySensor implements SensorEventListener{
 		
 		
 		//從系統設定值先抓取要用哪種感度
-		sensitivity=MySharedPreferences.getPreference(context, "sensitivity", 0);
+		sensitivity=MySharedPreferences.getPreference(context, "sensitivity", 1);
 		
 		float[] buf=event.values;
 		
@@ -252,8 +252,10 @@ public class MySensor implements SensorEventListener{
 					Log.i(tag, "now i is: "+i);
 				}
 				break;
-			case MODERATE_SENSITIVITY:
-				Log.i(tag, "into sensitivity==MODERATE_SENSITIVITY");
+			case MEDIUM_SENSITIVITY:
+				//中感度沒有用到乖巧數據判斷，但是他有用乖巧的末2組去判斷是否震痛前2組數據是否是平放狀態
+				//另外，在震痛後的數據只等待3組，若相等，才啟動摔落畫面
+				Log.i(tag, "into sensitivity==MEDIUM_SENSITIVITY");
 				//如果感度被設為中感度
 				if(listAfter000.size()==3&i<8){
 					Log.i(tag, "now array0= "+listAfter000.get(0));
@@ -263,11 +265,26 @@ public class MySensor implements SensorEventListener{
 					
 					if(listAfter000.get(0).equals(listAfter000.get(1))&&listAfter000.get(1).equals(listAfter000.get(2))){
 						Log.i(tag, "into arraylist0 == arraylist1 == arraylist2");
-						//如果達成力道則廣播以開啟Fallen.java
-						sendBroadToFallen(context);
 						
-						startRecord=false;
-						i=0;
+						ArrayList checklistbefore000=new ArrayList();
+						//將儲存乖巧數據的ArrayList複製一份出來檢查
+						//讓原本的ArrayList能夠繼續存放數據庫
+						checklistbefore000=(ArrayList) listbefore000.clone();
+						if(checkFlatOrNot(checklistbefore000)==true){
+							//如果判斷震痛數據前是0,0,10則不啟動摔落畫面
+							startRecord=false;
+							i=0;
+							listAfter000.clear();
+							
+						}else{
+							Log.i(tag, "276");
+							//如果達成力道則廣播以開啟Fallen.java
+							sendBroadToFallen(context);
+							startRecord=false;
+							i=0;
+						}
+						
+						
 					}else{
 						Log.i(tag, "into ! arraylist.size()==3 & i<8");
 						listAfter000.remove(0);
@@ -326,6 +343,84 @@ public class MySensor implements SensorEventListener{
 	}
 	
 	/**
+	 * 檢查在震痛數據前是否為平放狀態，
+	 * 如果前面5組數據都一樣，代表是平放狀態
+	 * @return 平放狀態，回傳true 
+	 */
+	private boolean checkFlatOrNot(ArrayList checklistbefore000){
+			boolean return_value=false;
+			int position0_bad_count=0;
+			int position1_bad_count=0;
+			int position2_bad_count=0;
+			
+			Log.i(tag, "349");
+		try{
+			//如果壞孩子數據小於2，判斷別正常摔落。
+			//啟動摔落畫面
+			Log.i(tag, "353");
+//			Log.i(tag, "checklistbefore000.SIZE: "+checklistbefore000.size());
+			
+			//震痛數據破壞0,0,10的組數
+			
+			
+			for(int i=0;i<checklistbefore000.size();i++){
+				
+					//如果迴圈已經運行到最後一組，就不用再算了
+//					if(i==checklistbefore000.size()-1){
+//						break;
+//					}else{
+						int[] a =(int[])checklistbefore000.get(i);
+						int[] b =(int[])checklistbefore000.get(i+1);
+						
+					
+							if(a[0]!=b[0]){
+								position0_bad_count++;
+							}
+						
+						
+						
+							if(a[1]!=b[1]){
+								position1_bad_count++;
+							}
+						
+						
+							if(a[2]!=b[2]){
+								position2_bad_count++;
+							}
+							
+						
+					
+						Log.i(tag, "a: "+a[0]+","+a[1]+","+a[2]+" ;b: "+b[0]+","+b[1]+","+b[2]);
+//					}
+					
+				
+			}
+			
+		}catch(ArrayIndexOutOfBoundsException e){
+			
+			Log.i(tag, "397:ArrayIndexOutOfBoundsException"+e.getMessage());
+		}catch(IndexOutOfBoundsException e){
+			
+			Log.i(tag, "400:IndexOutOfBoundsException"+e.getMessage());
+		}		finally{
+			if((position0_bad_count==0 & position1_bad_count==0)
+					|(position1_bad_count==0 & position2_bad_count==0)
+					|(position2_bad_count==0 & position0_bad_count==0)){
+				return_value=true;
+				Log.i(tag, "Now is flating!! stop Fallen");
+			}
+			Log.i(tag, "position0_bad_count: "+position0_bad_count+" ,position1_bad_count: "+position1_bad_count+" ,position2_bad_count: "+position2_bad_count);
+		}
+	
+		
+		
+		
+		return return_value;
+		
+	}
+	
+	
+	/**
 	 * 檢查震動數據前的乖巧數據，
 	 * 乖巧數據是x,y,z彼此間的引數，皆不超過正負3
 	 */
@@ -372,22 +467,23 @@ public class MySensor implements SensorEventListener{
 			}
 		  
 		
-		try{
+//		try{
 			//如果壞孩子數據小於2，判斷別正常摔落。
 			//啟動摔落畫面
-			int[] buffer=(int[]) checklistbefore000.get(checklistbefore000.size()-1);	
+//			int[] buffer=(int[]) checklistbefore000.get(checklistbefore000.size()-1);	
 		
 			//預防值為0,0,9或0,0,10，是因為有時候放在桌面啟動小安也會進入震痛數據
-			if((buffer[0]==0&buffer[1]==0&buffer[2]==9)|(buffer[0]==0&buffer[1]==0&buffer[2]==10)){
-				Log.i(tag, "num is: "+buffer[0]+","+buffer[1]+","+buffer[2]+", doint nothing...");
-			
+//			if((buffer[0]==0&buffer[1]==0&buffer[2]==9)|(buffer[0]==0&buffer[1]==0&buffer[2]==10)){
+//				Log.i(tag, "num is: "+buffer[0]+","+buffer[1]+","+buffer[2]+", doint nothing...");
+			if(checkFlatOrNot(checklistbefore000)==true){
+				//如果判斷為震痛數據前判斷為0,0,10，不做任何事情
 			}else if(badResult<=2){
 				Log.i(tag, "Bad Result is: "+badResult+", into badResult<=2");
 				sendBroadToFallen(context);
 			}
-		}catch(ArrayIndexOutOfBoundsException e){
-			Log.i(tag, "388:ArrayIndexOutOfBoundsException"+e.getMessage());
-		}
+//		}catch(ArrayIndexOutOfBoundsException e){
+//			Log.i(tag, "388:ArrayIndexOutOfBoundsException"+e.getMessage());
+//		}
 		
 		
 	}

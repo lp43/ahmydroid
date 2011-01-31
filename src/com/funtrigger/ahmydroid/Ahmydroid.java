@@ -76,7 +76,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.33";
+	private String softVersion="v1.0.0.35";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -257,8 +257,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 					if(MySharedPreferences.getPreference(Ahmydroid.this, "location", false)==true){
 						SwitchService.startService(Ahmydroid.this,LocationUpdateService.class);
 					}
-
-//					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
+					//用在讓重新開機時，能夠知道要不要啟動防摔小安
+					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
 //					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
 					MyDialog.newToast(Ahmydroid.this, getString(R.string.startfallprotect), R.drawable.icon);
 					MyDialog.newTwoBtnDialog(Ahmydroid.this, R.drawable.icon, getString(R.string.exit)+"?",getString(R.string.exit_or_not) , getString(R.string.ok), new DialogInterface.OnClickListener(){
@@ -281,6 +281,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 				}else if(MySystemManager.checkServiceExist(context,".FallDetector")==true){
 					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
 					SwitchService.stopService(Ahmydroid.this,LocationUpdateService.class);
+					//用在讓重新開機時，能夠知道要不要啟動防摔小安
 					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
 //					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
 					MyDialog.newToast(Ahmydroid.this, getString(R.string.stopfallprotect), R.drawable.icon);

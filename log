@@ -272,6 +272,12 @@ v1.0.0.33
 1.修改上一次新增LocationUpdateService後，Fallen若在沒開啟GPS時，會出錯的問題。
 2.將發送簡訊和Facebook的現在時間改為最後經緯度更新時間
 
+1/31
+v1.0.0.34
+1.讓中感度也加入乖巧的末2碼，若數據完全相同，則判斷為手機平放時的誤判
+2.將感測預設值調成中感度
+3.更改LocationUpdateService的圖示
+
 debug版指令︰keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore |openssl sha1 -binary | openssl base64
 
 debug版Hash_key
@@ -283,3 +289,6 @@ OFknagf6nO8CMYSVzn1ZPpuLk70=
 發佈版Hash_key
 uDDPuJXJw4CC3T2mfwgDwIqTLW8=
 
+v1.0.0.35
+1.修改重新開機後，防摔小安沒有啟動的問題
+2.修改英文版在Facebook發文的最後一段文字

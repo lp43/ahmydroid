@@ -107,7 +107,7 @@ public class FallDetector extends Service{
 //		notification.defaults=Notification.DEFAULT_SOUND;//開啟音效
 		
 		//啟動震動
-		long[] vibrate = {0,100,200,300};
+		long[] vibrate = {0,100,200,400};
 		notification.vibrate = vibrate;
 		
 		if(notification!=null){
