@@ -23,11 +23,11 @@ public class Welcome extends Activity{
 	CheckBox tuition_open_or_not;
 	
 	
-    public static void actionShowWelcome(Context context) {
-        Intent i = new Intent(context, Welcome.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(i);
-    }
+//    public static void actionShowWelcome(Context context) {
+//        Intent i = new Intent(context, Welcome.class);
+//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        context.startActivity(i);
+//    }
     
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -81,7 +81,10 @@ public class Welcome extends Activity{
 			public void onClick(View v) {
 				
 				finish();
-				Ahmydroid.actionShowMain(Welcome.this);
+//				Ahmydroid.actionShowMain(Welcome.this);
+				Intent i = new Intent(Welcome.this, Ahmydroid.class);
+		        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		        startActivity(i);
 			}
 			
 		});

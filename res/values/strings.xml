@@ -9,11 +9,11 @@
     <string name="copyright">Copyright</string>
     <string name="report_problem">Report the Problem</string>
     <string name="back">Back</string>
-    <string name="startfallprotect">Start drop protecting</string>
-    <string name="startingfallprotect">drop protecting...</string>
-    <string name="stopfallprotect">Stop drop protecting</string>
-    <string name="set_notify">Alert Settings</string>
-	<string name="location_setting">Location Settings</string>
+    <string name="startfallprotect">Start to protect your phone</string>
+    <string name="startingfallprotect">The mobile will alert when you drop...</string>
+    <string name="stopfallprotect">Stop protecting</string>
+
+	<string name="location_setting">Sending Data Settings</string>
 	<string name="location_feature">GPS/AGPS</string>
 	<string name="location_dialog_context">You must start GPS satellites or wireless networks, then you can come back to set it.</string>
 	<string name="location_dialog_diff_context">System Location has been closed, Do you want to turn on again?</string>
@@ -21,7 +21,7 @@
 	<string name="cancel">Cancel</string>	
 	<string name="location_feature_instroduction">You need to turn on the system Location first</string>
 	<string name="other_set">Other Settings</string>
-	<string name="alarm_set">Drop UI Settings</string>
+	<string name="alarm_set">Main Settings</string>
 	<string name="pick_feature">Somebody Pick up</string>
 	<string name="pick_set">Somebody Setting</string>
 	<string name="pick_message">Tell informations to Somebody pick your mobile up</string>
@@ -36,7 +36,7 @@
 	<string name="context_to_message">mobile number(1 number):</string>	
 	<string name="default_number_context">When you drop your mobile and lose it, program will auto-send this SMS</string>
 	<string name="context_title">SMS context:</string>
-	<string name="system_message_context">"It's Mobile Lose Notify, It is #time, Location is #location,"</string>
+	<string name="system_message_context">"It's Mobile Lose Notify, Last GeoLocation update time: #time, Location: #location,"</string>
 	<string name="type_message_context">can you contact my phone owner?</string>
 	<string name="wrong_phone_number">"It is a wrong phone number!System can't accept +=*/()"</string>
 	<string name="reset">Reset</string>
@@ -45,7 +45,7 @@
 	<string name="data_not_set">not set</string>
 	<string name="first_dispatcher_time">Processing Time</string>
 	<string name="first_dispatcher_time_instruduction">The period of sending Location by SMS or Facebook.</string>
-	<string name="facebook_instruction">1.This feature needs to keep 3G network.\n\n2.It will not login unless you use previous version of Facebook application.\n\n3.If you exit or turn off the power when application is sending to Facebook, it WILL NOT send Location!</string>
+	<string name="facebook_instruction">1.This feature needs to keep 3G network.\n\n2.It will not login unless you use original version of Facebook application(DO NOT update).\n\n3.If you exit or turn off the power when application is sending to Facebook, it WILL NOT send Location!</string>
 	<string name="has_old_cookie">You have set username and password before, do you want to delete and continue?\n\nNotes: If you has not type any data in programe, It will not auto-send by Facebook!</string>
 	<string name="post_success">Poll Location success!</string>
 	<string name="post_success2">You can check it on Facebook Wall now!</string>
@@ -63,9 +63,9 @@
 	<string name="ok">Ok</string>
 	<string name="please_type">Please type</string>
 	<string name="message_response">SMS has been sent!</string>	
-	<string name="facebook_message_head">Hey! Your mobile has been lost!</string>
-	<string name="facebook_message_time">It is: #time ,</string>
-	<string name="facebook_message_location">GeoGraphic location is #location ,</string>
+	<string name="facebook_message_head">Hey! This is Android APK - Do not drop Droid.\nYour mobile has been dropped!</string>
+	<string name="facebook_message_time">Last GeoLocation update time: #time ,</string>
+	<string name="facebook_message_location">GeoGraphic location: #location ,</string>
 	<string name="facebook_message_last">paste this location and find it out in Google Map!</string>
 	<string name="sensitivity_set">Sensitivity Setting</string>
 	<string name="sensitivity_instruction">"Low sensitivity" will hard to detect dropping.</string>
@@ -76,10 +76,11 @@
 	<string name="no_3g">Please enable 3G network first!</string>
 	<string name="set_and_start">Set and Turn on</string>
 	<string name="cant_get_location_with_3g">Error.\nPlease enable network or turn off GPS/AGPS in this program then try it!</string>
-	<string name="start_location_update">Start GeoLocation Updating</string>
+	<string name="start_location_update">Start to update GeoLocation</string>
 	<string name="stop_location_update">Close GeoLocation Updating</string>
 	<string name="location_name">GeoLocation</string>
 	<string name="location_name_ing">Geographic Location Updating...</string>
+	<string name="no_geolocation_data">"Can't get data"</string>
 	
 		<!-- 以下用在精靈 -->	
 	<string name="previous">Previous</string>
@@ -88,13 +89,12 @@
 	<string name="sendlocation_wizard">"If your mobile hasn't been discovered, it will send location to your friends or your Facebook's wall about your mobile's location."</string>
 	<string name="sendlocation_wizard_int0">Sending location requires:</string>
 	<string name="sendlocation_wizard_int1">●3G network</string>
-	<string name="sendlocation_wizard_int2">●Set location</string>
-	<string name="sendlocation_wizard_int3">●Related settings</string>
+	<string name="sendlocation_wizard_int2">●Turn on My Location</string>
+	<string name="sendlocation_wizard_int3">●Set sending data</string>
 	<string name="please_3g">If you want to initial 3G network setting, learning on internet by yourself,please.\n\nThis tutorial teaches you just how to enable 3G network.
 							\n\nTrun on by this setp︰\nPhone[Settings]→[Wireless and networks]→[Mobile networks]→[Data enabled]</string>
 	<string name="please_location">Trun on by this setp︰\n\nPhone[Settings]→[Location and security]→[Use wireless networks] or [Use GPS satellites]</string>
-	<string name="set_finish_cnx">"After you turn on drop protection, you can leave. 
-								\n"Drop protecting" will run in the background even when mobile is in standby mode.
+	<string name="set_finish_cnx">"JUST LEAVE the program after you turn on protection. It will run even in standby mode.
 								\nThank you for using this application."</string>
 	<string name="interrup_cnx">During mobile dropping to sending latitude/longitude, it will require some time, so you can choose to stop sending data by then. </string>
 	<string name="interrup_practice">Practice</string>

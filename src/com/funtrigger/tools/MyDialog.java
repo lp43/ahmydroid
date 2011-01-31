@@ -287,7 +287,7 @@ public class MyDialog {
 
 		TextView sys_cnx=(TextView) EntryView.findViewById(R.id.msg_sys_ctx);
 		sys_cnx.setText(sys_cnx.getText().toString().replace("#time",/* mytime.getHHMM()*/MyTime.getHHMM1()));
-		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", LocationUpdateService.getRecordLocation()));
+		sys_cnx.setText(sys_cnx.getText().toString().replace("#location", LocationUpdateService.getRecordLocation(context)));
 		
 
 		final EditText num=(EditText) EntryView.findViewById(R.id.type_message_number);

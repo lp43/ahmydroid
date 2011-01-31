@@ -266,6 +266,12 @@ GPS被關掉→LocationUpdateService也會被關
 3G打開→LocationUpdateService也會打開(前提示系統的AGPS沒有被關掉)
 7.讓LocationUpdateService也有notification
 
+
+1/31
+v1.0.0.33
+1.修改上一次新增LocationUpdateService後，Fallen若在沒開啟GPS時，會出錯的問題。
+2.將發送簡訊和Facebook的現在時間改為最後經緯度更新時間
+
 debug版指令︰keytool -exportcert -alias androiddebugkey -keystore ~/.android/debug.keystore |openssl sha1 -binary | openssl base64
 
 debug版Hash_key

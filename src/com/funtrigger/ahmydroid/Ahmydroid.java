@@ -76,7 +76,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.32";
+	private String softVersion="v1.0.0.33";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -120,11 +120,11 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	static AnimationDrawable ani_elect;
 	static Handler handler;
 	
-    public static void actionShowMain(Context context) {
-        Intent i = new Intent(context, Ahmydroid.class);
-        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        context.startActivity(i);
-    }
+//    public static void actionShowMain(Context context) {
+//        Intent i = new Intent(context, Ahmydroid.class);
+//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        context.startActivity(i);
+//    }
 		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -226,8 +226,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 //				}
 				
 				ClipboardManager cm=(ClipboardManager) Ahmydroid.this.getSystemService(Context.CLIPBOARD_SERVICE);
-				cm.setText(LocationUpdateService.getRecordLocation());
-				Toast.makeText(Ahmydroid.this, LocationUpdateService.getRecordLocation(), Toast.LENGTH_SHORT).show();
+				cm.setText(LocationUpdateService.getRecordLocation(context));
+				Toast.makeText(Ahmydroid.this, LocationUpdateService.getRecordLocation(context), Toast.LENGTH_SHORT).show();
 			}
         	
         });
@@ -674,9 +674,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
-		menu.add(0, 0, 0, R.string.set_notify);
+		menu.add(0, 0, 0, R.string.set);
 		menu.add(0, 1, 1, R.string.about);
-		menu.getItem(0).setIcon(R.drawable.set_notify);
+		menu.getItem(0).setIcon(R.drawable.setting);
 		menu.getItem(1).setIcon(R.drawable.about);
 		return super.onCreateOptionsMenu(menu);
 	}

@@ -12,16 +12,16 @@
     <string name="startfallprotect">啟動「摔落告知」功能</string>
     <string name="startingfallprotect">「摔落告知」偵測中</string>
     <string name="stopfallprotect">關閉「摔落告知」</string>
-    <string name="set_notify">摔落告知設定</string>
-	<string name="location_setting">發送經緯度 設定</string>
+
+	<string name="location_setting">發送資料設定</string>
 	<string name="location_feature">開啟GPS/AGPS</string>
-	<string name="location_dialog_context">必須先將手機的GPS或WiFi定位開啟，才能獲得地理座標。</string>
-	<string name="location_dialog_diff_context">您系統的GPS/WiFi定位被關掉了，您是否重新開啟？</string>
+	<string name="location_dialog_context">必須先將手機的GPS或3G定位開啟，才能獲得地理座標。</string>
+	<string name="location_dialog_diff_context">您系統的GPS/3G定位被關掉了，您是否重新開啟？</string>
 	<string name="go_to">前往開啟</string>
 	<string name="cancel">取消</string>	
 	<string name="location_feature_instroduction">需啟動定位功能，系統才能抓到手機所在經緯度位置</string>
 	<string name="other_set">其它設定</string>
-	<string name="alarm_set">摔落畫面 設定</string>
+	<string name="alarm_set">主設定</string>
 	<string name="pick_feature">拾獲者告知</string>
 	<string name="pick_set">拾獲者設定</string>
 	<string name="pick_message">將您設定的資訊告訴撿到的人</string>
@@ -36,7 +36,7 @@
 	<string name="context_to_message">收件者手機號碼(1組)︰</string>	
 	<string name="default_number_context">手機掉時，你希望系統自動通知誰的手機？</string>
 	<string name="context_title">通知的內文︰</string>
-	<string name="system_message_context">我是手機掉落告知系統，現在時間是#time，地點在#location，</string>
+	<string name="system_message_context">我是手機掉落告知系統，經緯度最後更新時間︰#time，地點︰#location，</string>
 	<string name="type_message_context">請你告訴我主人手機掉了，好嗎？</string>
 	<string name="wrong_phone_number">手機號碼格式錯誤！請勿加上+-*/()等符號</string>
 	<string name="reset">重新設定</string>
@@ -45,7 +45,7 @@
 	<string name="data_not_set">未設定</string>
 	<string name="first_dispatcher_time">緩衝時間</string>
 	<string name="first_dispatcher_time_instruduction">當進入摔落畫面後，希望程式多久後發出手機經緯度資訊？</string>
-	<string name="facebook_instruction">1.該方式需保持3G上網狀態\n\n2.請使用舊版Facebook，否則會無法登入。\n\n3.在摔落畫面中，若Facebook的發文過程中螢幕被關閉，可能會無法發送Facebook！</string>
+	<string name="facebook_instruction">1.該方式需保持3G上網狀態\n\n2.請使用預設版Facebook(勿更新)，否則會無法登入。\n\n3.在摔落畫面中，若Facebook的發文過程中螢幕被關閉，可能會無法發送Facebook！</string>
 	<string name="has_old_cookie">發現有舊的帳密，是否清除並繼續設定？\n\n注意︰若無設定帳密將無法自動發文！</string>
 	<string name="post_success">Facebook發文成功！</string>
 	<string name="post_success2">請至Facebook塗鴨牆查看！</string>
@@ -64,8 +64,8 @@
 	<string name="please_type">請輸入</string>
 	<string name="message_response">簡訊已寄出！</string>	
 	<string name="facebook_message_head">嘿！我是你的手機程式-「別摔小安」，我掉了！</string>
-	<string name="facebook_message_time">剛剛我看了系統時間是 #time</string>
-	<string name="facebook_message_location">我的位置在 #location</string>
+	<string name="facebook_message_time">經緯度最後更新時間︰ #time</string>
+	<string name="facebook_message_location">位置在︰ #location</string>
 	<string name="facebook_message_last">快用Google Map貼上這個經緯度把我找回家！</string>
 	<string name="sensitivity_set">靈敏度設定</string>
 	<string name="sensitivity_instruction">設定摔落感測器的靈敏度，越低越不容易進入摔落畫面</string>
@@ -79,7 +79,9 @@
 	<string name="start_location_update">啟動 定位小安</string>
 	<string name="stop_location_update">關閉 定位小安</string>
 	<string name="location_name">定位小安</string>
-	<string name="location_name_ing">經緯度獲取中...</string>
+	<string name="location_name_ing">經緯度持續更新中...</string>
+	<string name="no_geolocation_data">目前尚無資料</string>
+	
 	
 	<!-- 以下用在精靈 -->	
 	<string name="previous">上一個</string>

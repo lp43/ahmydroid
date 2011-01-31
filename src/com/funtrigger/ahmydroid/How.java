@@ -5,6 +5,7 @@ import com.funtrigger.tools.SwitchService;
 import com.funtrigger.tuition.Welcome;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 
 public class How extends Activity {
@@ -17,10 +18,17 @@ public class How extends Activity {
 		
 		if(MySharedPreferences.getPreference(How.this, "tuition_open_or_not", true)==true){
 			finish();
-			Welcome.actionShowWelcome(this);
+//			Ahmydroid.actionShowMain(How.this);
+			Intent i = new Intent(this, Welcome.class);
+	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        startActivity(i);
 		}else{
 			finish();
-			Ahmydroid.actionShowMain(this);
+//			Ahmydroid.actionShowMain(this);
+			
+			Intent i = new Intent(How.this, Ahmydroid.class);
+	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+	        startActivity(i);
 		}
 		
 	}

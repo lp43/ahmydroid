@@ -48,10 +48,10 @@ public class MyDispatcher {
 		Log.i(tag, "cellphone num is: "+MySharedPreferences.getPreference(context,"message_number",""));
 		
 		String msg_sys_cnx=context.getResources().getString(R.string.system_message_context);
-//		MyTime mytime=new MyTime();
-		msg_sys_cnx=msg_sys_cnx.replace("#time", /*mytime.getHHMM()*/MyTime.getHHMM1());
+
+		msg_sys_cnx=msg_sys_cnx.replace("#time", LocationUpdateService.getLastUpdatedTime(context));
 	
-		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation());	
+		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation(context));	
 		
 //		MySMS.sendSMS(context, MySharedPreferences.getPreference(context,"message_number",""), 
 //		msg_sys_cnx
@@ -74,11 +74,11 @@ public class MyDispatcher {
 		Log.i(tag, "cellphone num is: "+MySharedPreferences.getPreference(context,"message_number",""));
 		
 		String msg_sys_cnx=context.getResources().getString(R.string.system_message_context);
-//		MyTime mytime=new MyTime();
-		msg_sys_cnx=msg_sys_cnx.replace("#time", /*mytime.getHHMM()*/MyTime.getHHMM1());
+
+		msg_sys_cnx=msg_sys_cnx.replace("#time", LocationUpdateService.getLastUpdatedTime(context));
 		
 		LocationUpdateService lus= new LocationUpdateService();
-		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation());	
+		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation(context));	
 		
 //		MySMS.sendSMS(context, phoneNum, 
 //		msg_sys_cnx
@@ -131,7 +131,7 @@ public class MyDispatcher {
 		
     	params.putString("message", context.getString(R.string.facebook_message_head)+"\n"+
     			context.getString(R.string.facebook_message_time).replace("#time", /*mytime.getHHMMSS()*/MyTime.getHHMM1())+"\n"+
-    			context.getString(R.string.facebook_message_location).replace("#location",  LocationUpdateService.getRecordLocation())+"\n"+
+    			context.getString(R.string.facebook_message_location).replace("#location",  LocationUpdateService.getRecordLocation(context))+"\n"+
     			context.getString(R.string.facebook_message_last));
 
     	mAsyncRunner.request("me/feed", params, "POST", new PostRequestListener(),null);

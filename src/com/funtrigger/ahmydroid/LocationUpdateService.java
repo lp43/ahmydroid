@@ -4,6 +4,7 @@ import com.facebook.android.R;
 import com.funtrigger.tools.InternetInspector;
 import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MySystemManager;
+import com.funtrigger.tools.MyTime;
 import com.funtrigger.tools.SwitchService;
 
 import android.app.IntentService;
@@ -41,9 +42,13 @@ public class LocationUpdateService extends Service implements LocationListener{
 	 * latitude緯度
 	 */
 	static double latitude=0.0;
-	static String noGeoGraphic="It can't get Location now.";
+
 	NotificationManager mNotificationManager;
 	Notification notification;
+	/**
+	 * 最後經緯度更新時間
+	 */
+	private static String updated_time="";
 	
 	
 	@Override
@@ -130,9 +135,16 @@ public class LocationUpdateService extends Service implements LocationListener{
 		
 		
 		//==============關閉Notify欄視窗
-		mNotificationManager.cancelAll();
-		  stopForeground(true);
-		  //============================
+		//TODO 小米測到這裡出問題
+		try{
+			mNotificationManager.cancelAll();
+			 stopForeground(true);
+		}catch(NullPointerException e){
+			Log.i(tag, "NullPointerException: "+e.getMessage());
+		}
+			 		
+		 
+		//============================
 	
 		
 		super.onDestroy();
@@ -247,7 +259,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 	 * API文檔說︰如果要馬上取得經緯度，用getLastKnownLocation()
 	 * @return 回傳String︰latitue,longitude
 	 */
-	public static String getRecordLocation(){
+	public static String getRecordLocation(Context context){
 
 //			if(latitude==0.0 & longitude==0.0){
 //				Log.i(tag, "into latitude==0.0, getLastKnownLocation");
@@ -255,16 +267,20 @@ public class LocationUpdateService extends Service implements LocationListener{
 //				longitude=lm.getLastKnownLocation(getMyBestProvider()).getLongitude();
 //				
 //			}
-			
 		
-		//將緯經度貼到剪貼簿
-//    	cbm=(ClipboardManager) LocationUpdateService.this.getSystemService(Context.CLIPBOARD_SERVICE);
-//    	cbm.setText(latitude+","+longitude);
-    	
-		return latitude==0.0?noGeoGraphic:latitude+","+longitude;
+		return latitude==0.0?context.getString(R.string.no_geolocation_data):latitude+","+longitude;
 		
 	}
-
+	
+	/**
+	 * 取得經緯度最後更新的時間
+	 */
+	public static String getLastUpdatedTime(Context context){
+		Log.i(tag, "updated_time.equals(): " + String.valueOf(updated_time.equals("")));
+		return updated_time.equals("")?context.getString(R.string.no_geolocation_data):updated_time;
+		
+	}
+	 
 	/**
 	 * 告訴Ahmydroid沒有辦法定位
 	 */
@@ -282,7 +298,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 
 		latitude = location.getLatitude();//查詢緯度
 		longitude=location.getLongitude();//查詢經度,並存進經度
-
+		updated_time=MyTime.getHHMMSS1();
 		
 	}
 

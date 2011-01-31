@@ -185,7 +185,7 @@ public class Fallen extends Activity{
 			TimeService.setTimeCounter(Integer.valueOf(MySharedPreferences.getPreference(Fallen.this, "dispatcher_first_time", "15")));
 		}
 		
-		SwitchService.startService(Fallen.this, LocationUpdateService.class);
+		
 		
 		lp=this.getWindow().getAttributes();
 		
