@@ -77,7 +77,7 @@ public class MyDispatcher {
 
 		msg_sys_cnx=msg_sys_cnx.replace("#time", LocationUpdateService.getLastUpdatedTime(context));
 		
-		LocationUpdateService lus= new LocationUpdateService();
+	
 		msg_sys_cnx=msg_sys_cnx.replace("#location", LocationUpdateService.getRecordLocation(context));	
 		
 //		MySMS.sendSMS(context, phoneNum, 

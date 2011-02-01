@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.funtrigger.ahmydroid"
-      android:versionName="1.0.0.35" android:versionCode="35">
+      android:versionName="1.0.0.36" android:versionCode="36">
     <application android:icon="@drawable/icon" android:label="@string/app_name">
         <activity android:label="@string/app_name" android:name=".Ahmydroid" android:screenOrientation="nosensor" android:launchMode="singleInstance">
             
@@ -37,15 +37,15 @@
             </intent-filter>
 </activity>
 
-<activity android:name="com.funtrigger.tuition.Welcome" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.DropUI" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.PickUp" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.SendLocation" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.Keep3G" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.TurnOnLocation" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.SetSendData" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.End" android:launchMode="singleInstance"></activity>
-<activity android:name="com.funtrigger.tuition.InterrupSending" android:launchMode="singleInstance"></activity>
+<activity android:name="com.funtrigger.tuition.Welcome" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.DropUI" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.PickUp" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.SendLocation" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.Keep3G" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.TurnOnLocation" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.SetSendData" android:launchMode="singleInstance" android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.End" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
+<activity android:name="com.funtrigger.tuition.InterrupSending" android:launchMode="singleInstance" android:excludeFromRecents="true"  android:configChanges="orientation"></activity>
 <service android:name="LocationUpdateService"></service>
 
 <receiver android:name="ConnectionChangeReceiver" android:label="NetworkConnection">

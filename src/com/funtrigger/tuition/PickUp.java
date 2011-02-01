@@ -2,6 +2,7 @@ package com.funtrigger.tuition;
 
 import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MySharedPreferences;
+import com.funtrigger.tools.MySystemManager;
 
 import android.R;
 
@@ -12,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +29,10 @@ import android.widget.TextView;
 public class PickUp extends Activity{
 
 	Button tuition_previous,tuition_next,set_pick_up_now;
-	AnimationDrawable aniimg;
+	static AnimationDrawable aniimg;
 	protected String tag="tag";
 	static TextView tuition_pick_up;
+	ImageView bk,fall;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -38,85 +41,121 @@ public class PickUp extends Activity{
 		setContentView(com.funtrigger.ahmydroid.R.layout.wizard_pickup);
 		super.onCreate(savedInstanceState);
 		
-		
-		TextView tuition_title=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_title);
-		tuition_title.setText(com.funtrigger.ahmydroid.R.string.pick_feature);
-		
-		ImageView bk=(ImageView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_pic2);
-		ImageView fall=(ImageView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_fall3);
-		TextView tv=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_cnx2);
-		tuition_pick_up=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_pick_up);
-		tuition_previous=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_previous2);
-		tuition_next=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_next2);
-		set_pick_up_now=(Button)findViewById(com.funtrigger.ahmydroid.R.id.set_pick_up_now);
-		
-		bk.setBackgroundResource(com.funtrigger.ahmydroid.R.drawable.background);
-		fall.setBackgroundResource(com.funtrigger.ahmydroid.R.anim.falling_animation);
-		tv.setText(com.funtrigger.ahmydroid.R.string.pick_up_wizard);
-		tuition_pick_up.setText(MySharedPreferences.getPreference(PickUp.this, "pick_context", getString(com.funtrigger.ahmydroid.R.string.pick_default_context)));
-		
-		aniimg=(AnimationDrawable) fall.getBackground();
-		
-	
-		Animation pick_up_animation=AnimationUtils.loadAnimation(this, com.funtrigger.ahmydroid.R.anim.fade);
-		tuition_pick_up.startAnimation(pick_up_animation);
-		
-		tuition_previous.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-				PickUp.this.finish();
-				startActivity(new Intent(PickUp.this, DropUI.class));
-			}
+		if(MySystemManager.checkMemory(this.getApplicationContext())==true){
+			finish();
+		}else{
+			TextView tuition_title=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_title);
+			tuition_title.setText(com.funtrigger.ahmydroid.R.string.pick_feature);
 			
-		});
-		
-		tuition_next.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {	
-				PickUp.this.finish();
-				startActivity(new Intent(PickUp.this, SendLocation.class));				
-			}
+			/*ImageView*/ bk=(ImageView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_pic2);
+			/*ImageView*/ fall=(ImageView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_fall3);
+			TextView tv=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_cnx2);
+			tuition_pick_up=(TextView)findViewById(com.funtrigger.ahmydroid.R.id.tuition_pick_up);
+			tuition_previous=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_previous2);
+			tuition_next=(Button)findViewById(com.funtrigger.ahmydroid.R.id.tuition_next2);
+			set_pick_up_now=(Button)findViewById(com.funtrigger.ahmydroid.R.id.set_pick_up_now);
 			
-		});
+			bk.setBackgroundResource(com.funtrigger.ahmydroid.R.drawable.background);
+			fall.setBackgroundResource(com.funtrigger.ahmydroid.R.anim.falling_animation);
+			tv.setText(com.funtrigger.ahmydroid.R.string.pick_up_wizard);
+			tuition_pick_up.setText(MySharedPreferences.getPreference(PickUp.this, "pick_context", getString(com.funtrigger.ahmydroid.R.string.pick_default_context)));
+			
+			aniimg=(AnimationDrawable) fall.getBackground();
+			
 		
-		set_pick_up_now.setOnClickListener(new OnClickListener(){
+			Animation pick_up_animation=AnimationUtils.loadAnimation(this, com.funtrigger.ahmydroid.R.anim.fade);
+			tuition_pick_up.startAnimation(pick_up_animation);
+			
+			tuition_previous.setOnClickListener(new OnClickListener(){
 
-			@Override
-			public void onClick(View v) {
-
-				MyDialog.modifyPickUP(PickUp.this);
+				@Override
+				public void onClick(View v) {
+					PickUp.this.finish();
+					startActivity(new Intent(PickUp.this, DropUI.class));
+				}
 				
-			}
+			});
 			
-		});
+			tuition_next.setOnClickListener(new OnClickListener(){
+
+				@Override
+				public void onClick(View v) {	
+					PickUp.this.finish();
+					startActivity(new Intent(PickUp.this, SendLocation.class));				
+				}
+				
+			});
+			
+			set_pick_up_now.setOnClickListener(new OnClickListener(){
+
+				@Override
+				public void onClick(View v) {
+
+					MyDialog.modifyPickUP(PickUp.this);
+					
+				}
+				
+			});
+		}
+
+		
+		
+		
+		
 	}
 	
 
 	
 	@Override
 	protected void onResume() {
-		new Thread(){
-			public void run(){
-				for(int i=0;i<50;i++){
-					if(aniimg.isRunning()==false){
-						aniimg.start();
-					}
-				
-				}
-			}
-			
-		}.start();
+//		new Thread(){
+//			public void run(){
+//				for(int i=0;i<50;i++){
+//					if(aniimg.isRunning()==false){
+//						aniimg.start();
+//					}
+//				
+//				}
+//			}
+//			
+//		}.start();
 		super.onResume();
 	}
 
 	@Override
 	public void onPause() {
-		aniimg.stop();
+		Log.i(tag, "PickUp.onPause");
 		super.onPause();
 	}
 	
+	
+	@Override
+	protected void onDestroy() {
+		Log.i(tag, "PickUp.onDestroy");
+//		aniimg.stop();
+		bk.clearAnimation();
+		fall.clearAnimation();
+		bk=null;
+		fall=null;
+		aniimg=null;
+		finish();
+		
+		System.gc();
+		super.onDestroy();
+	}
+
+
+
+	@Override
+	public void onWindowFocusChanged(boolean hasFocus) {
+		if(hasFocus==true){
+			aniimg.start();
+		}else{
+			aniimg.stop();
+		
+		}
+		super.onWindowFocusChanged(hasFocus);
+	}
 	/**
 	 * 提供給Mydialog.modifyPickUP(PickUp.this)即時更改拾獲告知內文
 	 * @param text 要修改的文字內容

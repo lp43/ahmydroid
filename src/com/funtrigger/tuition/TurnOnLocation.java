@@ -88,7 +88,7 @@ public class TurnOnLocation extends Activity{
 
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
+		
 		super.onPause();
 	}
 

@@ -7,29 +7,45 @@ import com.funtrigger.tuition.Welcome;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Debug;
+import android.util.Log;
+import android.view.View;
 
 public class How extends Activity {
+
+	private String tag="tag";
+
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		
 		super.onCreate(savedInstanceState);
 		
+		int usedMegs = (int)(Debug.getNativeHeapAllocatedSize() / 1048576L);
+//		String usedMegsString = String.format(" - Memory Used: %d MB", usedMegs);
+
 		
-		if(MySharedPreferences.getPreference(How.this, "tuition_open_or_not", true)==true){
+		if(usedMegs>10){
+			Log.i(tag, "Memory is: "+usedMegs+"MB, cancel into Welcome.class");
 			finish();
-//			Ahmydroid.actionShowMain(How.this);
-			Intent i = new Intent(this, Welcome.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
+			Ahmydroid.actionShowMain(How.this);
+			MySharedPreferences.addPreference(How.this, "into_ahmydroid", true);
 		}else{
-			finish();
-//			Ahmydroid.actionShowMain(this);
+			if(MySharedPreferences.getPreference(How.this, "into_ahmydroid", false)==true){
+				finish();
+				Ahmydroid.actionShowMain(How.this);
 			
-			Intent i = new Intent(How.this, Ahmydroid.class);
-	        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-	        startActivity(i);
+			}else{
+				finish();
+				Welcome.actionShowWelcome(this);
+				
+			
+			}
 		}
+		
+		
+		
 		
 	}
 

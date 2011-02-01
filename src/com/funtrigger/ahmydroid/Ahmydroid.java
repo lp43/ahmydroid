@@ -44,6 +44,7 @@ import android.media.MediaPlayer.OnErrorListener;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.text.ClipboardManager;
@@ -76,7 +77,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 記錄當前的版本編號<br/>
 	 * 這個編號會被放在[Menu]的[關於]裡
 	 */
-	private String softVersion="v1.0.0.35";
+	private String softVersion="v1.0.0.36";
 	/**
 	 * [怎麼玩]和[離開]的Button變數
 	 */
@@ -106,7 +107,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	/**
 	 * 機器人暈眩的動畫變數，它會被imgfall變數啟動
 	 */
-	private AnimationDrawable aniimg;
+	static private AnimationDrawable aniimg;
 	/**
 	 * 該變數用在onCreateDialog的switch case裡，
 	 * 主要目的用來告知使用者怎麼玩這隻Apk的訊息視窗
@@ -116,15 +117,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	private static final int HOW_TO_USE_3 = 3;
 	private static final int HOW_TO_USE_4 = 4;
 	private static final int HOW_TO_USE_5 = 5;
-	static Context context;
+//	static Context context;
 	static AnimationDrawable ani_elect;
 	static Handler handler;
 	
-//    public static void actionShowMain(Context context) {
-//        Intent i = new Intent(context, Ahmydroid.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//        context.startActivity(i);
-//    }
+    public static void actionShowMain(Context context) {
+        Intent i = new Intent(context, Ahmydroid.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(i);
+    }
 		
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -134,165 +135,180 @@ public class Ahmydroid extends Activity implements SensorEventListener{
         
  
         setContentView(R.layout.ahmyphone);
-        button_how=(Button) findViewById(R.id.button_how);
-        button_exit=(Button) findViewById(R.id.button_exit);
-        img_btn=(ImageButton) findViewById(R.id.img_btn);
-        imgfall=(ImageView) findViewById(R.id.fall);
-        img_btn.setBackgroundResource(R.drawable.nostart);
         
-        this.context=this;
-        
-        //主畫面不用將離開按鈕隱藏
-        button_exit.setVisibility(View.VISIBLE);
-        
-        //開啟使用教學
-        button_how.setOnClickListener(new OnClickListener(){
 
-			@Override
-			public void onClick(View v) {
-//				button_how.setVisibility(View.INVISIBLE);
-//				showDialog(HOW_TO_USE_1);
-				Ahmydroid.this.finish();
-				startActivity(new Intent(Ahmydroid.this, Welcome.class));
-			}
-        	
-        });
+	
+			 button_how=(Button) findViewById(R.id.button_how);
+		        button_exit=(Button) findViewById(R.id.button_exit);
+		        img_btn=(ImageButton) findViewById(R.id.img_btn);
+		        imgfall=(ImageView) findViewById(R.id.fall);
+		        img_btn.setBackgroundResource(R.drawable.nostart);
+		        
+//		        this.context=this;
+		        
+		        //主畫面不用將離開按鈕隱藏
+		        button_exit.setVisibility(View.VISIBLE);
+		        
+		        //開啟使用教學
+		        button_how.setOnClickListener(new OnClickListener(){
 
-        button_exit.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-//				finish();	
-				
-				/*ConnectivityManager cm=(ConnectivityManager) Ahmydroid.this.getSystemService(Ahmydroid.this.CONNECTIVITY_SERVICE);
-				Log.i(tag, "return value: "+String.valueOf(cm.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE , ConnectivityManager.CONNECTIVITY_ACTION)));
-				cm.setNetworkPreference(ConnectivityManager.TYPE_MOBILE);
-				NetworkInfo c=cm.getActiveNetworkInfo();
-				if(c!=null){
-					Log.i(tag, "Type: "+c.getTypeName());
-				}*/
-//				WriteToTXT.writeLogToTXT(MyLocation.getLocation(Ahmydroid.this));
-				
-//				if(checkServiceExist(".LocationUpdateService")==false){
-//					SwitchService.startService(Ahmydroid.this, LocationUpdateService.class);
-//					Toast.makeText(Ahmydroid.this, "start LocationUpdateService", Toast.LENGTH_SHORT).show();
-//				}else{
-//					SwitchService.stopService(Ahmydroid.this, LocationUpdateService.class);
-//					Toast.makeText(Ahmydroid.this, "stop LocationUpdateService", Toast.LENGTH_SHORT).show();
-//					
-//					LocationUpdateService lus= new LocationUpdateService();
-//					lus.resetLocation();			
-//					Toast.makeText(Ahmydroid.this, "resetLocation", Toast.LENGTH_SHORT).show();
-//				}
-//				try {
-//					MyDispatcher.facebook.logout(Ahmydroid.this);
-//				} catch (MalformedURLException e) {
-//					Log.i(tag, "MalformedURLException: "+e.getMessage());
-//				} catch (IOException e) {
-//					Log.i(tag, "IOException: "+e.getMessage());
-//				}
-//				Facebook facebook= new Facebook("171403682887181");
-//				facebook.authorize(Ahmydroid.this, new String[]{"publish_stream"}, new BaseDialogListener(){
-//
-//					@Override
-//					public void onComplete(Bundle values) {
-//						Log.i(tag, "success");
-//					}
-//					
-//				});//這行要加，因為有時候Session會過期
-				
-//				MyDispatcher md= new MyDispatcher();
-//				md.facebookDispatcher(Ahmydroid.this, Ahmydroid.this);
-				
-				
-//				Bundle params =new Bundle();
-//				params.putString("message", context.getString(R.string.facebook_message_head)+"\n"+
-//		    			context.getString(R.string.facebook_message_time).replace("#time", mytime.getHHMMSS())+"\n"+
-//		    			context.getString(R.string.facebook_message_location).replace("#location",  LocationUpdateService.getRecordLocation())+"\n"+
-//		    			context.getString(R.string.facebook_message_last));
-				
-				
-//				String aa= "test";
-//				String bb="message";
-//				params.putByteArray("message", aa.getBytes());
-//				try {
-//					facebook.request("me/feed", params, "POST");
-//				} catch (FileNotFoundException e) {
-//					Log.i(tag, "FileNotFoundException: "+e.getMessage());
-//				} catch (MalformedURLException e) {
-//					Log.i(tag, "MalformedURLException: "+e.getMessage());
-//				} catch (IOException e) {
-//					Log.i(tag, "IOException: "+e.getMessage());
-//				}
-				
-				ClipboardManager cm=(ClipboardManager) Ahmydroid.this.getSystemService(Context.CLIPBOARD_SERVICE);
-				cm.setText(LocationUpdateService.getRecordLocation(context));
-				Toast.makeText(Ahmydroid.this, LocationUpdateService.getRecordLocation(context), Toast.LENGTH_SHORT).show();
-			}
-        	
-        });
-        
-        
-        
-     
-//        button_exit.setOnLongClickListener(new OnLongClickListener(){
-//
-//			@Override
-//			public boolean onLongClick(View v) {
-//				
-//				return false;
-//			}
-//        	
-//        });
-        
-        img_btn.setOnClickListener(new OnClickListener(){
-
-			@Override
-			public void onClick(View v) {
-
-				
-				if(MySystemManager.checkServiceExist(context,".FallDetector")==false){
-					SwitchService.startService(Ahmydroid.this,FallDetector.class);
-					
-					if(MySharedPreferences.getPreference(Ahmydroid.this, "location", false)==true){
-						SwitchService.startService(Ahmydroid.this,LocationUpdateService.class);
+					@Override
+					public void onClick(View v) {
+//						button_how.setVisibility(View.INVISIBLE);
+//						showDialog(HOW_TO_USE_1);
+						Ahmydroid.this.finish();
+						startActivity(new Intent(Ahmydroid.this, Welcome.class));
 					}
-					//用在讓重新開機時，能夠知道要不要啟動防摔小安
-					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
-//					Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
-					MyDialog.newToast(Ahmydroid.this, getString(R.string.startfallprotect), R.drawable.icon);
-					MyDialog.newTwoBtnDialog(Ahmydroid.this, R.drawable.icon, getString(R.string.exit)+"?",getString(R.string.exit_or_not) , getString(R.string.ok), new DialogInterface.OnClickListener(){
+		        	
+		        });
 
-						@Override
-						public void onClick(DialogInterface dialog, int which) {
-							finish();
+		        button_exit.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View v) {
+						finish();	
+						
+						/*ConnectivityManager cm=(ConnectivityManager) Ahmydroid.this.getSystemService(Ahmydroid.this.CONNECTIVITY_SERVICE);
+						Log.i(tag, "return value: "+String.valueOf(cm.startUsingNetworkFeature(ConnectivityManager.TYPE_MOBILE , ConnectivityManager.CONNECTIVITY_ACTION)));
+						cm.setNetworkPreference(ConnectivityManager.TYPE_MOBILE);
+						NetworkInfo c=cm.getActiveNetworkInfo();
+						if(c!=null){
+							Log.i(tag, "Type: "+c.getTypeName());
+						}*/
+//						WriteToTXT.writeLogToTXT(MyLocation.getLocation(Ahmydroid.this));
+						
+//						if(checkServiceExist(".LocationUpdateService")==false){
+//							SwitchService.startService(Ahmydroid.this, LocationUpdateService.class);
+//							Toast.makeText(Ahmydroid.this, "start LocationUpdateService", Toast.LENGTH_SHORT).show();
+//						}else{
+//							SwitchService.stopService(Ahmydroid.this, LocationUpdateService.class);
+//							Toast.makeText(Ahmydroid.this, "stop LocationUpdateService", Toast.LENGTH_SHORT).show();
+//							
+//							LocationUpdateService lus= new LocationUpdateService();
+//							lus.resetLocation();			
+//							Toast.makeText(Ahmydroid.this, "resetLocation", Toast.LENGTH_SHORT).show();
+//						}
+//						try {
+//							MyDispatcher.facebook.logout(Ahmydroid.this);
+//						} catch (MalformedURLException e) {
+//							Log.i(tag, "MalformedURLException: "+e.getMessage());
+//						} catch (IOException e) {
+//							Log.i(tag, "IOException: "+e.getMessage());
+//						}
+//						Facebook facebook= new Facebook("171403682887181");
+//						facebook.authorize(Ahmydroid.this, new String[]{"publish_stream"}, new BaseDialogListener(){
+		//
+//							@Override
+//							public void onComplete(Bundle values) {
+//								Log.i(tag, "success");
+//							}
+//							
+//						});//這行要加，因為有時候Session會過期
+						
+//						MyDispatcher md= new MyDispatcher();
+//						md.facebookDispatcher(Ahmydroid.this, Ahmydroid.this);
+						
+						
+//						Bundle params =new Bundle();
+//						params.putString("message", context.getString(R.string.facebook_message_head)+"\n"+
+//				    			context.getString(R.string.facebook_message_time).replace("#time", mytime.getHHMMSS())+"\n"+
+//				    			context.getString(R.string.facebook_message_location).replace("#location",  LocationUpdateService.getRecordLocation())+"\n"+
+//				    			context.getString(R.string.facebook_message_last));
+						
+						
+//						String aa= "test";
+//						String bb="message";
+//						params.putByteArray("message", aa.getBytes());
+//						try {
+//							facebook.request("me/feed", params, "POST");
+//						} catch (FileNotFoundException e) {
+//							Log.i(tag, "FileNotFoundException: "+e.getMessage());
+//						} catch (MalformedURLException e) {
+//							Log.i(tag, "MalformedURLException: "+e.getMessage());
+//						} catch (IOException e) {
+//							Log.i(tag, "IOException: "+e.getMessage());
+//						}
+						
+//						ClipboardManager cm=(ClipboardManager) Ahmydroid.this.getSystemService(Context.CLIPBOARD_SERVICE);
+//						cm.setText(LocationUpdateService.getRecordLocation(Ahmydroid.this.getApplicationContext()));
+//						Toast.makeText(Ahmydroid.this, LocationUpdateService.getRecordLocation(Ahmydroid.this.getApplicationContext()), Toast.LENGTH_SHORT).show();
+					}
+		        	
+		        });
+		        
+		        
+		        
+		     
+//		        button_exit.setOnLongClickListener(new OnLongClickListener(){
+		//
+//					@Override
+//					public boolean onLongClick(View v) {
+//						
+//						return false;
+//					}
+//		        	
+//		        });
+		        
+		        img_btn.setOnClickListener(new OnClickListener(){
+
+					@Override
+					public void onClick(View v) {
+
+						
+						if(MySystemManager.checkServiceExist(Ahmydroid.this.getApplicationContext(),".FallDetector")==false){
+							SwitchService.startService(Ahmydroid.this,FallDetector.class);
+							
+							if(MySharedPreferences.getPreference(Ahmydroid.this, "location", false)==true){
+								SwitchService.startService(Ahmydroid.this,LocationUpdateService.class);
+							}
+							//用在讓重新開機時，能夠知道要不要啟動防摔小安
+							MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "true");
+//							Toast.makeText(Ahmydroid.this, getString(R.string.startfallprotect), Toast.LENGTH_SHORT).show();
+							MyDialog.newToast(Ahmydroid.this, getString(R.string.startfallprotect), R.drawable.icon);
+							MyDialog.newTwoBtnDialog(Ahmydroid.this, R.drawable.icon, getString(R.string.exit)+"?",getString(R.string.exit_or_not) , getString(R.string.ok), new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									finish();
+								}
+								
+							}, getString(R.string.cancel), new DialogInterface.OnClickListener(){
+
+								@Override
+								public void onClick(DialogInterface dialog, int which) {	
+								}
+								
+							});
+							
+//							img_btn.setBackgroundResource(R.drawable.nostart);
+							setAndroid_Machine(Ahmydroid.this.getApplicationContext());
+						}else if(MySystemManager.checkServiceExist(Ahmydroid.this.getApplicationContext(),".FallDetector")==true){
+							SwitchService.stopService(Ahmydroid.this,FallDetector.class);
+							SwitchService.stopService(Ahmydroid.this,LocationUpdateService.class);
+							//用在讓重新開機時，能夠知道要不要啟動防摔小安
+							MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
+//							Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
+							MyDialog.newToast(Ahmydroid.this, getString(R.string.stopfallprotect), R.drawable.icon);
+//							img_btn.setBackgroundResource(R.drawable.start);
+							setAndroid_Machine(Ahmydroid.this.getApplicationContext());
 						}
 						
-					}, getString(R.string.cancel), new DialogInterface.OnClickListener(){
-
-						@Override
-						public void onClick(DialogInterface dialog, int which) {	
-						}
 						
-					});
-					
-//					img_btn.setBackgroundResource(R.drawable.nostart);
-					setAndroid_Machine();
-				}else if(MySystemManager.checkServiceExist(context,".FallDetector")==true){
-					SwitchService.stopService(Ahmydroid.this,FallDetector.class);
-					SwitchService.stopService(Ahmydroid.this,LocationUpdateService.class);
-					//用在讓重新開機時，能夠知道要不要啟動防摔小安
-					MySharedPreferences.addPreference(Ahmydroid.this, "falldetector_status", "false");
-//					Toast.makeText(Ahmydroid.this, getString(R.string.stopfallprotect), Toast.LENGTH_SHORT).show();
-					MyDialog.newToast(Ahmydroid.this, getString(R.string.stopfallprotect), R.drawable.icon);
-//					img_btn.setBackgroundResource(R.drawable.start);
-					setAndroid_Machine();
+					}
+		        	
+		        });
+		
+		        //檢查緩衝記憶體是否過量
+				int usedMegs = (int)(Debug.getNativeHeapAllocatedSize() / 1048576L);
+//				String usedMegsString = String.format(" - Memory Used: %d MB", usedMegs);
+
+				if(usedMegs>11){
+					Log.i(tag, "Memory is: "+usedMegs+"MB, cancel into Welcome.class");
+					button_how.setVisibility(View.INVISIBLE);
+					MySharedPreferences.addPreference(this, "into_ahmydroid", true);
 				}
-				
-				
-			}
-        	
-        });
+	
+		
     }
     
 	@Override
@@ -301,14 +317,23 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 		
 		
 		
-		setAndroid_Machine();
+		setAndroid_Machine(Ahmydroid.this.getApplicationContext());
 		
 		sensormanager=(SensorManager) this.getSystemService(SENSOR_SERVICE);	
 
 		
 	    //讓按鈕怎麼玩變成動畫
 		Animation how_animation=AnimationUtils.loadAnimation(this, R.anim.scale_animation);
-		button_how.startAnimation(how_animation);
+		
+		   //檢查緩衝記憶體是否過量
+		int usedMegs = (int)(Debug.getNativeHeapAllocatedSize() / 1048576L);
+//		String usedMegsString = String.format(" - Memory Used: %d MB", usedMegs);
+		
+		//過量就不要出現使用教學的動畫了
+		if(usedMegs<11){
+			button_how.startAnimation(how_animation);
+		}
+		
 		
 		super.onResume();
 	}
@@ -473,6 +498,9 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	protected void onPause() {
 		Log.i(tag, "Ahmydroid.onPause");
 		sensormanager.unregisterListener(this);
+		if(ani_elect!=null){
+			ani_elect.stop();
+		}
 		super.onPause();
 	}
 	
@@ -481,15 +509,15 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 如果LocationUpdateService.Service有開啟，變人電波小安
 	 * 否則為暗
 	 */
-	public static void setAndroid_Machine(){
+	public static void setAndroid_Machine(Context context){
 		
-		if(MySystemManager.checkServiceExist(context,".FallDetector")==false){
+		if(MySystemManager.checkServiceExist(context.getApplicationContext(),".FallDetector")==false){
 			img_btn.setBackgroundResource(R.drawable.start);
-		}else if(MySystemManager.checkServiceExist(context,".FallDetector")==true){
+		}else if(MySystemManager.checkServiceExist(context.getApplicationContext(),".FallDetector")==true){
 			
-				if(MySystemManager.checkServiceExist(context,".LocationUpdateService")==true){
+				if(MySystemManager.checkServiceExist(context.getApplicationContext(),".LocationUpdateService")==true){
 					//當主畫面是Ahmydroid，而且FallDetector有開，才展現電波小安
-					if(MySystemManager.checkTaskExist(context, ".Ahmydroid")==true){
+					if(MySystemManager.checkTaskExist(context.getApplicationContext(), ".Ahmydroid")==true){
 						
 						handler= new Handler();
 						handler.postDelayed(new Runnable(){
@@ -615,8 +643,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	 * 此時若按了小綠人，LocationUpdateService打不開
 	 * 會在呼叫的頁面顯示沒有開啟的畫面
 	 */
-	public static void tellUserCantGetLocation(){
-		if(LocationUpdateService.getMyBestProvider(context)!=null){
+	public static void tellUserCantGetLocation(Context context){
+		if(LocationUpdateService.getMyBestProvider(context.getApplicationContext())!=null){
 			
 		
 			if(!InternetInspector.checkInternet(context).equals("mobile")
@@ -659,7 +687,7 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 			if(aniimg!=null){
 				
 				aniimg.stop();
-				setAndroid_Machine();
+				setAndroid_Machine(Ahmydroid.this.getApplicationContext());
 				imgfall.setVisibility(View.INVISIBLE);
 				img_btn.setVisibility(View.VISIBLE);
 			}		
@@ -777,8 +805,8 @@ public class Ahmydroid extends Activity implements SensorEventListener{
 	/**
 	 * 關閉摔落告知
 	 */
-	public static void closeDropProtection(){
-		SwitchService.stopService(context, FallDetector.class);
+	public static void closeDropProtection(Context context){
+		SwitchService.stopService(context.getApplicationContext(), FallDetector.class);
 		img_btn.setBackgroundResource(R.drawable.start);
 	}
 	

@@ -81,6 +81,7 @@
 	<string name="location_name">GeoLocation</string>
 	<string name="location_name_ing">Geographic Location Updating</string>
 	<string name="no_geolocation_data">"Can't get data"</string>
+	<string name="memory_overload">Because out of memory, the application was finished enforcing.</string>
 	
 		<!-- 以下用在精靈 -->	
 	<string name="previous">Previous</string>

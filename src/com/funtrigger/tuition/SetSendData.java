@@ -139,7 +139,7 @@ public class SetSendData extends Activity{
 
 	@Override
 	public void onPause() {
-		// TODO Auto-generated method stub
+	
 		super.onPause();
 	}
 

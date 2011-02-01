@@ -86,7 +86,7 @@ public class Fallen extends Activity{
 	 * 測試期間，讓我可以快速更改音量的變數
 	 * 不用每次都跑到程式碼裡去找設定
 	 */
-	public static int setVolumn = 3;
+	public static int setVolumn = 15;
 	/**
 	 * 機器人圖案的ImageView
 	 */
@@ -476,7 +476,7 @@ public class Fallen extends Activity{
 				
 				//取得震動服務
 				myVibrator = (Vibrator)getSystemService(Service.VIBRATOR_SERVICE);
-//				myVibrator.vibrate(1000);//震動1000秒
+				myVibrator.vibrate(1000);//震動1000秒
 				
 			}
 			

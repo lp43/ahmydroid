@@ -18,6 +18,7 @@ import com.funtrigger.tools.MySharedPreferences;
 import com.funtrigger.tools.MyDialog;
 import com.funtrigger.tools.MyTime;
 import com.funtrigger.tools.SwitchService;
+import com.funtrigger.tuition.InterrupSending;
 
 import android.app.Activity;
 import android.app.KeyguardManager;
@@ -415,7 +416,11 @@ public class TryFallen extends Activity{
 	@Override
 	protected void onDestroy() {
 		Log.i(tag, "TryFallenn.onDestroy");
-
+		
+		Intent intent=new Intent();
+		intent.setClass(this, InterrupSending.class);
+		startActivity(intent);
+		
 		super.onDestroy();
 	}
 

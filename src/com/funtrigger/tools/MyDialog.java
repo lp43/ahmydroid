@@ -410,6 +410,8 @@ public class MyDialog {
 									cookie.removeAllCookie();
 									if(MySystemManager.checkTaskExist(context, ".Settings")==true){
 										Settings.setFacebookStatus(false);
+									}else if(MySystemManager.checkTaskExist(context, ".SetSendData")==true){
+										MySharedPreferences.addPreference(context, "facebook", false);
 									}
 									
 									

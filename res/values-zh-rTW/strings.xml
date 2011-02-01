@@ -81,7 +81,7 @@
 	<string name="location_name">定位小安</string>
 	<string name="location_name_ing">經緯度持續更新中</string>
 	<string name="no_geolocation_data">目前尚無資料</string>
-	
+	<string name="memory_overload">記憶體負載過重，程式強制離開！</string>
 	
 	<!-- 以下用在精靈 -->	
 	<string name="previous">上一個</string>

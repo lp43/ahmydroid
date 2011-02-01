@@ -2,12 +2,18 @@ package com.funtrigger.tools;
 
 import java.util.List;
 
+import com.facebook.android.R;
+
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.ActivityManager.RunningServiceInfo;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Debug;
 import android.util.Log;
+import android.widget.Toast;
 
 public class MySystemManager {
 
@@ -87,5 +93,39 @@ public class MySystemManager {
 		Log.i(tag, "app exist: "+String.valueOf(return_field));
 		return return_field;
 		
+	}
+	
+	/**
+	 * 檢查記憶體是否超載
+	 * @param context
+	 * @return 若超載，回傳true
+	 */
+	public static boolean checkMemory(Context context){
+		//檢查緩衝記憶體是否過量
+		int usedMegs = (int)(Debug.getNativeHeapAllocatedSize() / 1048576L);
+//		String usedMegsString = String.format(" - Memory Used: %d MB", usedMegs);
+
+		if(usedMegs>11){
+			Log.i(tag, "Memory is: "+usedMegs+"MB, cancel into Welcome.class");
+			
+			MySharedPreferences.addPreference(context, "into_ahmydroid", true);
+			
+//			new AlertDialog.Builder(context)
+//            .setTitle(context.getResources().getString(R.string.attention))
+////		    .setIcon(icon)
+//		    .setMessage(context.getResources().getString(R.string.memory_overload))
+//		    .setPositiveButton(context.getResources().getString(R.string.exit), new DialogInterface.OnClickListener() {
+//				
+//				@Override
+//				public void onClick(DialogInterface dialog, int which) {
+//					
+//				}
+//			})
+//
+//			.show();
+			
+			Toast.makeText(context, context.getResources().getString(R.string.memory_overload), Toast.LENGTH_SHORT).show();
+		}
+		return usedMegs>11?true:false;
 	}
 }

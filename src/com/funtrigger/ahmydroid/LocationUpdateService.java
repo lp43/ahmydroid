@@ -83,7 +83,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 					Log.i(tag, "into 68");
 					updateLocation(LocationManager.NETWORK_PROVIDER);
 					if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
-						Ahmydroid.setAndroid_Machine();
+						Ahmydroid.setAndroid_Machine(LocationUpdateService.this.getApplicationContext());
 						
 					}
 					
@@ -94,7 +94,7 @@ public class LocationUpdateService extends Service implements LocationListener{
 				Log.i(tag, "into 78");
 				updateLocation(LocationManager.GPS_PROVIDER);
 				if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
-					Ahmydroid.setAndroid_Machine();
+					Ahmydroid.setAndroid_Machine(LocationUpdateService.this.getApplicationContext());
 				}		
 			}	
 			
@@ -287,8 +287,8 @@ public class LocationUpdateService extends Service implements LocationListener{
 	private void tellAhmydroidNoLocation(){
 		
 		if(MySystemManager.checkTaskExist(LocationUpdateService.this, ".Ahmydroid")==true){
-			Ahmydroid.closeDropProtection();
-			Ahmydroid.tellUserCantGetLocation();
+			Ahmydroid.closeDropProtection(LocationUpdateService.this.getApplicationContext());
+			Ahmydroid.tellUserCantGetLocation(LocationUpdateService.this.getApplicationContext());
 		}
 	}
 	
